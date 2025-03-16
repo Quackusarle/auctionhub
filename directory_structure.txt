@@ -1,10 +1,5 @@
 auction_web/               # Thư mục gốc của dự án
-│── config/                # Cấu hình chung
-│   ├── __init__.py
-│   ├── settings.py        # Cấu hình chính
-│   ├── urls.py            # Định tuyến chính
-│   ├── asgi.py            # Chạy server với ASGI (cho WebSocket)
-│   ├── wsgi.py            # Chạy server với WSGI
+|
 │── apps/                  # Chứa các module chính
 │   ├── auth/              # Xác thực người dùng (JWT + OAuth)
 │   │   ├── models.py      # Model User
@@ -13,28 +8,42 @@ auction_web/               # Thư mục gốc của dự án
 │   │   ├── serializers.py # API (Django Rest Framework)
 │   │   ├── permissions.py # Phân quyền
 │   │   ├── templates/     # Giao diện auth (login, register)
+|   |   
 │   ├── items/             # Quản lý vật phẩm đấu giá
 │   │   ├── models.py      # Model Item (Sản phẩm đấu giá)
 │   │   ├── views.py       # API CRUD sản phẩm
 │   │   ├── urls.py        # URL API
 │   │   ├── serializers.py # Chuyển dữ liệu thành JSON
+|   |
 │   ├── bidding/           # Hệ thống đặt giá thầu
 │   │   ├── models.py      # Model lưu lịch sử đấu giá
 │   │   ├── views.py       # API đặt giá
 │   │   ├── urls.py        # URL API
 │   │   ├── consumers.py   # WebSocket xử lý real-time
 │   │   ├── serializers.py # Xử lý dữ liệu đấu giá
+|   |
 │   ├── payments/          # Xử lý thanh toán
 │   │   ├── models.py      # Model giao dịch
 │   │   ├── views.py       # API thanh toán, hoàn tiền
 │   │   ├── urls.py        # URL API
 │   │   ├── services.py    # Tích hợp cổng thanh toán
-│── templates/             # HTML templates chung
-│── static/                # Chứa CSS, JS, hình ảnh
-│── media/                 # Chứa file upload (ảnh sản phẩm)
-│── tests/                 # Chứa unit test cho API
+|   
+│── auction_web/                # Cấu hình chung
+│   ├── _pycache_/         # Chứa file bytecode (.pyc) do Python tạo (có thể bỏ qua)
+|   |
+│   ├── __init__.py
+│   ├── settings.py        # Cấu hình chính
+│   ├── urls.py            # Định tuyến chính
+│   ├── asgi.py            # Chạy server với ASGI (cho WebSocket)
+│   ├── wsgi.py            # Chạy server với WSGI
+|   
 │── database/              # Chứa file SQL (nếu có)
 │   ├── Mange_Online_bid_web.sql
+|
+│── media/                 # Chứa file upload (ảnh sản phẩm)
+│── static/                # Chứa CSS, JS, hình ảnh
+│── tests/                 # Chứa unit test cho API
+│── templates/             # HTML templates chung
 │── manage.py              # File quản lý Django
 │── requirements.txt       # Danh sách thư viện
 │── README.md              # Hướng dẫn sử dụng
