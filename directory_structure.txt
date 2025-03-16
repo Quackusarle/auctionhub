@@ -1,7 +1,7 @@
 auction_web/               # Thư mục gốc của dự án
 |
 │── apps/                  # Chứa các module chính
-│   ├── auth/              # Xác thực người dùng (JWT + OAuth)
+│   ├── auth_users/              # Xác thực người dùng (JWT + OAuth)
 │   │   ├── models.py      # Model User
 │   │   ├── views.py       # Xử lý đăng ký, đăng nhập
 │   │   ├── urls.py        # URL API Auth
