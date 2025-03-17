@@ -37,11 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "rest_framework",
+
+    # Thêm ứng dụng bên thứ ba vào project
+    'rest_framework',
+    
+    # Thêm các ứng dụng của project vào đây
+    "apps.auth_users",
     "apps.items",
     "apps.bidding",
     "apps.payments",
-    "apps.auth_users",
 ]
 
 MIDDLEWARE = [
