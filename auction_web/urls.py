@@ -16,12 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("Hello, world!")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('api/', include('apps.items.urls')),
-    # Thêm đường dẫn cho ứng dụng payments
+
     path('api/payments/', include('apps.payments.urls')),
-    # Thêm các đường dẫn khác của project nếu có
+
+    path('', home)
 ]
