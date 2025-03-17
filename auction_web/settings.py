@@ -37,11 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    "apps.auth_users",
+    "rest_framework",
     "apps.items",
     "apps.bidding",
     "apps.payments",
+    "apps.auth_users",
 ]
 
 MIDDLEWARE = [
@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'auctiondb',
         'USER': 'root',
-        'PASSWORD': '18112005',
+        'PASSWORD': 'thosanbatcay111',
         'HOST': 'localhost',
         'PORT': '3306',
     }
