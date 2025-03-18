@@ -1,7 +1,8 @@
-# auction_web
+# auction_web:NT208
 course project of web application programming
 
-Hướng Dẫn Cài Đặt Cơ Sở Dữ Liệu Cho Dự Án Đấu Giá Trực Tuyến
+# Cài đặt các gói cần thiết
+ Chạy lệnh: pip install -r requirements.txt
 
 # Hướng Dẫn Cài Đặt Cơ Sở Dữ Liệu Cho Dự Án Đấu Giá Trực Tuyến
 
