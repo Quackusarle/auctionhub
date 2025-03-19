@@ -28,5 +28,7 @@ urlpatterns = [
 
     path('api/payments/', include('apps.payments.urls')),
 
+    path ('api/', include('apps.auth_users.urls')),
+
     path('', home)
 ]

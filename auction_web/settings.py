@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,14 +39,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Thêm ứng dụng bên thứ ba vào project
+    # Ứng dụng bên thứ ba
     'rest_framework',
+    'rest_framework_simplejwt',
     
-    # Thêm các ứng dụng của project vào đây
-    "apps.auth_users",
-    "apps.items",
-    "apps.bidding",
-    "apps.payments",
+    # Ứng dụng của project (chỉ khai báo MỘT LẦN cho mỗi app)
+    'apps.auth_users.apps.AuthUsersConfig',
+    'apps.items.apps.ItemsConfig',
+    'apps.bidding.apps.BiddingConfig',
+    'apps.payments.apps.PaymentsConfig',
 ]
 
 MIDDLEWARE = [
@@ -87,7 +89,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'auctiondb',
         'USER': 'root',
-        'PASSWORD': '18112005',
+        'PASSWORD': 'thosanbatcay111',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -135,3 +137,23 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'auth_users.User'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'tvhoangg05@gmail.com'  
+EMAIL_HOST_PASSWORD = 'aabc ijil fyzu vzkx'  
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ]
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
