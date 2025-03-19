@@ -9,3 +9,7 @@ sqlparse
 psycopg2-binary
 python-dotenv
 mysqlclient
+django-allauth
+Pillow
+pyotp
+django-otp
