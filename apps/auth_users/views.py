@@ -5,7 +5,6 @@ from rest_framework.views import APIView
 from rest_framework import serializers
 from .models import User
 from django.conf import settings
-from .serializers import userSerializer
 from .serializers import *
 from django.core.mail import send_mail
 import pyotp
