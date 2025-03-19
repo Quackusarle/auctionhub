@@ -1,9 +1,12 @@
 from django.db import models
+from django.conf import settings
+
+
 
 # Create your models here.
 class Item(models.Model):
     item_id = models.AutoField(primary_key=True)
-    seller_id = models.IntegerField()
+    seller_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     image_url = models.CharField(max_length=255, blank=True, null=True)
@@ -17,7 +20,6 @@ class Item(models.Model):
     )
 
     class Meta:
-        managed = False
         db_table = 'items'
 
     def __str__(self):
