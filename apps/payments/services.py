@@ -1,6 +1,8 @@
 from django.db import transaction
 from django.utils.timezone import now
-from apps.payments.models import Transaction, User, Item
+from apps.payments.models import Transaction
+from apps.auth_users.models import User
+from apps.items.models import Item
 
 class TransactionService:
     @staticmethod
