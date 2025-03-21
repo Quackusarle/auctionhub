@@ -177,10 +177,10 @@ class ChangePasswordView(APIView):
         if serializer.is_valid():
             user = request.user
             if not check_password(serializer.validated_data['old_password'], user.password):
-                return Response({"error": "Old password is incorrect"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "Mật khẩu cũ không hợp lệ"}, status=status.HTTP_400_BAD_REQUEST)
             user.password = make_password(serializer.validated_data['new_password'])
             user.save()
-            return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
+            return Response({"message": "Thay đổi mật khẩu thành công"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ResetPasswordView(APIView):
@@ -191,9 +191,21 @@ class ResetPasswordView(APIView):
                 user = User.objects.get(email=serializer.validated_data['email'])
                 user.password = make_password(serializer.validated_data['new_password'])
                 user.save()
-                return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
+                return Response({"message": "Thay đổi mật khẩu thành công"}, status=status.HTTP_200_OK)
             except User.DoesNotExist:
-                return Response({"error": "User with this email does not exist"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"error": "Người dùng với email này không tồn tại"}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class LogoutView(APIView):
+    def post(self, request):
+        try:
+            refresh_token = request.data.get("refresh")
+            if not refresh_token:
+                return Response({"error": "Refresh token required !?"}, status=status.HTTP_400_BAD_REQUEST)
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"message": "Logout thành công"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": "Token không hợp lệ hoặc đã bị đưa vào blacklist"}, status=status.HTTP_400_BAD_REQUEST)
 
 
