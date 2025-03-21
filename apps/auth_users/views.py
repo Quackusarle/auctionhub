@@ -9,7 +9,7 @@ from .serializers import *
 from django.core.mail import send_mail
 import pyotp
 from rest_framework_simplejwt.tokens import RefreshToken    
-
+from django.contrib.auth.hashers import check_password, make_password
 
 # Create your views here.
 
@@ -170,5 +170,30 @@ class ResendOTPView(APIView):
                 {"error": "Email không tồn tại."},
                 status=status.HTTP_404_NOT_FOUND
             )
+
+class ChangePasswordView(APIView):
+    def post(self, request):
+        serializer = ChangePasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            user = request.user
+            if not check_password(serializer.validated_data['old_password'], user.password):
+                return Response({"error": "Old password is incorrect"}, status=status.HTTP_400_BAD_REQUEST)
+            user.password = make_password(serializer.validated_data['new_password'])
+            user.save()
+            return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ResetPasswordView(APIView):
+    def post(self, request):
+        serializer = ResetPasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                user = User.objects.get(email=serializer.validated_data['email'])
+                user.password = make_password(serializer.validated_data['new_password'])
+                user.save()
+                return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
+            except User.DoesNotExist:
+                return Response({"error": "User with this email does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
