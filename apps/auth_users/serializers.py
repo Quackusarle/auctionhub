@@ -28,12 +28,11 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
 class VerifyOTPSerializer(serializers.Serializer):
     email = serializers.EmailField()
-    otp = serializers.CharField(max_length=6)
+    otp = serializers.CharField(max_length=6)  # OTP là 6 chữ số
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
-    otp = serializers.CharField(required=False)  # Dùng cho bước xác thực OTP
 
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
