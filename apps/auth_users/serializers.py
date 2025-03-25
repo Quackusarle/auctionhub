@@ -35,4 +35,12 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField()
     otp = serializers.CharField(required=False)  # Dùng cho bước xác thực OTP
 
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+class ResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    new_password = serializers.CharField(required=True)
+
 
