@@ -19,7 +19,7 @@ class CreateTransactionView(APIView):
         try:
             txn = TransactionService.create_transaction(buyer_id, seller_id, item_id, final_price)
             return Response(
-                {"message": "Giao dịch đã tạo", "transaction_id": txn.transaction},
+                {"message": "Giao dịch đã tạo", "transaction_id": txn.transaction_id},
                 status=status.HTTP_201_CREATED
             )
         except Exception as e:
@@ -33,7 +33,7 @@ class ProcessPaymentView(APIView):
 
     def post(self, request, transaction_id):
         try:
-            Transaction.objects.get(transaction=transaction_id)
+            Transaction.objects.get(transaction_id=transaction_id)
         except Transaction.DoesNotExist:
             return Response({"message": "Giao dịch không tồn tại"}, status=status.HTTP_404_NOT_FOUND)
 

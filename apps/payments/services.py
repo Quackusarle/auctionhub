@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.utils.timezone import now
 from apps.payments.models import Transaction
@@ -8,13 +9,27 @@ class TransactionService:
     @staticmethod
     def create_transaction(buyer_id, seller_id, item_id, final_price):
         """Tạo transaction với trạng thái pending"""
+        if not User.objects.filter(buyer_id_id=buyer_id).exists():
+            raise ValueError(f"Không tìm thấy người dùng với ID {buyer_id}")
+        
+        if not User.objects.filter(seller_id_id=seller_id).exists():
+            raise ValueError(f"Không tìm thấy người bán với ID {seller_id}")
+        
+        if not Item.objects.filter(item_id_id=item_id).exists():
+            raise ValueError(f"Không tìm thấy sản phẩm với ID {item_id}")
+
+        buyer = User.objects.get(buyer_id_id=buyer_id)
+        seller = User.objects.get(seller_id_id=seller_id)
+        item = Item.objects.get(item_id_id=item_id)
+
         return Transaction.objects.create(
-            buyer_id=buyer_id,
-            seller_id=seller_id,
-            item_id=item_id,
+            buyer=buyer,
+            seller=seller,
+            item=item,
             final_price=final_price,
             status="pending"
         )
+
 
     @staticmethod
     def process_payment(transaction_id):
