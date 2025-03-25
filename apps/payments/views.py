@@ -31,12 +31,15 @@ class CreateTransactionView(APIView):
 class ProcessPaymentView(APIView):
     """API để xử lý thanh toán"""
 
-    def post(self, request, transaction_id):
+    def post(self, request):  # Không nhận transaction_id từ URL
+        transaction_id = request.data.get("transaction_id")
+        if not transaction_id:
+            return Response({"message": "Thiếu transaction_id"}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            Transaction.objects.get(transaction_id=transaction_id)
+            txn = Transaction.objects.get(transaction_id=transaction_id)
         except Transaction.DoesNotExist:
             return Response({"message": "Giao dịch không tồn tại"}, status=status.HTTP_404_NOT_FOUND)
 
         result = TransactionService.process_payment(transaction_id)
-
         return Response(result, status=status.HTTP_200_OK if result["success"] else status.HTTP_400_BAD_REQUEST)
