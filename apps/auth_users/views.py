@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render  # Import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -17,22 +17,21 @@ class UserList(APIView):
     
     def get(self, request):
         users = User.objects.all()
-        serializer = userSerializer(users, many = True)
+        serializer = userSerializer(users, many=True)
         return Response(serializer.data)
 
- 
     def post(self, request):
-        serializer = userSerializer(data = request.data)
+        serializer = userSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status = status.HTTP_201_CREATED)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 class UserDetail(APIView):
     def get_object(self, username):
         try:
-            return User.objects.get(username = username)
+            return User.objects.get(username=username)
         except User.DoesNotExist:
             return None
     
@@ -42,28 +41,26 @@ class UserDetail(APIView):
             serializer = userSerializer(user)
             return Response(serializer.data)
         else:
-            return Response(status = status.HTTP_404_NOT_FOUND)
-        
+            return Response(status=status.HTTP_404_NOT_FOUND)
     
     def put(self, request, pk):
         user = self.get_object(pk)
         if user:
-            serializer = userSerializer(user, data = request.data)
+            serializer = userSerializer(user, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
             else:
-                return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-        return Response(status = status.HTTP_404_NOT_FOUND)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_404_NOT_FOUND)
     
     def delete(self, request, pk):
         user = self.get_object(pk)
         if user:
             user.delete()
-            return Response(status = status.HTTP_204_NO_CONTENT)
-        return Response(status = status.HTTP_404_NOT_FOUND)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_404_NOT_FOUND)
     
-
 
 class RegisterView(APIView):
     def post(self, request):
@@ -90,6 +87,7 @@ class RegisterView(APIView):
 
 class VerifyOTPView(APIView):
     def post(self, request):
+        print("Request data:", request.data)  # Debug dữ liệu nhận được
         serializer = VerifyOTPSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data['email']
@@ -98,6 +96,7 @@ class VerifyOTPView(APIView):
             try:
                 user = User.objects.get(email=email)
                 totp = pyotp.TOTP(user.otp_secret, interval=300)
+                print(f"Generated OTP for {email}: {totp.now()}")  # Debug OTP
                 if totp.verify(otp):
                     user.is_verified = True
                     user.save()
@@ -114,9 +113,8 @@ class VerifyOTPView(APIView):
                     {"error": "Người dùng không tồn tại."},
                     status=status.HTTP_404_NOT_FOUND
                 )
+        print("Serializer errors:", serializer.errors)  # Debug lỗi serializer
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -208,4 +206,12 @@ class LogoutView(APIView):
         except Exception as e:
             return Response({"error": "Token không hợp lệ hoặc đã bị đưa vào blacklist"}, status=status.HTTP_400_BAD_REQUEST)
 
+# Render templates for login, register, verify OTP
+def register_template(request):
+    return render(request, 'auth_users/register.html')
 
+def login_template(request):
+    return render(request, 'auth_users/login.html')
+
+def verify_otp_template(request):
+    return render(request, 'auth_users/verify_otp.html')
