@@ -75,19 +75,21 @@ class RegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def send_otp_email(self, user):
-        totp = pyotp.TOTP(user.otp_secret, interval=300)  # OTP hết hạn sau 5 phút
+        totp = pyotp.TOTP(user.otp_secret, interval=3000)  # OTP hết hạn sau 5 phút
         otp_code = totp.now()
-        send_mail(
-            subject='Xác thực tài khoản',
-            message=f'Mã OTP của bạn là: {otp_code}',
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[user.email],
-            fail_silently=False,
-        )
+        try:
+            send_mail(
+                subject='Xác thực tài khoản',
+                message=f'Mã OTP của bạn là: {otp_code}',
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[user.email],
+                #fail_silently=False,
+            )
+        except Exception as e:
+            return Response({"error": "Không thể gửi OTP, vui lòng thử lại."}, status=500)
 
 class VerifyOTPView(APIView):
     def post(self, request):
-        print("Request data:", request.data)  # Debug dữ liệu nhận được
         serializer = VerifyOTPSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data['email']
@@ -95,8 +97,7 @@ class VerifyOTPView(APIView):
             
             try:
                 user = User.objects.get(email=email)
-                totp = pyotp.TOTP(user.otp_secret, interval=300)
-                print(f"Generated OTP for {email}: {totp.now()}")  # Debug OTP
+                totp = pyotp.TOTP(user.otp_secret, interval=3000)
                 if totp.verify(otp):
                     user.is_verified = True
                     user.save()
@@ -104,7 +105,8 @@ class VerifyOTPView(APIView):
                         {"message": "Xác thực thành công!"},
                         status=status.HTTP_200_OK
                     )
-                return Response(
+                else: 
+                    return Response(
                     {"error": "Mã OTP không hợp lệ hoặc đã hết hạn."},
                     status=status.HTTP_400_BAD_REQUEST
                 )
@@ -113,7 +115,6 @@ class VerifyOTPView(APIView):
                     {"error": "Người dùng không tồn tại."},
                     status=status.HTTP_404_NOT_FOUND
                 )
-        print("Serializer errors:", serializer.errors)  # Debug lỗi serializer
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginSerializer(serializers.Serializer):
