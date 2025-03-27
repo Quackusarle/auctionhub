@@ -31,5 +31,5 @@ urlpatterns = [
     path('register-page/', register_template, name='register-template'),
     path('login-page/', login_template, name='login-template'),
     path('verify-otp-page/', verify_otp_template, name='verify-otp-template'),
-
+    path('api/bidding/', include('apps.bidding.urls')),
 ]
