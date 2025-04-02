@@ -25,9 +25,7 @@ def home(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('apps.items.urls')),
-    path('api/payments/', include('apps.payments.urls')),
     path('api/', include('apps.auth_users.urls')),
-    path('', home),
     path('register-page/', register_template, name='register-template'),
     path('login-page/', login_template, name='login-template'),
     path('verify-otp-page/', verify_otp_template, name='verify-otp-template'),
