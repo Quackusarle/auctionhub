@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Chủ - Đấu Giá Online</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+
+    <header>
+        <a class="logo" href = "/">
+            <img src="{% static 'images/logo.png' %}" alt="Logo Sàn Đấu Giá" style="width: 35px; height: 35px; padding-left: 10px">
+        </a>        
+        <h1>Online Auction</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="/">Trang Chủ</a></li>
+            <li><a href="/">Danh Mục</a></li>
+            <li><a href="/">Sắp Kết Thúc</a></li>
+            <li><a href="/">Tìm Kiếm</a></li>
+            <li><a href="/login-page/">Đăng Nhập</a></li>
+            <li><a href="/register-page/">Đăng Ký</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h2>Phiên Đấu Giá Nổi Bật</h2>
+            <p>Khám phá những vật phẩm độc đáo và tham gia đấu giá ngay!</p>
+        </section>
+
+        <section class="listings">
+            <h2>Đang Đấu Giá</h2>
+            <div class="item-list">
+                <article class="item-card">
+                     <img src="{% static '' %}" alt="Tên sản phẩm 1">
+                    <h3><a href="/item/1/">Tên Sản Phẩm Đấu Giá 1</a></h3>
+                    <p class="price">Giá hiện tại: 1,500,000 VNĐ</p>
+                    <p class="time">Còn lại: 1 giờ 30 phút</p>
+                    <a href="/item/1/" class="btn">Xem Chi Tiết</a>
+                </article>
+
+                <article class="item-card">
+                     <img src="{% static '' %}" alt="Tên sản phẩm 2">
+                    <h3><a href="/item/2/">Vật Phẩm Cổ Hiếm Có</a></h3>
+                    <p class="price">Giá khởi điểm: 500,000 VNĐ</p>
+                    <p class="time">Còn lại: 3 ngày 5 giờ</p>
+                    <a href="/item/2/" class="btn">Xem Chi Tiết</a>
+                </article>
+
+                <article class="item-card">
+                     <img src="{% static '' %}" alt="Tên sản phẩm 3">
+                    <h3><a href="/item/3/">Bộ Sưu Tập Tem</a></h3>
+                    <p class="price">Giá hiện tại: 850,000 VNĐ</p>
+                    <p class="time">Còn lại: 22 giờ</p>
+                    <a href="/item/3/" class="btn">Xem Chi Tiết</a>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; {% now "Y" %} Sàn Đấu Giá Online Auction. Bảo lưu mọi quyền.</p>
+        <p><a href="/about/">Giới thiệu</a> | <a href="/contact/">Liên hệ</a> | <a href="/terms/">Điều khoản</a></p>
+    </footer>
+
+    <script src="{% static 'js/home.js' %}" defer></script>
+</body>
+</html>

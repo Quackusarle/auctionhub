@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'apps.items.apps.ItemsConfig',
     'apps.bidding.apps.BiddingConfig',
     'apps.payments.apps.PaymentsConfig',
+    'apps.reviews.apps.ReviewsConfig',
 ]
 
 MIDDLEWARE = [
@@ -65,7 +66,7 @@ ROOT_URLCONF = 'auction_web.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'auction_web/templates'],   # Thư mục chứa các template HTML chính của project
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,6 +133,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'auction_web/static',  # Thư mục chứa các file tĩnh chính của project
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
