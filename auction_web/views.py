@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from apps.items.models import Item
 
 # Hàm này sẽ xử lý việc hiển thị trang chủ
 def home_view(request):
