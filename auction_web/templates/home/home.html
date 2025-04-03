@@ -3,48 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Chủ - Đấu Giá Online</title>
-    <link rel="stylesheet" href="static/css/home.css">
-    <script src="static/js/home.js?v=123"></script>
+    <title>Trang Đấu Giá Hiện Đại</title>
+    <link rel="stylesheet" href="static/css/home.css?v123">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <header>
-        <a class="logo" href="/">
-            <img src="static/images/logo.png" alt="Logo Sàn Đấu Giá" width="35" height="35" style="padding-left: 10px">
-        </a>
-        <h1>Online Auction</h1>
+    <header class="site-header">
+        <div class="container">
+            <div class="logo">Auction<span class="logo-alt">Hub</span></div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#" class="active">Trang chủ</a></li>
+                    <li class="has-dropdown">
+                        <a href="#">Sản phẩm <span class="arrow"></span></a> <ul class="submenu">
+                            <li><a href="#">Đồ cổ & Sưu tầm</a></li>
+                            <li><a href="#">Trang sức & Đồng hồ</a></li>
+                            <li><a href="#">Nghệ thuật & Tranh</a></li>
+                            <li><a href="#">Đồ điện tử</a></li>
+                            <li><a href="#">Thời trang & Phụ kiện</a></li>
+                            <li><a href="#">Xem tất cả</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#">Về chúng tôi</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Liên hệ</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <button class="btn btn-outline">Đăng nhập</button>
+                <button class="btn btn-primary">Đăng ký</button>
+            </div>
+             <button class="mobile-menu-toggle">☰</button>
+        </div>
     </header>
 
-    <nav>
-        <ul>
-            <button id="btn_home_page">Trang Chủ</button>
-            <button id="btn_description">Danh Mục</button>
-            <button id="btn_ending">Sắp Kết Thúc</button>
-            <button id="btn_search">Tìm Kiếm</button>
-            <button id="login-btn">Đăng Nhập</button>
-            <button id="register-btn">Đăng Ký</button>
-        </ul>
-    </nav>
+    <section class="hero-section" style="background-image: url('placeholder-hero.jpg');">
+        <div class="container hero-content">
+            <h1>Khám Phá Phiên Đấu Giá Độc Quyền</h1>
+            <p>Tìm kiếm những món đồ độc đáo với mức giá tốt nhất.</p>
+            <button class="btn btn-primary btn-lg">Xem Ngay</button>
+        </div>
+    </section>
 
-    <main>
+    <main class="site-main container">
         <section class="hero">
             <h2>Phiên Đấu Giá Nổi Bật</h2>
             <p>Khám phá những vật phẩm độc đáo và tham gia đấu giá ngay!</p>
         </section>
 
         <section class="listings">
-            <h2>Đang Đấu Giá</h2>
             <div class="item-list" id="item-list-container">
                 <p id="loading-message">Đang tải danh sách sản phẩm...</p>
             </div>
         </section>
     </main>
 
-    <footer>
-        <p>&copy; <span id="copyright-year">2025</span> Sàn Đấu Giá Online Auction. Bảo lưu mọi quyền.</p>
-        <p><a href="/about/">Giới thiệu</a> | <a href="/contact/">Liên hệ</a> | <a href="/terms/">Điều khoản</a></p>
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2025 AuctionHub. Bảo lưu mọi quyền.</p>
+            <ul class="footer-links">
+                <li><a href="#">Chính sách</a></li>
+                <li><a href="#">Điều khoản</a></li>
+                <li><a href="#">Hỗ trợ</a></li>
+            </ul>
+        </div>
     </footer>
 
+    <script src="static/js/home.js?v=123"></script>
 </body>
 </html>

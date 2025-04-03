@@ -1,81 +1,206 @@
-/* static/css/home.css - CSS cho trang chủ */
-body {
-    font-family: sans-serif;
+/* Reset CSS cơ bản & Thiết lập biến */
+:root {
+    --primary-color: #D8BFD8; /* Màu tím nhạt giống ảnh */
+    --secondary-color: #F5F5F5; /* Màu nền trắng ngà */
+    --text-color: #333;
+    --heading-color: #5a5a5a;
+    --accent-color: #C8A2C8; /* Một màu tím đậm hơn chút */
+    --white: #fff;
+    --border-color: #e0e0e0;
+    --font-family: 'Montserrat', sans-serif;
+}
+
+* {
     margin: 0;
-    background-color: #fff;
-    color: #333;
-}
-
-header {
-    display: flex;
-    background-color: #0080ff;
-    padding: 1em 0;
-    text-align: center;
-    border-bottom: 1px solid #0080ff;
-}
-
-footer {
-    background-color: #f8f9fa;
-    padding: 1em 0;
-    text-align: center;
-    border-bottom: 1px solid #e7e7e7;
-}
-
-header h1 {
-    margin: 0;
-    color: #ffff00;
-    padding-left: 10px;
-}
-
-nav {
-    background-color: #e9ecef;
-    padding: 0.5em 0;
-    border-bottom: 1px solid #dee2e6;
-}
-
-nav ul {
-    list-style: none;
     padding: 0;
-    margin: 0;
-    text-align: center;
+    box-sizing: border-box;
 }
 
-nav ul li {
-    display: inline-block;
-    margin: 0 15px;
+body {
+    font-family: var(--font-family);
+    color: var(--text-color);
+    background-color: var(--white);
+    line-height: 1.6;
 }
 
-nav a {
-    text-decoration: none;
-    color: #0056b3;
-    font-weight: bold;
-    padding: 5px 0;
-    display: inline-block;
-}
-nav a:hover {
-    color: #003d82;
-    text-decoration: underline;
-}
-
-main {
-    padding: 20px;
+.container {
     max-width: 1200px;
-    margin: 20px auto;
+    margin: 0 auto;
+    padding: 0 15px;
 }
 
-.hero {
-    background-color: #e9ecef;
-    padding: 50px 20px;
+/* Header */
+.site-header {
+    background-color: var(--white);
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky; /* Giữ header khi cuộn */
+    top: 0;
+    z-index: 1000;
+}
+
+.site-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--heading-color);
+}
+.logo-alt {
+    color: var(--primary-color);
+    font-weight: 400;
+}
+
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+}
+
+.main-nav ul li {
+    margin-left: 25px;
+}
+
+.main-nav ul li a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    padding-bottom: 5px;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.main-nav ul li a:hover,
+.main-nav ul li a.active {
+    color: var(--primary-color);
+}
+
+/* Hiệu ứng gạch chân khi hover/active */
+.main-nav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    display: block;
+    margin-top: 5px;
+    right: 0;
+    background: var(--primary-color);
+    transition: width 0.3s ease;
+    -webkit-transition: width 0.3s ease;
+}
+.main-nav ul li a:hover::after,
+.main-nav ul li a.active::after {
+     width: 100%;
+     left: 0;
+     background-color: var(--primary-color);
+}
+
+
+.header-actions .btn {
+    margin-left: 10px;
+}
+
+.mobile-menu-toggle {
+    display: none; /* Ẩn trên desktop */
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-color);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.btn-outline:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.btn-lg {
+    padding: 15px 30px;
+    font-size: 1.1em;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
     text-align: center;
-    margin-bottom: 30px;
-    border-radius: 8px;
-}
-.hero h2 {
-    margin-top: 0;
-    color: #0056b3;
 }
 
-.listings {}
+
+/* Hero Section */
+.hero-section {
+    background-color: var(--secondary-color); /* Fallback color */
+    background-size: cover;
+    background-position: center;
+    color: var(--white); /* Đổi màu chữ thành trắng cho dễ đọc trên nền ảnh */
+    text-align: center;
+    padding: 100px 0;
+    position: relative; /* Để tạo lớp phủ */
+}
+/* Lớp phủ mờ */
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(51, 51, 51, 0.4); /* Màu đen mờ */
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative; /* Nằm trên lớp phủ */
+    z-index: 2;
+}
+
+
+.hero-section h1 {
+    font-size: 3em;
+    margin-bottom: 15px;
+    font-weight: 700;
+    color: var(--white); /* Đảm bảo màu trắng */
+}
+
+.hero-section p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    color: var(--white); /* Đảm bảo màu trắng */
+}
+
+/* Main Content & Product Grid */
+.site-main {
+    padding: 50px 0;
+}
 
 .listings h2 {
     text-align: center;
@@ -158,17 +283,296 @@ main {
     background-color: #0056b3;
 }
 
-footer {
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid #e7e7e7;
-    font-size: 0.9em;
-    color: #6c757d;
+/* Footer */
+.site-footer {
+    background-color: var(--secondary-color);
+    color: #777;
+    padding: 20px 0;
+    margin-top: 50px;
+    border-top: 1px solid var(--border-color);
 }
-footer a {
-    color: #0056b3;
+
+.site-footer .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Cho phép xuống dòng trên mobile */
+}
+
+.footer-links {
+    list-style: none;
+    display: flex;
+}
+
+.footer-links li {
+    margin-left: 20px;
+}
+
+.footer-links a {
+    color: #777;
     text-decoration: none;
+    transition: color 0.3s ease;
 }
-footer a:hover {
-    text-decoration: underline;
+
+.footer-links a:hover {
+    color: var(--primary-color);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .main-nav {
+        display: none; /* Ẩn menu chính trên tablet/mobile */
+        /* Cần JS để xử lý hiện menu khi click toggle */
+    }
+    .header-actions {
+        display: none; /* Ẩn nút header trên mobile */
+    }
+    .mobile-menu-toggle {
+        display: block; /* Hiện nút toggle menu */
+    }
+     .site-header .container {
+        /* Có thể cần điều chỉnh lại flex để logo và toggle căn chỉnh đẹp */
+        justify-content: space-between;
+    }
+
+}
+
+
+@media (max-width: 768px) {
+     .hero-section h1 {
+        font-size: 2.2em;
+    }
+    .hero-section p {
+        font-size: 1em;
+    }
+    .product-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+     .site-footer .container {
+        flex-direction: column;
+        text-align: center;
+    }
+    .footer-links {
+        margin-top: 10px;
+    }
+     .footer-links li {
+        margin: 0 10px; /* Giảm khoảng cách */
+    }
+}
+
+@media (max-width: 576px) {
+    .logo {
+        font-size: 1.5em;
+    }
+     .hero-section {
+         padding: 60px 0;
+     }
+     .hero-section h1 {
+         font-size: 1.8em;
+     }
+     .btn-lg {
+         padding: 12px 25px;
+         font-size: 1em;
+     }
+     .section-title {
+         font-size: 1.6em;
+     }
+}
+
+/* --- CSS cho Dropdown Menu (Đã sửa lỗi ưu tiên) --- */
+
+/* Định vị cho thẻ li cha chứa dropdown */
+.main-nav ul li.has-dropdown {
+    position: relative;
+}
+
+/* Kiểu cho mũi tên dropdown */
+.main-nav ul li a .arrow {
+    font-size: 0.7em;
+    margin-left: 5px;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+/* Xoay mũi tên khi hover vào mục cha */
+.main-nav ul li.has-dropdown:hover > a .arrow {
+    transform: rotate(180deg);
+}
+
+/* === SỬA Ở ĐÂY: Tăng độ ưu tiên cho việc ẩn/hiện === */
+
+/* Kiểu cho submenu (Ẩn mặc định - Ưu tiên cao) */
+.main-nav ul li.has-dropdown > ul.submenu { /* Chỉ định rõ đường dẫn hơn */
+    display: none !important; /* Thêm !important để ép ghi đè */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--white);
+    list-style: none;
+    padding: 10px 0;
+    margin: 0;
+    min-width: 200px;
+    border: 1px solid var(--border-color);
+    border-top: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1100;
+    border-radius: 0 0 5px 5px;
+}
+
+/* Kiểu cho từng mục trong submenu */
+.main-nav ul li.has-dropdown > ul.submenu li { /* Chỉ định rõ hơn */
+    margin: 0;
+}
+
+.main-nav ul li.has-dropdown > ul.submenu li a { /* Chỉ định rõ hơn */
+    display: block;
+    padding: 10px 20px;
+    color: var(--text-color);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hiệu ứng khi hover vào từng mục con */
+.main-nav ul li.has-dropdown > ul.submenu li a:hover { /* Chỉ định rõ hơn */
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+/* Hiển thị submenu khi hover vào thẻ li cha (Ưu tiên cao) */
+.main-nav ul li.has-dropdown:hover > ul.submenu {
+    display: block !important; /* Thêm !important */
+}
+
+/* Reset gạch chân cho link trong submenu (nếu có) */
+.main-nav ul li.has-dropdown > ul.submenu li a::after { /* Chỉ định rõ hơn */
+    display: none;
+}
+
+/* --- Kết thúc sửa ---*/
+
+
+/* --- CSS Cập nhật cho Mobile (Tùy chọn) --- */
+/* Phần này giữ nguyên như cũ */
+@media (max-width: 992px) {
+    /* Ẩn submenu trên mobile trừ khi được kích hoạt bằng JS */
+     .main-nav ul li.has-dropdown > ul.submenu { /* Cập nhật selector ở đây luôn */
+         /* Có thể cần display: none !important; hoặc dùng JS để quản lý */
+         position: static;
+         box-shadow: none;
+         border: none;
+         padding-left: 15px;
+         background-color: transparent;
+         /* Quan trọng: Cần đảm bảo nó ẩn đi nếu không có class active */
+         display: none; /* Thử thêm dòng này vào đây xem */
+     }
+     .main-nav ul li.has-dropdown > ul.submenu li a { /* Cập nhật selector */
+         padding: 8px 0;
+         color: #555;
+     }
+
+     /* Cần thêm CSS để .main-nav hiển thị dạng dọc khi được bật */
+     .main-nav.active {
+        display: block;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--white);
+        border-top: 1px solid var(--border-color);
+        padding: 10px 0;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        z-index: 1050; /* Đảm bảo nó dưới header nhưng trên content */
+     }
+      .main-nav.active ul {
+         flex-direction: column;
+     }
+     .main-nav.active ul li {
+         margin: 0;
+         width: 100%;
+     }
+      .main-nav.active ul li a {
+         padding: 12px 20px;
+         border-bottom: 1px solid var(--border-color);
+     }
+     .main-nav.active ul li:last-child a {
+         border-bottom: none;
+     }
+      /* Khi menu mobile active thì mới hiện submenu con */
+     .main-nav.active ul li.has-dropdown > ul.submenu {
+         display: block; /* Hiển thị submenu con */
+         position: static;
+         box-shadow: none;
+         border: none;
+         background: #fdfdfd;
+         padding-left: 30px;
+     }
+      .main-nav.active ul li.has-dropdown > ul.submenu a {
+         padding: 8px 20px;
+         font-size: 0.9em;
+         border-bottom: none;
+     }
+}
+
+/* --- CSS Cập nhật cho Mobile (Tùy chọn) --- */
+/* Nếu bạn dùng JS để xử lý click menu mobile, cần CSS tương ứng */
+/* Ví dụ: */
+@media (max-width: 992px) {
+    /* Ẩn submenu trên mobile trừ khi được kích hoạt bằng JS */
+     .submenu {
+        /* Có thể cần display: none !important; hoặc dùng JS để quản lý */
+        position: static; /* Reset position cho menu mobile */
+        box-shadow: none;
+        border: none;
+        padding-left: 15px; /* Thụt lề cho dễ nhìn */
+        background-color: transparent;
+    }
+     .submenu li a {
+         padding: 8px 0; /* Giảm padding */
+         color: #555; /* Có thể đổi màu */
+     }
+
+     /* Cần thêm CSS để .main-nav hiển thị dạng dọc khi được bật */
+     .main-nav.active { /* Giả sử có class active khi menu mobile mở */
+        display: block;
+        position: absolute;
+        top: 100%; /* Ngay dưới header */
+        left: 0;
+        width: 100%;
+        background-color: var(--white);
+        border-top: 1px solid var(--border-color);
+        padding: 10px 0;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+     }
+      .main-nav.active ul {
+         flex-direction: column; /* Chuyển thành cột */
+     }
+     .main-nav.active ul li {
+         margin: 0;
+         width: 100%;
+     }
+      .main-nav.active ul li a {
+         padding: 12px 20px;
+         border-bottom: 1px solid var(--border-color); /* Thêm ngăn cách */
+     }
+     .main-nav.active ul li:last-child a {
+         border-bottom: none;
+     }
+
+     .main-nav.active ul li.has-dropdown .submenu {
+         display: block; /* Hiển thị submenu con */
+         position: static; /* Reset định vị */
+         box-shadow: none;
+         border: none;
+         background: #fdfdfd; /* Nền hơi khác biệt */
+         padding-left: 30px; /* Thụt lề sâu hơn */
+     }
+      .main-nav.active ul li.has-dropdown .submenu a {
+          padding: 8px 20px;
+          font-size: 0.9em;
+          border-bottom: none; /* Bỏ border trong submenu con */
+      }
+
 }

@@ -8,8 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    addClickEvent("btn_home_page", "/");
-    addClickEvent("btn_description", "/categories/");
     addClickEvent("btn_ending", "/ending-soon/");
     addClickEvent("btn_search", "/search/");
     addClickEvent("login-btn", "/login-page/");
@@ -137,3 +135,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 }); // End DOMContentLoaded
+
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const mainNav = document.querySelector('.main-nav'); // Cần điều chỉnh CSS để hiện/ẩn
+
+    if (mobileMenuToggle && mainNav) {
+        mobileMenuToggle.addEventListener('click', function() {
+            // Chỗ này bạn cần thêm class hoặc thay đổi style để hiện menu
+            // Ví dụ: mainNav.classList.toggle('active');
+            // Và CSS: .main-nav.active { display: block; position: absolute; ... }
+            alert('Cần thêm code để xử lý hiện/ẩn menu mobile!');
+        });
+    }
+});
