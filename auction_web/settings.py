@@ -12,9 +12,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+#sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -32,6 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,8 +46,12 @@ INSTALLED_APPS = [
     # Ứng dụng bên thứ ba
     'rest_framework',
     'rest_framework_simplejwt',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     
-    # Ứng dụng của project (chỉ khai báo MỘT LẦN cho mỗi app)
+    # Ứng dụng của project 
     'apps.auth_users.apps.AuthUsersConfig',
     'apps.items.apps.ItemsConfig',
     'apps.bidding.apps.BiddingConfig',
@@ -59,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'auction_web.urls'
@@ -66,7 +75,7 @@ ROOT_URLCONF = 'auction_web.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'auction_web/templates'],   # Thư mục chứa các template HTML chính của project
+        'DIRS': [BASE_DIR / 'auction_web/templates'],  # Thư mục chứa các template của project
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -90,7 +99,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'auctiondb',
         'USER': 'root',
-        'PASSWORD': '18112005',
+        'PASSWORD': 'thosanbatcay111',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -161,3 +170,46 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
+
+ACCOUNT_FORMS = {'signup': 'apps.auth_users.forms.CustomSignupForm'}
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SITE_ID = 1
+
+ACCOUNT_LOGIN_METHODS = {"email"}  # Chỉ cho phép đăng nhập bằng email
+ACCOUNT_UNIQUE_EMAIL = True  # Email duy nhất
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Bắt buộc xác thực email
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True  # Chuyển hướng sau khi đăng nhập thành công
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # Không sử dụng trường username
+
+
+# Các trường trong form đăng ký
+ACCOUNT_SIGNUP_FIELDS = [
+    "email*",
+    "password1*",
+    "password2*"
+]
+
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],  # Quyền truy cập
+        'AUTH_PARAMS': {'access_type': 'online'},  # Loại xác thực
+        'APP': {
+            'client_id': '', 
+            'secret': '',
+            'key': ''
+        }
+    }
+}
+
+
+
