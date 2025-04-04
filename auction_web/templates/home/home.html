@@ -4,13 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang Đấu Giá Hiện Đại</title>
-    <link rel="stylesheet" href="static/css/home.css?v=final_plant_carousel"> 
+    
+    <link rel="stylesheet" href="static/css/home.css?v=carousel_final_fix"> 
+    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+
 </head>
 <body>
 
-    <header class="site-header plant-theme-header" style="background-color: rgb(231, 231, 231);">
+    <header class="site-header plant-theme-header">
         <div class="container">
             <div class="logo">Auction<span class="logo-alt">Hub</span></div>
             <nav class="main-nav plant-theme-nav">
@@ -38,7 +44,7 @@
                 <a href="#listings-section" class="btn btn-primary btn-lg hero-btn">Khám Phá Ngay</a> 
             </div>
             <div class="hero-image-content">
-                <img src="placeholder-hero-plant.png" alt="Hình ảnh trang trí">
+                <img src="static/images/placeholder-hero-plant.png" alt="Hình ảnh trang trí"> 
             </div>
         </div>
     </section>
@@ -49,72 +55,40 @@
                  <h2>Phiên Đấu Giá Nổi Bật</h2>
              </div>
 
-             <div class="item-carousel-container">
-                 <button class="carousel-arrow prev-arrow" aria-label="Sản phẩm trước" disabled> 
-                     <i class="fas fa-chevron-left"></i>
-                 </button>
-
-                 <div class="item-carousel-wrapper">
-                     <div class="item-list" id="item-list-container">
-                         <p id="loading-message">Đang tải danh sách sản phẩm...</p>
+             <div class="item-carousel-container swiper-container"> 
+                 <div class="swiper">
+                     <div class="swiper-wrapper" id="item-list-container"> 
+                         <p id="loading-message" style="text-align: center; width: 100%; padding: 20px;">Đang tải danh sách sản phẩm...</p>
                          </div>
                  </div>
-
-                 <button class="carousel-arrow next-arrow" aria-label="Sản phẩm tiếp theo">
-                     <i class="fas fa-chevron-right"></i>
-                 </button>
+                 <div class="swiper-button-prev carousel-arrow prev-arrow"></div> 
+                 <div class="swiper-button-next carousel-arrow next-arrow"></div>
              </div>
-             </section>
+        </section>
     </main>
-
+    
     <footer class="site-footer simplified-footer plant-theme-footer" id="contact-section">
         <div class="container">
             <div class="footer-content-wrapper">
                 <div class="contact-info">
                     <h5>Kết nối với AuctionHub</h5>
-                    <div class="contact-item">
-                        <i class="fas fa-map-marker-alt contact-icon"></i>
-                        <div class="contact-details">
-                            <strong>Địa chỉ:</strong>
-                            <span>Trường Đại Học Công Nghệ Thông Tin (UIT), ĐHQG TPHCM</span>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-phone-alt contact-icon"></i>
-                        <div class="contact-details">
-                            <strong>Điện thoại:</strong>
-                            <a href="tel:0914321432">09.1432.1432</a>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-envelope contact-icon"></i>
-                        <div class="contact-details">
-                            <strong>Email:</strong>
-                            <a href="mailto:support@auctionhub.com">support@auctionhub.com</a>
-                        </div>
-                    </div>
-                    <div class="social-icons">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
+                    <div class="contact-item"> <i class="fas fa-map-marker-alt contact-icon"></i> <div class="contact-details"> <strong>Địa chỉ:</strong> <span>Trường Đại Học Công Nghệ Thông Tin (UIT), ĐHQG TPHCM</span> </div> </div>
+                    <div class="contact-item"> <i class="fas fa-phone-alt contact-icon"></i> <div class="contact-details"> <strong>Điện thoại:</strong> <a href="tel:0914321432">09.1432.1432</a> </div> </div>
+                    <div class="contact-item"> <i class="fas fa-envelope contact-icon"></i> <div class="contact-details"> <strong>Email:</strong> <a href="mailto:support@auctionhub.com">support@auctionhub.com</a> </div> </div>
+                    <div class="social-icons"> <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a> <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a> <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a> <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a> </div>
                 </div>
-
                 <div class="newsletter-signup">
                     <h5>Đăng ký nhận bản tin</h5>
-                    <form class="newsletter-form">
-                        <input type="email" placeholder="Nhập email của bạn" required>
-                        <button type="submit">Đăng ký</button>
-                    </form>
+                    <form class="newsletter-form"> <input type="email" placeholder="Nhập email của bạn" required> <button type="submit">Đăng ký</button> </form>
                 </div>
             </div>
-             <div class="footer-bottom">
-                 <p>&copy; <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p>
-             </div>
+             <div class="footer-bottom"> <p>&copy; <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p> </div>
         </div>
     </footer>
 
-     <script src="static/js/home.js?v=final_plant_carousel"></script> 
+    <script src="static/js/home.js?v=final_carousel_fix"></script> 
+    
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
 </body>
 </html>
