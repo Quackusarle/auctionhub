@@ -1,151 +1,139 @@
+// --- Các hàm phụ trợ (Ví dụ) ---
+function formatPrice(priceString) {
+    try {
+        const price = parseFloat(priceString);
+        return `$${price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`; 
+    } catch (e) { return priceString || '$0'; } 
+}
+
+// --- Hàm khởi tạo Swiper (Cập nhật breakpoints) ---
+function initializeSwiper() {
+    if (typeof Swiper === 'undefined') { console.error('Swiper library is not loaded.'); return; }
+
+    const swiperSelector = '.swiper-container .swiper'; 
+    if (!document.querySelector(swiperSelector)) { console.log('Swiper container not found, skipping initialization.'); return; }
+
+    const swiper = new Swiper(swiperSelector, { 
+        loop: false, 
+        slidesPerView: 2, // Bắt đầu với 2 slide trên màn hình nhỏ nhất
+        spaceBetween: 15, // Giảm khoảng cách chút
+        
+        // Responsive breakpoints (TĂNG slidesPerView để card nhỏ lại)
+        breakpoints: {
+            // Khi >= 576px
+            576: { slidesPerView: 3, spaceBetween: 15 },
+            // Khi >= 768px
+            768: { slidesPerView: 4, spaceBetween: 20 },
+            // Khi >= 992px
+            992: { slidesPerView: 5, spaceBetween: 20 }, // Hiển thị 5 slide 
+            // Khi >= 1200px 
+            1200: { slidesPerView: 6, spaceBetween: 20 } // Hiển thị 6 slide trên màn hình lớn
+        },
+
+        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+        slideActiveClass: 'is-active', 
+        watchOverflow: true, 
+        observer: true, 
+        observeParents: true, 
+        grabCursor: true, 
+
+        // Thêm hiệu ứng phóng to cho slide active (Cần CSS hỗ trợ)
+        // centeredSlides: true, // Đặt true để slide active luôn ở giữa (giúp hiệu ứng scale đẹp hơn)
+        // slidesOffsetBefore: 0, // Có thể cần điều chỉnh nếu dùng centeredSlides
+        // slidesOffsetAfter: 0,
+    });
+
+    // Logic xử lý class 'is-active' khi slide thay đổi
+    if (swiper.slides && swiper.slides.length > 0) {
+         if(swiper.slides[swiper.activeIndex]){
+             swiper.slides[swiper.activeIndex].classList.add('is-active');
+             const activeItemCard = swiper.slides[swiper.activeIndex].querySelector('.item-card');
+             if (activeItemCard) { activeItemCard.classList.add('is-active'); }
+         }
+         swiper.on('slideChange', function () {
+             swiper.slides.forEach(slide => {
+                 if(slide) { 
+                    slide.classList.remove('is-active'); 
+                    const itemCard = slide.querySelector('.item-card');
+                    if (itemCard) { itemCard.classList.remove('is-active'); } 
+                 }
+             });
+             if(swiper.slides[swiper.activeIndex]){ 
+                swiper.slides[swiper.activeIndex].classList.add('is-active'); 
+                const activeItemCard = swiper.slides[swiper.activeIndex].querySelector('.item-card');
+                if (activeItemCard) { activeItemCard.classList.add('is-active'); }
+             }
+         });
+    } else {
+        console.log("Swiper initialized, but no slides found.");
+    }
+}
+
+
+// --- Chạy tất cả code sau khi DOM tải xong ---
 document.addEventListener("DOMContentLoaded", function () {
-    function addClickEvent(id, url) {
-        let button = document.getElementById(id);
-        if (button) {
-            button.addEventListener("click", function () {
-                window.location.href = url;
-            });
-        }
-    }
-
-    addClickEvent("btn_ending", "/ending-soon/");
-    addClickEvent("btn_search", "/search/");
-    addClickEvent("login-btn", "/login-page/");
-    addClickEvent("register-btn", "/register-page/");
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const itemListContainer = document.getElementById('item-list-container');
-    const loadingMessage = document.getElementById('loading-message');
+    
+    // 1. Cập nhật năm bản quyền
     const copyrightYearSpan = document.getElementById('copyright-year');
+    if (copyrightYearSpan) { copyrightYearSpan.textContent = new Date().getFullYear(); }
 
-    // Cập nhật năm hiện tại trong footer
-    if (copyrightYearSpan) {
-        copyrightYearSpan.textContent = new Date().getFullYear();
+    // 2. Xử lý menu mobile
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const mainNav = document.querySelector('.main-nav.plant-theme-nav'); 
+    if (mobileMenuToggle && mainNav) {
+        mobileMenuToggle.addEventListener('click', function() { mainNav.classList.toggle('active'); });
     }
 
-    // --- Gọi API để lấy danh sách Items ---
-    const apiUrl = '/api/items/'; // Đây là URL của ItemList API ông đã tạo
+    // 3. Tải dữ liệu sản phẩm và khởi tạo Swiper
+    const itemListContainer = document.getElementById('item-list-container'); // swiper-wrapper
+    const loadingMessage = document.getElementById('loading-message');
+    const apiUrl = '/api/items/'; // Đảm bảo URL API đúng
+
+    if (!itemListContainer) { console.error("Container '#item-list-container' for swiper not found!"); return; }
 
     fetch(apiUrl)
-        .then(response => {
-            if (!response.ok) {
-                // Ném lỗi nếu response không thành công (VD: 4xx, 5xx)
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json(); // Chuyển response thành JSON
-        })
+        .then(response => { /* ... xử lý response ... */ return response.json(); })
         .then(items => {
-            // Xóa thông báo "Đang tải..."
-            if (loadingMessage) {
-                loadingMessage.remove();
-            }
+            if (loadingMessage) loadingMessage.remove(); 
+            itemListContainer.innerHTML = ''; 
 
-            // Kiểm tra xem có item nào không
             if (items && items.length > 0) {
-                // Lặp qua từng item trong danh sách JSON trả về
                 items.forEach(item => {
-                    // Tạo thẻ article.item-card
+                    // TẠO SLIDE VÀ ITEM CARD CHO CAROUSEL NGANG
+                    const swiperSlide = document.createElement('div');
+                    swiperSlide.classList.add('swiper-slide'); 
+
                     const article = document.createElement('article');
-                    article.classList.add('item-card');
+                    article.classList.add('item-card'); 
 
-                    // Tạo ảnh (kiểm tra image_url hoặc dùng placeholder)
                     const img = document.createElement('img');
-                    // Giả sử API trả về 'image_url'. Nếu là ImageField thì có thể là item.image
-                    img.src = item.image_url || 'images/placeholder.png'; // Dùng ảnh placeholder nếu ko có ảnh
-                    img.alt = item.name;
+                    img.src = item.image_url || 'static/images/placeholder.png'; 
+                    img.alt = item.name || 'Auction Item'; 
+                    img.loading = 'lazy'; 
 
-                    // Tạo tên sản phẩm (h3 và link a)
+                    const cardContent = document.createElement('div');
+                    cardContent.classList.add('card-content');
+
                     const heading = document.createElement('h3');
-                    const link = document.createElement('a');
-                    // Chú ý: Dùng item.item_id hay item.id tùy thuộc vào JSON trả về từ serializer
-                    link.href = `/item/${item.item_id}/`; // Link đến trang chi tiết (trang này cũng cần làm bằng JS hoặc cách khác)
-                    link.textContent = item.name;
-                    heading.appendChild(link);
+                    heading.textContent = item.name || 'N/A'; 
 
-                    // Tạo giá hiện tại
-                    const pricePara = document.createElement('p');
+                    const pricePara = document.createElement('span'); 
                     pricePara.classList.add('price');
-                    // Giả sử API trả về 'current_price'
-                    pricePara.textContent = `Giá hiện tại: ${formatPrice(item.current_price)} VNĐ`; // Có thể cần hàm format tiền tệ
+                    pricePara.textContent = `${formatPrice(item.current_price || 0)}`; 
 
-                    // Tạo thời gian kết thúc (hiển thị đơn giản)
-                    const timePara = document.createElement('p');
-                    timePara.classList.add('time');
-                    // Giả sử API trả về 'end_time'
-                    timePara.textContent = `Kết thúc: ${formatDateTime(item.end_time)}`; // Cần hàm format ngày giờ
-
-                    // Tạo nút xem chi tiết
-                    const detailButton = document.createElement('a');
-                    detailButton.classList.add('btn');
-                    detailButton.href = `/item/${item.item_id}/`; // Link giống tên sản phẩm
-                    detailButton.textContent = 'Xem Chi Tiết';
-
-                    // Gắn các element con vào article
+                    cardContent.appendChild(heading); 
+                    cardContent.appendChild(pricePara); 
                     article.appendChild(img);
-                    article.appendChild(heading);
-                    article.appendChild(pricePara);
-                    article.appendChild(timePara);
-                    article.appendChild(detailButton);
-
-                    // Gắn article vào container
-                    itemListContainer.appendChild(article);
+                    article.appendChild(cardContent);
+                    swiperSlide.appendChild(article);
+                    itemListContainer.appendChild(swiperSlide); 
                 });
-            } else {
-                // Hiển thị thông báo nếu không có item nào
-                const noItemsPara = document.createElement('p');
-                noItemsPara.textContent = 'Hiện tại không có phiên đấu giá nào đang diễn ra.';
-                itemListContainer.appendChild(noItemsPara);
-            }
+
+                // KHỞI TẠO SWIPER
+                initializeSwiper(); 
+
+            } else { /* ... xử lý không có item ... */ }
         })
-        .catch(error => {
-            // Xử lý lỗi nếu gọi API thất bại
-            console.error('Lỗi khi tải dữ liệu sản phẩm:', error);
-            if (loadingMessage) {
-                loadingMessage.textContent = 'Không thể tải dữ liệu. Vui lòng thử lại sau.';
-                loadingMessage.style.color = 'red';
-            } else {
-                 const errorPara = document.createElement('p');
-                 errorPara.textContent = 'Không thể tải dữ liệu. Vui lòng thử lại sau.';
-                 errorPara.style.color = 'red';
-                 itemListContainer.appendChild(errorPara);
-            }
-        });
+        .catch(error => { /* ... xử lý lỗi ... */ });
 
-    // --- Các hàm phụ trợ (ví dụ) ---
-    function formatPrice(priceString) {
-        // Hàm đơn giản để format giá, ông có thể làm phức tạp hơn
-        try {
-            const price = parseFloat(priceString);
-            return price.toLocaleString('vi-VN'); // Format theo kiểu Việt Nam
-        } catch (e) {
-            return priceString; // Trả về chuỗi gốc nếu không format được
-        }
-    }
-
-    function formatDateTime(dateTimeString) {
-         // Hàm đơn giản để format ngày giờ, ông có thể làm phức tạp hơn
-        try {
-            const date = new Date(dateTimeString);
-             const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            return date.toLocaleString('vi-VN', options); // Format theo kiểu Việt Nam
-        } catch (e) {
-            return dateTimeString; // Trả về chuỗi gốc nếu không format được
-        }
-    }
-
-}); // End DOMContentLoaded
-
-document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-    const mainNav = document.querySelector('.main-nav'); // Cần điều chỉnh CSS để hiện/ẩn
-
-    if (mobileMenuToggle && mainNav) {
-        mobileMenuToggle.addEventListener('click', function() {
-            // Chỗ này bạn cần thêm class hoặc thay đổi style để hiện menu
-            // Ví dụ: mainNav.classList.toggle('active');
-            // Và CSS: .main-nav.active { display: block; position: absolute; ... }
-            alert('Cần thêm code để xử lý hiện/ẩn menu mobile!');
-        });
-    }
-});
+}); // Kết thúc DOMContentLoaded
