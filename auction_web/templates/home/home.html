@@ -4,72 +4,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang Đấu Giá Hiện Đại</title>
-    <link rel="stylesheet" href="static/css/home.css?v123">
+    <link rel="stylesheet" href="static/css/home.css?v=final_plant_carousel"> 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
 
-    <header class="site-header">
+    <header class="site-header plant-theme-header" style="background-color: rgb(231, 231, 231);">
         <div class="container">
             <div class="logo">Auction<span class="logo-alt">Hub</span></div>
-            <nav class="main-nav">
+            <nav class="main-nav plant-theme-nav">
                 <ul>
                     <li><a href="#" class="active">Trang chủ</a></li>
-                    <li class="has-dropdown">
-                        <a href="#">Sản phẩm <span class="arrow"></span></a> <ul class="submenu">
-                            <li><a href="#">Đồ cổ & Sưu tầm</a></li>
-                            <li><a href="#">Trang sức & Đồng hồ</a></li>
-                            <li><a href="#">Nghệ thuật & Tranh</a></li>
-                            <li><a href="#">Đồ điện tử</a></li>
-                            <li><a href="#">Thời trang & Phụ kiện</a></li>
-                            <li><a href="#">Xem tất cả</a></li>
-                        </ul>
-                    </li>
+                    <li><a href="#">Sản phẩm</a></li>
                     <li><a href="#">Về chúng tôi</a></li>
                     <li><a href="#">Blog</a></li>
-                    <li><a href="#">Liên hệ</a></li>
-                </ul>
+                    <li><a href="#contact-section">Liên hệ</a></li>
+                 </ul>
             </nav>
-            <div class="header-actions">
-                <button class="btn btn-outline">Đăng nhập</button>
-                <button class="btn btn-primary">Đăng ký</button>
+            <div class="header-actions plant-theme-actions">
+                <a href="#" class="header-icon" aria-label="Giỏ hàng"><i class="fas fa-shopping-bag"></i></a>
+                <a href="#" class="header-icon" aria-label="Tài khoản"><i class="fas fa-user"></i></a>
             </div>
-             <button class="mobile-menu-toggle">☰</button>
+            <button class="mobile-menu-toggle">☰</button> 
         </div>
     </header>
 
-    <section class="hero-section" style="background-image: url('placeholder-hero.jpg');">
-        <div class="container hero-content">
-            <h1>Khám Phá Phiên Đấu Giá Độc Quyền</h1>
-            <p>Tìm kiếm những món đồ độc đáo với mức giá tốt nhất.</p>
-            <button class="btn btn-primary btn-lg">Xem Ngay</button>
+    <section class="hero-section plant-theme-hero">
+        <div class="container hero-container">
+            <div class="hero-text-content">
+                <h1>Khám Phá Phiên<br><span class="highlight">Đấu Giá</span> Độc Quyền</h1>
+                <p>Tìm kiếm những món đồ độc đáo từ khắp nơi trên thế giới với mức giá tốt nhất.</p>
+                <a href="#listings-section" class="btn btn-primary btn-lg hero-btn">Khám Phá Ngay</a> 
+            </div>
+            <div class="hero-image-content">
+                <img src="placeholder-hero-plant.png" alt="Hình ảnh trang trí">
+            </div>
         </div>
     </section>
 
     <main class="site-main container">
-        <section class="hero">
-            <h2>Phiên Đấu Giá Nổi Bật</h2>
-            <p>Khám phá những vật phẩm độc đáo và tham gia đấu giá ngay!</p>
-        </section>
+        <section class="listings" id="listings-section">
+             <div class="section-title-wrapper">
+                 <h2>Phiên Đấu Giá Nổi Bật</h2>
+             </div>
 
-        <section class="listings">
-            <div class="item-list" id="item-list-container">
-                <p id="loading-message">Đang tải danh sách sản phẩm...</p>
-            </div>
-        </section>
+             <div class="item-carousel-container">
+                 <button class="carousel-arrow prev-arrow" aria-label="Sản phẩm trước" disabled> 
+                     <i class="fas fa-chevron-left"></i>
+                 </button>
+
+                 <div class="item-carousel-wrapper">
+                     <div class="item-list" id="item-list-container">
+                         <p id="loading-message">Đang tải danh sách sản phẩm...</p>
+                         </div>
+                 </div>
+
+                 <button class="carousel-arrow next-arrow" aria-label="Sản phẩm tiếp theo">
+                     <i class="fas fa-chevron-right"></i>
+                 </button>
+             </div>
+             </section>
     </main>
 
-    <footer class="site-footer">
+    <footer class="site-footer simplified-footer plant-theme-footer" id="contact-section">
         <div class="container">
-            <p>&copy; 2025 AuctionHub. Bảo lưu mọi quyền.</p>
-            <ul class="footer-links">
-                <li><a href="#">Chính sách</a></li>
-                <li><a href="#">Điều khoản</a></li>
-                <li><a href="#">Hỗ trợ</a></li>
-            </ul>
+            <div class="footer-content-wrapper">
+                <div class="contact-info">
+                    <h5>Kết nối với AuctionHub</h5>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt contact-icon"></i>
+                        <div class="contact-details">
+                            <strong>Địa chỉ:</strong>
+                            <span>Trường Đại Học Công Nghệ Thông Tin (UIT), ĐHQG TPHCM</span>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone-alt contact-icon"></i>
+                        <div class="contact-details">
+                            <strong>Điện thoại:</strong>
+                            <a href="tel:0914321432">09.1432.1432</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope contact-icon"></i>
+                        <div class="contact-details">
+                            <strong>Email:</strong>
+                            <a href="mailto:support@auctionhub.com">support@auctionhub.com</a>
+                        </div>
+                    </div>
+                    <div class="social-icons">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <div class="newsletter-signup">
+                    <h5>Đăng ký nhận bản tin</h5>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Nhập email của bạn" required>
+                        <button type="submit">Đăng ký</button>
+                    </form>
+                </div>
+            </div>
+             <div class="footer-bottom">
+                 <p>&copy; <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p>
+             </div>
         </div>
     </footer>
 
-    <script src="static/js/home.js?v=123"></script>
+     <script src="static/js/home.js?v=final_plant_carousel"></script> 
 </body>
 </html>
