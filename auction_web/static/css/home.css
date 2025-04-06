@@ -73,7 +73,32 @@ body {
 } 
 .swiper-slide { height: auto; display: flex; transition: opacity 0.3s ease; } /* Thêm transition cho slide */
 
-/* Item Card bên trong swiper-slide (Cập nhật size) */
+.item-carousel-container {
+    position: relative; /* Để định vị mũi tên tuyệt đối */
+    padding: 0 100px; /* Khoảng trống rộng hơn cho mũi tên */
+    margin-bottom: 30px;
+}
+
+.item-carousel-wrapper {
+    overflow: hidden; /* Quan trọng: ẩn các item ngoài khung nhìn */
+    width: 100%;
+}
+
+/* Sửa item-list cho carousel */
+.item-list {
+    display: flex; /* Xếp các item hàng ngang */
+    flex-wrap: nowrap; /* Không cho xuống dòng */
+    gap: 20px; /* Giảm gap một chút nếu cần */
+    /* Width sẽ được tính toán hoặc để tự nhiên bởi JS/Thư viện */
+    transition: transform 0.5s ease; /* Hiệu ứng trượt mượt bằng transform */
+    /* transition: scroll-left 0.5s ease; */ /* Hoặc dùng scrollLeft nếu JS điều khiển */
+    padding-bottom: 10px; /* Thêm padding để shadow không bị cắt */
+    margin-left: 0; /* Reset margin nếu có */
+    justify-content: flex-start; /* Bắt đầu từ bên trái */
+}
+
+/* Sửa Item Card cho carousel */
+
 .item-card {
     background-color: var(--white); border: none; border-radius: 1rem; 
     box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075); padding: 0;
