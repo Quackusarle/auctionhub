@@ -1,11 +1,10 @@
-from django.shortcuts import render
+# apps/items/views.py
+from django.shortcuts import render, get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Item
 from .serializers import ItemSerializer
-
-# Create your views here.
 
 class ItemList(APIView):
     def get(self, request):
@@ -51,4 +50,13 @@ class ItemDetail(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-
+# View cho trang chi tiết sản phẩm (item_details)
+def item_detail_view(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    # Tính toán phần trăm giảm giá
+    if item.starting_price and item.current_price and item.starting_price > 0:
+        discount = ((item.starting_price - item.current_price) / item.starting_price) * 100
+        discount = round(discount)  # Thực hiện làm tròn
+    else:
+        discount = 0
+    return render(request, 'items/item_detail.html', {'item': item, 'discount': discount})
