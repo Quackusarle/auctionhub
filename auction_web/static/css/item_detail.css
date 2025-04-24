@@ -1,3 +1,19 @@
+/* --- Biến màu và font (Copy từ home.css) --- */
+:root {
+    --primary-color: #198754;
+    --secondary-color: #ffffff;
+    --text-color: #212529;
+    --heading-color: #212529;
+    --accent-color: #157347;
+    --white: #ffffff;
+    --border-color: #dee2e6;
+    --bg-color: #f8f9fa;       /* Màu nền chính từ home.css */
+    --muted-color: #6c757d;
+    --dark-green-footer-bg: #157347; /* Màu footer từ home.css */
+    --active-card-bg: #146c43; 
+    --font-family: 'Montserrat', sans-serif; /* Font từ home.css */
+}
+
 /* Reset and Base Styles */
 * {
     margin: 0;
@@ -6,27 +22,36 @@
 }
 
 body {
-    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    line-height: 1.7;
-    color: #2d3436;
-    background-color: #f9f7f5; /* Creamy off-white for a softer background */
+    /* Sử dụng biến từ :root */
+    font-family: var(--font-family); /* Đổi font */
+    line-height: 1.6; /* Giữ lại line-height cũ hoặc chỉnh theo home.css */
+    color: var(--text-color);      /* Đổi màu chữ */
+    background-color: var(--bg-color); /* Đổi màu nền */
 }
 
 /* Container */
 .container {
-    max-width: 1320px;
+    max-width: 1140px; /* Đồng bộ kích thước container với home.css */
     margin: 0 auto;
-    padding: 0 32px;
+    padding: 0 15px;  /* Đồng bộ padding với home.css */
 }
 
-/* Header */
+/* --- Header (Style giống header của home.css) --- */
 .site-header {
-    background: linear-gradient(135deg, #1e4620 0%, #2e7d32 100%);
-    padding: 24px 0;
-    position: sticky;
-    top: 0;
+    /* Bỏ style cũ, áp dụng style từ home.css */
+    background-color: var(--bg-color); /* Nền sáng giống home */
+    padding: 20px 0;
+    position: sticky; 
+    top: 0; 
     z-index: 1000;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid var(--border-color); /* Thêm đường viền mảnh nếu muốn */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Shadow nhẹ */
+}
+/* Thêm đường kẻ mảnh dưới header nếu muốn giống hệt home.html */
+.site-header::after { 
+    content: ""; display: block; width: 100%; height: 1px; 
+    background-color: #ddd; /* Màu kẻ nhạt hơn */ 
+    margin-top: 20px; /* Điều chỉnh nếu cần */
 }
 
 .site-header .container {
@@ -36,442 +61,357 @@ body {
 }
 
 .logo {
-    font-family: 'Roboto', sans-serif;
-    font-size: 30px;
+    font-family: var(--font-family); /* Đồng bộ font */
+    font-size: 1.6em;  /* Đồng bộ cỡ chữ logo */
     font-weight: 700;
-    color: #f7f7f7;
-    letter-spacing: 1px;
+    color: var(--heading-color); /* Màu chữ logo giống home */
+    text-decoration: none; /* Đảm bảo logo là link thì không gạch chân */
 }
 
 .logo-alt {
-    color: #b7e1bc;
-    font-weight: 400;
+    color: var(--primary-color); /* Màu nhấn logo giống home */
+    font-weight: 700;
 }
 
+/* --- Main Nav (Style giống home.css) --- */
 .main-nav ul {
     display: flex;
     list-style: none;
-    gap: 32px;
+    gap: 40px; /* Đồng bộ khoảng cách nav item */
 }
 
 .main-nav ul li a {
-    color: #f7f7f7;
+    color: var(--text-color); /* Màu chữ nav giống home */
     text-decoration: none;
     font-weight: 500;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-size: 0.95em; /* Đồng bộ cỡ chữ nav */
+    text-transform: none; /* Bỏ uppercase nếu home không dùng */
+    letter-spacing: normal; /* Bỏ letter-spacing nếu home không dùng */
     position: relative;
     transition: color 0.3s ease;
 }
-
-.main-nav ul li a::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 1px;
-    background-color: #b7e1bc;
-    bottom: -4px;
-    left: 0;
-    transition: width 0.3s ease;
-}
-
-.main-nav ul li a:hover::after,
-.main-nav ul li a.active::after {
-    width: 100%;
-}
+/* Bỏ gạch chân effect cũ */
+.main-nav ul li a::after { display: none; } 
 
 .main-nav ul li a:hover,
 .main-nav ul li a.active {
-    color: #b7e1bc;
+    color: var(--primary-color); /* Màu hover/active giống home */
 }
 
+/* --- Header Actions (Style giống home.css) --- */
+.header-actions {
+    display: flex; /* Đảm bảo có display flex */
+    align-items: center; /* Đảm bảo có align items */
+    gap: 20px; /* Đồng bộ khoảng cách icon */
+}
 .header-actions .header-icon {
-    color: #f7f7f7;
-    margin-left: 24px;
+    color: var(--text-color); /* Màu icon giống home */
+    margin-left: 0; /* Reset margin cũ nếu cần */
     text-decoration: none;
-    font-size: 18px;
-    opacity: 0.9;
-    transition: opacity 0.3s ease, color 0.3s ease;
+    font-size: 1.3em; /* Đồng bộ cỡ icon */
+    opacity: 1; /* Bỏ opacity cũ */
+    transition: color 0.3s ease;
 }
 
 .header-actions .header-icon:hover {
     opacity: 1;
-    color: #b7e1bc;
+    color: var(--primary-color); /* Màu hover icon giống home */
 }
 
-.mobile-menu-toggle {
-    display: none;
-    background: none;
-    border: none;
-    color: #f7f7f7;
-    font-size: 24px;
-    cursor: pointer;
-    opacity: 0.9;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
+/* Ẩn mobile toggle trên desktop */
+.mobile-menu-toggle { display: none; }
 
-.mobile-menu-toggle:hover {
-    opacity: 1;
-    transform: rotate(90deg);
-}
-
-/* Item Detail Section */
+/* --- Item Detail Section (Phần nội dung chi tiết) --- */
+/* Giữ lại bố cục grid nhưng tinh chỉnh màu sắc và khoảng cách */
 .item-detail {
-    padding: 80px 0;
-    background-color: #fff;
-    border-radius: 20px;
+    padding: 40px 0; /* Giảm padding trên dưới */
+    background-color: var(--white); /* Nền trắng cho phần chi tiết */
+    border-radius: 10px; /* Giảm bo góc */
     margin: 40px 0;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Shadow tương tự card */
+    border: 1px solid var(--border-color);
 }
 
 .item-detail-wrapper {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
-    align-items: start;
+    grid-template-columns: 1fr 1.2fr; /* Cho phần text rộng hơn ảnh chút */
+    gap: 30px; /* Giảm khoảng cách */
+    align-items: start; /* Chỉnh thành center nếu muốn căn giữa dọc */
 }
 
 .item-image-section {
-    position: relative;
+    /* position: relative; */ /* Bỏ relative nếu không cần */
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 15px; /* Thêm padding quanh ảnh */
 }
 
 .item-main-image {
     width: 100%;
-    max-width: 500px;
+    max-width: 100%; /* Cho ảnh chiếm hết khu vực */
     height: auto;
-    border-radius: 20px;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
-    transition: transform 0.5s ease, box-shadow 0.3s ease;
+    border-radius: 8px; /* Giảm bo góc ảnh */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Giảm thời gian transition */
 }
 
 .item-main-image:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
 .item-info-section {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding: 32px 0;
+    /* justify-content: center; */ /* Bỏ nếu không muốn căn giữa dọc */
+    padding: 15px 15px 15px 0; /* Điều chỉnh padding */
 }
 
 .item-title {
-    font-family: 'Roboto', sans-serif;
-    font-size: 36px;
+    font-family: var(--font-family); /* Đồng bộ font */
+    font-size: 2em; /* Giảm cỡ chữ title */
     font-weight: 700;
-    color: #1a202c;
-    margin-bottom: 24px;
+    color: var(--heading-color); /* Dùng màu heading */
+    margin-bottom: 15px; /* Giảm margin */
     line-height: 1.3;
-    letter-spacing: 0.5px;
+    letter-spacing: normal; /* Bỏ spacing */
 }
 
-.item-price {
+.item-price { /* Đổi tên class này thành .item-price-block để tránh xung đột */
     display: flex;
-    align-items: center;
-    gap: 24px;
-    margin-bottom: 32px;
+    /* align-items: center; */
+    align-items: baseline; /* Căn theo baseline đẹp hơn */
+    gap: 15px; /* Giảm gap */
+    margin-bottom: 25px; /* Giảm margin */
+    flex-wrap: wrap; /* Cho phép xuống dòng nếu cần */
 }
 
-.current-price {
-    font-size: 40px;
+/* Đổi tên class */
+.item-price-block .current-price { 
+    font-size: 2.2em; /* Giảm cỡ chữ giá hiện tại */
     font-weight: 700;
-    color: #c53030;
-    letter-spacing: -0.5px;
+    color: var(--primary-color); /* ĐỔI MÀU GIÁ HIỆN TẠI sang màu chính */
+    letter-spacing: normal;
 }
 
-.original-price {
-    font-size: 20px;
-    color: #718096;
+/* Đổi tên class */
+.item-price-block .original-price { 
+    font-size: 1.1em; /* Giảm cỡ chữ */
+    color: var(--muted-color); /* Dùng màu muted */
     text-decoration: line-through;
     font-weight: 500;
-    opacity: 0.8;
+    opacity: 1; /* Bỏ opacity */
 }
 
 .item-description {
-    margin-bottom: 48px;
-    padding: 24px;
-    background: linear-gradient(145deg, #f9f9f9, #f0f0f0);
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 30px; /* Giảm margin */
+    padding: 20px; /* Giảm padding */
+    background: var(--bg-color); /* Nền giống body */
+    border-radius: 8px; /* Giảm bo góc */
+    border: 1px solid var(--border-color); /* Thêm viền nhẹ */
+    box-shadow: none; /* Bỏ shadow trong */
+    transition: none; /* Bỏ transition */
 }
 
-.item-description:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+.item-description:hover { /* Bỏ hover effect */
+    transform: none;
+    box-shadow: none;
 }
 
 .item-description h3 {
-    font-family: 'Roboto', sans-serif;
-    font-size: 22px;
-    font-weight: 500;
-    color: #2d3436;
-    margin-bottom: 16px;
-    letter-spacing: 0.3px;
+    font-family: var(--font-family);
+    font-size: 1.2em; /* Giảm cỡ chữ */
+    font-weight: 600; /* Tăng weight */
+    color: var(--heading-color); 
+    margin-bottom: 10px; /* Giảm margin */
+    letter-spacing: normal;
+    border-bottom: 1px solid var(--border-color); /* Thêm đường kẻ dưới */
+    padding-bottom: 5px;
 }
 
 .item-description p {
-    font-size: 16px;
-    color: #4a5568;
-    line-height: 1.8;
+    font-size: 1em; /* Đồng bộ cỡ chữ */
+    color: var(--text-color); /* Dùng màu text chính */
+    line-height: 1.7; /* Tăng line-height */
     font-weight: 400;
 }
 
 .item-actions {
-    margin-bottom: 32px;
+    margin-bottom: 25px; /* Giảm margin */
 }
 
 .bid-now-btn {
-    padding: 14px 40px;
+    /* Style lại nút giống nút trên home */
+    padding: 12px 30px; /* Đồng bộ padding */
     border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 600;
+    border-radius: 5px; /* Giảm bo góc */
+    font-size: 1em; /* Đồng bộ font size */
+    font-weight: 600; /* Giảm weight */
     cursor: pointer;
-    background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
-    color: #f7f7f7;
-    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
-    letter-spacing: 0.5px;
-    position: relative;
-    overflow: hidden;
+    background-color: var(--primary-color); /* Dùng màu chính */
+    color: var(--white); /* Chữ trắng */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Sửa transition */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Shadow nhẹ */
+    letter-spacing: normal; /* Bỏ spacing */
+    position: static; /* Bỏ position */
+    overflow: visible; /* Bỏ overflow */
 }
-
-.bid-now-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s ease;
-}
-
-.bid-now-btn:hover::before {
-    left: 100%;
-}
+/* Bỏ hiệu ứng giả */
+.bid-now-btn::before { display: none; }
 
 .bid-now-btn:hover {
-    box-shadow: 0 6px 16px rgba(46, 125, 50, 0.2);
-    transform: translateY(-2px);
+    background-color: var(--accent-color); /* Dùng màu accent khi hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: none; /* Bỏ transform */
 }
 
 .bid-now-btn:active {
-    box-shadow: 0 2px 8px rgba(46, 125, 50, 0.1);
-    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: none;
 }
 
+/* Item Meta Section */
 .item-meta {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px; /* Reduced gap for better balance */
-    background: linear-gradient(145deg, #f9f9f9, #f0f0f0);
-    padding: 16px 20px; /* Reduced padding to fit content better */
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive hơn */
+    gap: 15px; 
+    background: var(--bg-color); /* Nền giống body */
+    padding: 15px; 
+    border-radius: 8px; 
+    border: 1px solid var(--border-color);
+    box-shadow: none; /* Bỏ shadow */
 }
 
 .meta-item {
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Center the content vertically */
+    /* justify-content: center; */ /* Bỏ căn giữa */
 }
 
 .meta-label {
-    font-size: 15px; /* Slightly larger for better hierarchy */
-    font-weight: 500;
-    color: #2d3436;
-    margin-bottom: 2px; /* Reduced spacing for compactness */
+    font-size: 0.9em; /* Giảm cỡ chữ */
+    font-weight: 600; /* Tăng weight */
+    color: var(--muted-color); /* Dùng màu muted */
+    margin-bottom: 4px; 
 }
 
 .meta-value {
-    font-size: 14px;
-    font-weight: 400;
-    color: #4a5568;
+    font-size: 0.95em; /* Tăng nhẹ */
+    font-weight: 500;
+    color: var(--text-color); /* Dùng màu text */
 }
 
-/* Footer */
+/* --- Footer (Style giống footer home.css) --- */
 .site-footer {
-    background: linear-gradient(135deg, #1e4620 0%, #2e7d32 100%);
-    color: #f7f7f7;
-    padding: 80px 0;
-    margin-top: 80px;
+    /* Bỏ style cũ, dùng style từ home */
+    background-color: var(--dark-green-footer-bg); /* Nền tối giống home */
+    color: var(--white);
+    padding: 50px 0 0 0; /* Padding giống home */
+    margin-top: 60px; /* Margin giống home */
+    font-family: var(--font-family);
+    border-top: none;
 }
 
 .footer-content-wrapper {
     display: flex;
+    flex-wrap: wrap; /* Thêm wrap */
     justify-content: space-between;
-    gap: 48px;
-    margin-bottom: 48px;
+    gap: 40px; /* Đồng bộ gap */
+    margin-bottom: 50px; /* Đồng bộ margin */
 }
 
+.contact-info, .newsletter-signup { /* Style chung cho 2 cột footer */
+     flex-basis: 45%; /* Điều chỉnh nếu cần */
+     min-width: 280px;
+}
+/* Giữ lại style các phần tử con của footer như h5, .contact-item, form,... từ home.css nếu muốn giống hệt */
+/* Ví dụ: */
 .contact-info h5,
 .newsletter-signup h5 {
-    font-family: 'Roboto', sans-serif;
-    font-size: 22px;
-    font-weight: 500;
-    margin-bottom: 24px;
-    color: #f7f7f7;
+    color: var(--white); 
+    font-size: 0.9em; 
+    font-weight: 700;
+    margin-bottom: 20px; 
+    text-transform: uppercase; 
     letter-spacing: 0.5px;
 }
-
-.contact-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
+.contact-item { /* Copy từ home.css */
+    display: flex; align-items: flex-start; margin-bottom: 15px;
+    font-size: 0.9em; color: var(--white);
 }
-
-.contact-icon {
-    font-size: 16px;
-    color: #b7e1bc;
-    opacity: 0.9;
+.contact-icon { /* Copy từ home.css */
+    font-size: 1em; color: rgba(255, 255, 255, 0.7); margin-right: 10px;
+    width: 1.2em; text-align: center; margin-top: 0.15em;
 }
-
-.contact-details a {
-    color: #b7e1bc;
-    text-decoration: none;
-    position: relative;
-    transition: color 0.3s ease;
+.contact-details { flex: 1; line-height: 1.7; }
+.contact-details strong { color: var(--white); font-weight: 700; margin-right: 5px; }
+.contact-details a { color: var(--white); text-decoration: underline; transition: opacity 0.3s ease; }
+.contact-details a:hover { opacity: 0.8; }
+.social-icons { margin-top: 20px; }
+.social-icons a { color: var(--white); font-size: 1.2em; margin-right: 18px; transition: opacity 0.3s ease; }
+.social-icons a:hover { opacity: 0.8; }
+.newsletter-form { display: flex; margin-top: 10px; height: 42px; }
+.newsletter-form input[type="email"] {
+    flex-grow: 1; padding: 10px 15px; border: none; background-color: var(--white);
+    color: var(--text-color); border-radius: 3px 0 0 3px; outline: none;
+    font-family: var(--font-family); font-size: 0.9em; height: 100%;
 }
-
-.contact-details a::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 1px;
-    background-color: #f7f7f7;
-    bottom: -2px;
-    left: 0;
-    transition: width 0.3s ease;
-}
-
-.contact-details a:hover::after {
-    width: 100%;
-}
-
-.contact-details a:hover {
-    color: #f7f7f7;
-}
-
-.contact-details span {
-    color: #d1dae3;
-}
-
-.contact-details strong {
-    font-weight: 500;
-    color: #f7f7f7;
-}
-
-.social-icons {
-    display: flex;
-    gap: 16px;
-    margin-top: 24px;
-}
-
-.social-icons a {
-    color: #f7f7f7;
-    font-size: 18px;
-    opacity: 0.9;
-    transition: opacity 0.3s ease, color 0.3s ease;
-}
-
-.social-icons a:hover {
-    opacity: 1;
-    color: #b7e1bc;
-}
-
-.newsletter-form {
-    display: flex;
-    gap: 12px;
-    max-width: 400px;
-}
-
-.newsletter-form input {
-    padding: 12px 16px;
-    border: none;
-    border-radius: 8px;
-    flex: 1;
-    font-size: 14px;
-    background-color: #f7f7f7;
-    color: #2d3436;
-    border: 1px solid #e2e8f0;
-    transition: border-color 0.3s ease;
-}
-
-.newsletter-form input:focus {
-    outline: none;
-    border-color: #b7e1bc;
-}
-
-.newsletter-form input::placeholder {
-    color: #a0aec0;
-}
-
+.newsletter-form input[type="email"]::placeholder { color: #999; font-style: italic; }
 .newsletter-form button {
-    padding: 12px 32px;
-    background-color: #b7e1bc;
-    color: #1e4620;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    padding: 10px 25px; background-color: #444; color: var(--white); border: none;
+    cursor: pointer; border-radius: 0 3px 3px 0; font-family: var(--font-family);
+    font-size: 0.9em; font-weight: 500; text-transform: none; white-space: nowrap;
+    transition: background-color 0.3s ease; height: 100%; line-height: normal;
+}
+.newsletter-form button:hover { background-color: #555; }
+
+.footer-bottom { /* Copy từ home.css */
+    border-top: 1px solid rgba(255, 255, 255, 0.1); 
+    padding: 15px 0;
+    text-align: center; 
+    font-size: 0.85em; 
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: normal; /* Bỏ letter spacing */
+}
+.footer-bottom p { margin: 0; }
+
+
+/* Responsive Design - Giữ lại hoặc chỉnh sửa nếu cần */
+@media (max-width: 992px) { /* Thêm breakpoint này nếu home.css có */
+     .contact-info { flex-basis: 45%; } .newsletter-signup { flex-basis: 50%; }
 }
 
-.newsletter-form button:hover {
-    background-color: #a5d6a7;
-    box-shadow: 0 4px 12px rgba(165, 214, 167, 0.2);
-}
-
-.footer-bottom {
-    text-align: center;
-    font-size: 13px;
-    color: #d1dae3;
-    letter-spacing: 0.5px;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
     .item-detail-wrapper {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Chuyển thành 1 cột */
     }
-
     .item-image-section {
-        position: static;
+         padding: 0; /* Reset padding ảnh */
+         margin-bottom: 20px; /* Thêm khoảng cách dưới ảnh */
     }
-
-    .item-main-image {
-        max-width: 100%;
+     .item-info-section {
+        padding: 0; /* Reset padding */
     }
-
-    .item-info-section {
-        padding: 24px 0;
-    }
+    .item-title { font-size: 1.8em; }
+    .item-price-block .current-price { font-size: 2em; }
+    .item-price-block .original-price { font-size: 1em; }
 
     .item-meta {
-        grid-template-columns: 1fr;
-        gap: 12px; /* Reduced gap for mobile */
-        padding: 12px 16px; /* Adjusted padding for mobile */
+        grid-template-columns: 1fr; /* Đã có */
+        gap: 10px; 
+        padding: 10px 15px; 
     }
 
     .footer-content-wrapper {
         flex-direction: column;
+        gap: 30px; /* Giảm gap */
     }
+     .contact-info, .newsletter-signup {
+         flex-basis: auto; /* Reset flex-basis */
+         width: 100%;
+     }
 
-    .mobile-menu-toggle {
-        display: block;
-    }
-
-    .main-nav {
-        display: none;
-    }
+    .mobile-menu-toggle { display: block; }
+    .main-nav { display: none; } 
 }

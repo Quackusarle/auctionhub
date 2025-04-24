@@ -254,4 +254,10 @@ header::after { /* Đường kẻ mảnh dưới header */
 }
 .footer-bottom p { margin: 0; }
 
+a.item-card-link {
+    text-decoration: none; /* Bỏ gạch chân */
+    color: inherit; /* Kế thừa màu chữ */
+    display: block; /* Đảm bảo link bao trọn thẻ */
+}
+
 /* --- KẾT THÚC CSS --- */
