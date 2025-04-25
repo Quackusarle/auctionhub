@@ -7,6 +7,7 @@ from .views import (
     UserDetail, 
     UserProfileView, 
     ProfilePictureUploadView,
+    GetProfilePictureView,
     DeleteCurrentUserView 
 )
 
@@ -20,7 +21,8 @@ urlpatterns = [
     
     # API cho user hiện tại quản lý profile
     path('profile/me/', UserProfileView.as_view(), name='profile-me'), # api/profile/me/
-    path('profile/avatar/', ProfilePictureUploadView.as_view(), name='profile-avatar-upload'), # api/profile/avatar/
+    path('profile/upload_avatar/', ProfilePictureUploadView.as_view(), name='profile-avatar-upload'), # api/profile/avatar/
+    path('profile/get_avatar/', GetProfilePictureView.as_view(), name='profile-avatar'), # api/profile/get_avatar/
     path('profile/delete/', DeleteCurrentUserView.as_view(), name='profile-delete'), # api/profile/delete/
 ]
 

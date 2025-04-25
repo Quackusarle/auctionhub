@@ -6,6 +6,9 @@ from rest_framework.views import APIView
 from .models import User
 from .serializers import UserSerializer # Đổi tên serializer cho đúng chuẩn Python (viết hoa)
 from rest_framework.parsers import MultiPartParser, FormParser # Thêm parser cho file upload
+from django.templatetags.static import static
+from django.urls import reverse
+
 
 # View để lấy danh sách User (Thường chỉ dành cho Admin)
 class UserList(APIView):
@@ -81,8 +84,38 @@ class UserProfileView(APIView):
     #          updated_serializer = UserSerializer(user) # Lấy lại dữ liệu mới nhất
     #          return Response(updated_serializer.data)
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
+DEFAULT_AVATAR_STATIC_PATH = '/images/default_avatar.jpg' # Đảm bảo ảnh này tồn tại trong static/images/
+
+class GetProfilePictureView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        # Chỗ này anh phải đảm bảo reverse() đúng hoặc dùng URL cố định cho profile
+        profile_url = request.build_absolute_uri(reverse('users:profile-me'))
+
+        avatar_url = None
+        # Kiểm tra kỹ: field có giá trị VÀ có thuộc tính .url không
+        if user.profile_picture and hasattr(user.profile_picture, 'url'):
+            try:
+                avatar_url = request.build_absolute_uri(user.profile_picture.url)
+            except Exception as e:
+                print(f"Lỗi khi lấy profile_picture.url của user {user.pk}: {e}")
+                avatar_url = None # Lỗi thì coi như không có ảnh
+
+        if avatar_url is None: # Nếu không có ảnh riêng thì dùng ảnh mặc định
+            try:
+                avatar_url = request.build_absolute_uri(static(DEFAULT_AVATAR_STATIC_PATH))
+            except Exception as e:
+                print(f"Lỗi khi lấy static URL cho ảnh mặc định: {e}")
+                avatar_url = None # Bó tay thì trả về null
+
+        # Luôn trả về 200 OK
+        return Response({
+            'avatarUrl': avatar_url,
+            'profileUrl': profile_url
+        }, status=status.HTTP_200_OK)
 
 class ProfilePictureUploadView(APIView):
     """

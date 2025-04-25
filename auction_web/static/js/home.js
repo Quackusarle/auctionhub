@@ -96,20 +96,6 @@ document.addEventListener("DOMContentLoaded", function () {
         copyrightYearSpan.textContent = new Date().getFullYear();
     }
 
-    // 2. Xử lý menu mobile 
-    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-    const mainNav = document.querySelector('.main-nav.plant-theme-nav');
-    if (mobileMenuToggle && mainNav) {
-        mainNav.classList.remove('active');
-        mobileMenuToggle.addEventListener('click', function() {
-            mainNav.classList.toggle('active');
-        });
-    } else {
-        if (mobileMenuToggle) mobileMenuToggle.style.display = 'none';
-        console.warn("Mobile menu toggle or main navigation not found.");
-    }
-
-
     // 3. Tải dữ liệu sản phẩm, xử lý và khởi tạo Swiper
     const itemListContainer = document.getElementById('item-list-container'); // Chính là swiper-wrapper
     const loadingMessage = document.getElementById('loading-message');
@@ -220,3 +206,103 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
 }); // Kết thúc DOMContentLoaded
+
+// === Code xử lý trạng thái đăng nhập và cập nhật header ===
+// Anh có thể đặt đoạn code này vào cuối file home.js
+// Lưu ý: Nếu anh có nhiều listener 'DOMContentLoaded', nên gộp chúng lại thành một cho gọn.
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    const userActionArea = document.getElementById('user-action-area');
+    if (!userActionArea) {
+        // In ra lỗi nếu không tìm thấy khu vực để chèn avatar/icon
+        console.error('[home.js] LỖI: Không tìm thấy thẻ có id="user-action-area" trong HTML!');
+        return; // Không tìm thấy thì không làm gì cả
+    }
+
+    const apiUrl = '/api/profile/get_avatar/'; // API để lấy URL avatar và URL profile
+
+    console.log('[home.js] Bắt đầu kiểm tra trạng thái đăng nhập bằng cách gọi API...');
+
+    // Gọi API, thêm credentials: 'include' để đảm bảo cookie được gửi kèm (quan trọng!)
+    fetch(apiUrl, { credentials: 'include' })
+        .then(response => {
+            // Kiểm tra xem response có OK không (status 200-299)
+            if (!response.ok) {
+                 // Nếu status là 401 hoặc 403 -> Chưa đăng nhập hoặc không có quyền
+                 if (response.status === 401 || response.status === 403) {
+                     console.log(`[home.js] API trả về ${response.status}. Có vẻ người dùng chưa đăng nhập hoặc không có quyền.`);
+                     // Không throw error, chỉ đơn giản là không làm gì cả, giữ icon login
+                     return null; // Trả về null để không chạy tiếp .then(data =>...) bên dưới
+                 } else {
+                     // Các lỗi khác (404, 500...) -> Báo lỗi và dừng lại
+                     console.error(`[home.js] LỖI: API ${apiUrl} phản hồi status ${response.status}`);
+                     throw new Error(`Server phản hồi lỗi ${response.status}`); // Ném lỗi để nhảy vào .catch()
+                 }
+            }
+            // Nếu response.ok -> Đọc và trả về dữ liệu JSON
+            return response.json();
+        })
+        .then(data => {
+            // In dữ liệu nhận được ra console để kiểm tra (rất hữu ích khi debug)
+            console.log('[home.js] Dữ liệu JSON nhận được từ API:', data);
+
+            // Nếu data là null (do trả về từ bước kiểm tra 401/403 ở trên) thì không làm gì cả
+            if (data === null) {
+                return;
+            }
+
+            // --- Khối IF ĐÃ SỬA LẠI CHO ĐÚNG ---
+            // Kiểm tra xem có dữ liệu và có trường 'profileUrl' không
+            // Vì API đã trả về 200 OK, nên chỉ cần có profileUrl là đủ tín hiệu tốt
+            if (data && data.profileUrl) {
+                console.log('[home.js] Dữ liệu hợp lệ, tiến hành thay thế icon bằng avatar.');
+
+                // Kiểm tra lại userActionArea một lần nữa cho chắc
+                if (!userActionArea) return;
+
+                // 1. Tạo thẻ link <a> bọc ngoài
+                const profileLink = document.createElement('a');
+                // **CẢNH BÁO**: Nhớ đảm bảo backend trả về ĐÚNG link trang profile HTML ở đây nhé!
+                // Hiện tại nó đang là link API: data.profileUrl = http://127.0.0.1:8000/api/profile/me/
+                profileLink.href = data.profileUrl;
+                profileLink.classList.add('header-avatar'); // Thêm class để CSS style nếu cần
+                profileLink.setAttribute('aria-label', 'Thông tin tài khoản');
+
+                // 2. Tạo thẻ ảnh <img>
+                const avatarImg = document.createElement('img');
+                // **QUAN TRỌNG**: Đảm bảo file ảnh này tồn tại trong thư mục static!
+                const defaultAvatar = '/static/images/default_avatar.jpg';
+                // Lấy URL ảnh từ API. Nếu API trả về null hoặc undefined cho avatarUrl,
+                // thì toán tử || sẽ tự động lấy giá trị defaultAvatar.
+                const avatarSrc = data.avatarUrl || defaultAvatar;
+                avatarImg.src = avatarSrc;
+                avatarImg.alt = 'Avatar'; // Mô tả ảnh
+                // Thêm chút style cơ bản, nên dùng CSS class để đẹp hơn
+                avatarImg.style.width = '30px';
+                avatarImg.style.height = '30px';
+                avatarImg.style.borderRadius = '50%'; // Bo tròn
+                avatarImg.style.verticalAlign = 'middle'; // Căn giữa theo chiều dọc nếu cần
+
+                // 3. Đặt ảnh vào trong link
+                profileLink.appendChild(avatarImg);
+
+                // 4. Xóa icon login cũ và thay bằng link + avatar mới
+                userActionArea.innerHTML = '';
+                userActionArea.appendChild(profileLink);
+                console.log('[home.js] Đã cập nhật thành công: Hiển thị avatar.');
+
+            } else {
+                // Trường hợp API trả về 200 OK nhưng JSON không có profileUrl hoặc data là null/undefined
+                console.log('[home.js] Kết luận: API không trả về đủ thông tin (thiếu profileUrl?). Giữ nguyên icon login.');
+                // Để nguyên icon login mặc định trong HTML
+            }
+            // --- Hết khối IF ĐÃ SỬA LẠI ---
+        })
+        .catch(error => {
+            // Bắt các lỗi xảy ra trong quá trình fetch hoặc xử lý (ví dụ lỗi mạng, lỗi JSON parse, lỗi ném ra từ !response.ok)
+            console.error('[home.js] LỖI TOANG!: Đã xảy ra lỗi trong quá trình fetch hoặc xử lý data:', error);
+            // Gặp lỗi thì an toàn nhất là giữ nguyên icon login mặc định
+        });
+
+}); // Kết thúc listener 'DOMContentLoaded'

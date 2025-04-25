@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.env
 
 # Thêm các file/thư mục khác không muốn đưa lên Git (ví dụ)
 # db.sqlite3

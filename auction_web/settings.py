@@ -14,6 +14,10 @@ from pathlib import Path
 from datetime import timedelta
 import os
 import sys
+from dotenv import load_dotenv
+
+# Tìm đến file .env và đọc các biến trong đó vào môi trường
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -100,7 +104,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'auctiondb',
         'USER': 'root',
-        'PASSWORD': '1447928479',
+        'PASSWORD': '18112005',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -163,7 +167,12 @@ EMAIL_HOST_PASSWORD = 'aabc ijil fyzu vzkx'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication', # <--- THÊM CÁI NÀY VÀO ĐÂY!
+        'rest_framework_simplejwt.authentication.JWTAuthentication', # Giữ lại nếu anh CÓ DÙNG JWT ở chỗ khác
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated', # Bắt buộc đăng nhập cho mọi API mặc định
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly', # Cho phép xem nếu chưa đăng nhập, sửa/xóa phải đăng nhập
     ]
 }
 
@@ -205,12 +214,12 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': ['profile', 'email'],  # Quyền truy cập
         'AUTH_PARAMS': {'access_type': 'online'},  # Loại xác thực
         'APP': {
-            'client_id': '', 
-            'secret': '',
-            'key': ''
+            # Đọc Client ID từ biến môi trường GOOGLE_CLIENT_ID trong file .env
+            'client_id': os.environ.get('GOOGLE_CLIENT_ID'),
+            # Đọc Secret từ biến môi trường GOOGLE_CLIENT_SECRET trong file .env
+            'secret': os.environ.get('GOOGLE_CLIENT_SECRET'),
+            'key': '' # Cái này thường để trống cho Google
         }
+
     }
 }
-
-
-
