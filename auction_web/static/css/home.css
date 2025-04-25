@@ -31,7 +31,7 @@ header::after { /* Đường kẻ mảnh dưới header */
     height: 2px;
     background-color: #ccc;
     margin-top: 20px;
- }
+}
 .site-header.plant-theme-header {
     background-color: var(--bg-color); padding: 20px 0;
     position: sticky; top: 0; z-index: 1000;
@@ -84,124 +84,77 @@ header::after { /* Đường kẻ mảnh dưới header */
     display: inline-block; padding-bottom: 8px; font-size: 1.8em;
 }
 
-/* --- CSS CHO CAROUSEL NGANG (Item Card Hover Effect) --- */
-.item-carousel-container {
-    position: relative; /* Để định vị mũi tên tuyệt đối */
-    padding: 0 60px; /* Khoảng trống cho mũi tên, có thể điều chỉnh */
-    margin-bottom: 30px;
-}
-.swiper-container .swiper {
-    overflow: hidden;
-    width: 100%;
-    height: auto; /* Để chiều cao tự động theo nội dung */
-    padding: 10px 10px 10px 10px; /* Khoảng cách giữa các slide */
-    border-radius: 1rem; /* Bo tròn cho swiper */
-}
-.swiper-wrapper {
-    display: flex; /* Swiper sẽ quản lý cái này */
-    padding-bottom: 10px; /* Để shadow không bị cắt */
-    align-items: center; /* Căn giữa các slide nếu chiều cao khác nhau */
-}
-.swiper-slide {
-    height: auto; /* Để chiều cao tự điều chỉnh theo nội dung */
-    flex-shrink: 0; /* Ngăn slide bị co lại */
-    /* Width và spaceBetween sẽ do Swiper JS quản lý */
+/* --- CSS CHO GRID SẢN PHẨM (Thay thế Carousel) --- */
+#item-grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 cột bằng nhau */
+    gap: 25px; /* Khoảng cách giữa các thẻ, có thể điều chỉnh */
+    padding-top: 10px; /* Khoảng cách với tiêu đề */
+    padding-bottom: 20px; /* Thêm khoảng trống dưới cùng */
 }
 
-/* Style cho Item Card */
+/* Style cho Item Card (trong Grid) */
 .item-card {
     background-color: var(--white);
     border: none;
-    border-radius: 1rem;
-    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
-    padding: 0;
-    width: 100%; /* Chiếm toàn bộ chiều rộng của slide cha */
+    border-radius: 1rem; /* Giữ bo tròn */
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075); /* Giữ bóng đổ nhẹ */
+    padding: 0; /* KHÔNG padding ở thẻ article */
+    width: 100%; /* Chiếm toàn bộ chiều rộng của grid cell */
     display: flex;
     flex-direction: column;
     text-align: center;
     overflow: hidden;
     cursor: pointer;
-    transform: scale(1); /* Trạng thái mặc định */
     /* Transition cho hiệu ứng hover mượt mà */
-    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
     position: relative; /* Cần cho z-index */
     z-index: 1;
 }
 .item-card img {
     width: 100%;
-    height: 160px;
+    height: 360px; /* ** TĂNG CHIỀU CAO ẢNH CHO PHÙ HỢP VỚI THẺ RỘNG HƠN ** */
     object-fit: cover;
     margin-bottom: 0;
-    background-color: #eee;
+    background-color: #eee; /* Màu nền cho ảnh đang tải hoặc lỗi */
     display: block;
-    border-top-left-radius: 1rem;
+    border-top-left-radius: 1rem; /* Bo góc trên của ảnh */
     border-top-right-radius: 1rem;
 }
 .item-card .card-content {
-    padding: 10px 12px; /* Padding cho nội dung text */
-    flex-grow: 1;
+    padding: 15px 18px; /* Tăng nhẹ padding cho nội dung text khi thẻ rộng hơn */
+    flex-grow: 1; /* Đẩy nội dung xuống nếu thẻ có chiều cao khác nhau */
 }
 .item-card h3 {
-    margin-top: 0; margin-bottom: 4px; font-size: 0.9em;
+    margin-top: 0; margin-bottom: 6px; /* Tăng nhẹ margin bottom */
+    font-size: 1em; /* Có thể tăng nhẹ font size */
     font-weight: 600; color: var(--heading-color);
+    /* Ngăn tên quá dài làm vỡ layout (tùy chọn) */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .item-card .price {
     font-weight: 600; color: var(--text-color); margin-bottom: 0;
-    font-size: 0.85em; display: block;
+    font-size: 0.9em; /* Có thể tăng nhẹ font size */
+    display: block;
 }
-/* Ẩn các phần tử không cần thiết trong card carousel */
+/* Ẩn các phần tử không cần thiết trong card (nếu có) */
 .item-card .time, .item-card .btn { display: none; }
 
-/* Hiệu ứng khi rê chuột vào Item Card */
+/* Hiệu ứng khi rê chuột vào Item Card (phiên bản Grid) */
 .item-card:hover {
-    background-color: var(--active-card-bg);
-    color: var(--white);
-    transform: scale(1.05);
-    z-index: 5;
+    background-color: var(--active-card-bg); /* Đổi nền xanh đậm */
+    color: var(--white); /* Chữ trắng */
+    /* transform: scale(1.05); */ /* ** ĐÃ XÓA BỎ HIỆU ỨNG PHÓNG TO ** */
+    z-index: 5; /* Để shadow nổi lên trên */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Tăng nhẹ bóng đổ khi hover */
 }
+/* Đổi màu chữ cho các thành phần con khi hover */
 .item-card:hover h3 { color: var(--white); }
 .item-card:hover .price { color: var(--white); font-weight: 700; }
 
-/* CSS MŨI TÊN CHO CAROUSEL */
-.item-carousel-container .carousel-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%); /* Căn giữa theo chiều dọc tốt hơn margin */
-    width: 40px;
-    height: 40px;
-    background-color: var(--primary-color); /* Dùng !important nếu bị ghi đè mạnh */
-    color: var(--white);
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    transition: background-color 0.3s ease, opacity 0.3s ease;
-    box-shadow: none;
-}
-.item-carousel-container .carousel-arrow:hover {
-    background-color: var(--accent-color);
-}
-/* Vị trí nút */
-.item-carousel-container .carousel-arrow.swiper-button-prev { left: 5px; }
-.item-carousel-container .carousel-arrow.swiper-button-next { right: 5px; }
-/* Icon Font Awesome bên trong (Swiper tự thêm content) */
-.item-carousel-container .carousel-arrow::after {
-    font-family: "Font Awesome 6 Free", "FontAwesome";
-    font-weight: 900;
-    font-size: 1em;
-}
-.item-carousel-container .swiper-button-prev::after { content: '\f060'; }
-.item-carousel-container .swiper-button-next::after { content: '\f061'; }
-
-/* Style khi nút bị vô hiệu hóa (Swiper) */
-.item-carousel-container .carousel-arrow.swiper-button-disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    background-color: var(--primary-color); /* Giữ nền xanh hoặc làm mờ đi tùy ý */
-}
+/* --- KẾT THÚC CSS GRID SẢN PHẨM --- */
 
 /* --- FOOTER (Nền Xanh Lá Đậm) --- */
 .site-footer.plant-theme-footer {
@@ -254,10 +207,18 @@ header::after { /* Đường kẻ mảnh dưới header */
 }
 .footer-bottom p { margin: 0; }
 
+/* Style cho thẻ link bao quanh item card */
 a.item-card-link {
     text-decoration: none; /* Bỏ gạch chân */
-    color: inherit; /* Kế thừa màu chữ */
-    display: block; /* Đảm bảo link bao trọn thẻ */
+    color: inherit; /* Kế thừa màu chữ từ cha */
+    display: block; /* Đảm bảo link bao trọn thẻ article */
+    transition: box-shadow 0.3s ease; /* Thêm hiệu ứng cho link nếu muốn */
+}
+/* Có thể thêm hiệu ứng khi focus vào link (cho bàn phím) */
+a.item-card-link:focus-visible {
+     outline: 2px solid var(--primary-color);
+     outline-offset: 2px;
+     border-radius: 1rem; /* Hợp với bo tròn của thẻ */
 }
 
 /* --- KẾT THÚC CSS --- */

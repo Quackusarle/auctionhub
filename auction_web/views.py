@@ -8,4 +8,4 @@ def home_view(request):
     # tính từ thư mục 'templates' gốc mà ông đã khai báo trong settings.py
     # Nếu file HTML của ông tên khác hoặc nằm ở chỗ khác trong templates, thì sửa lại cho đúng
     context = {} # Có thể truyền thêm dữ liệu vào đây nếu muốn
-    return render(request, 'home.html', context)
+    return render(request, 'home/home.html', context)
