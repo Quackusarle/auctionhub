@@ -1,0 +1,294 @@
+
+:root {
+    --primary-color: #198754;
+    --secondary-color: #ffffff;
+    --text-color: #212529;
+    --heading-color: #212529;
+    --accent-color: #157347;
+    --white: #ffffff;
+    --border-color: #dee2e6;
+    --bg-color: #f8f9fa;       
+    --muted-color: #6c757d;
+    --dark-green-footer-bg: #157347;
+    --active-card-bg: #146c43; 
+    --font-family: 'Montserrat', sans-serif;
+}
+
+body { /* Kế thừa từ home.css nếu import, hoặc định nghĩa lại nếu copy :root */
+    font-family: var(--font-family);
+    color: var(--text-color);
+    background-color: var(--bg-color);
+}
+.container { /* Kế thừa từ home.css nếu import, hoặc định nghĩa lại */
+    max-width: 1140px; margin: 0 auto; padding: 0 15px; 
+}
+/* Thêm CSS cho header/footer nếu không import home.css */
+
+/* Bố cục chính trang bidding detail */
+.bidding-detail-main-content {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+.bidding-detail-main-content h1 {
+    color: var(--heading-color);
+    margin-bottom: 30px;
+    font-size: 2em;
+    text-align: center;
+    border-bottom: 2px solid var(--primary-color);
+    display: inline-block; /* Để border bottom không chiếm hết hàng */
+    padding-bottom: 5px;
+}
+
+.bidding-detail-layout {
+    display: grid;
+    /* Chia 3 cột với độ rộng khác nhau, ví dụ: */
+    grid-template-columns: 1.2fr 1.5fr 1fr; 
+    gap: 30px; /* Khoảng cách giữa các cột */
+}
+
+.bidding-column h2 {
+    font-size: 1.4em;
+    color: var(--heading-color);
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Cột trái - Thông tin item */
+.bidding-item-info .item-card-display {
+    background-color: var(--white);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    text-align: center;
+    margin-bottom: 20px;
+}
+.bidding-item-info .item-card-display img {
+    max-width: 100%;
+    height: auto;
+    max-height: 200px; /* Giới hạn chiều cao ảnh */
+    object-fit: contain;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+.bidding-item-info .item-card-display h3 {
+    font-size: 1.2em;
+    color: var(--heading-color);
+    margin-bottom: 5px;
+}
+.bidding-item-info .item-card-display p {
+    font-size: 0.9em;
+    color: var(--muted-color);
+}
+.price-chart-placeholder {
+    border: 1px dashed var(--border-color);
+    padding: 20px;
+    text-align: center;
+    color: var(--muted-color);
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background-color: var(--white);
+}
+
+/* Cột giữa - Lịch sử bid */
+.bidding-history .bid-list {
+    max-height: 300px; /* Giới hạn chiều cao, thêm scroll nếu cần */
+    overflow-y: auto;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background-color: var(--white);
+}
+.bidding-history table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.bidding-history th, .bidding-history td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9em;
+}
+.bidding-history th {
+    background-color: var(--bg-color);
+    font-weight: 600;
+    position: sticky; /* Giữ aheader khi scroll */
+    top: 0;
+}
+.bidding-history td:first-child { /* Giá đặt */
+    font-weight: 600;
+    color: var(--accent-color);
+}
+.bidding-history td:nth-child(2) { /* Người đặt */
+    color: var(--muted-color);
+    font-style: italic;
+}
+.bidding-history tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Cột phải - Actions */
+.bidding-actions .action-details p {
+    font-size: 0.95em;
+    margin-bottom: 8px;
+    color: var(--muted-color);
+}
+#place-bid-form {
+    margin-top: 20px;
+    background-color: var(--white);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+#place-bid-form .form-group {
+    margin-bottom: 15px;
+}
+#place-bid-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--heading-color);
+    font-size: 0.9em;
+}
+#place-bid-form input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1.1em;
+    box-sizing: border-box; /* Quan trọng */
+}
+#place-bid-form input[type="number"]:focus {
+     outline: none;
+     border-color: var(--primary-color);
+     box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.2); /* Hiệu ứng focus */
+}
+
+.bid-summary {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    font-size: 1em;
+    font-weight: 500;
+}
+.bid-summary span {
+    font-weight: 700;
+    font-size: 1.2em;
+    color: var(--primary-color);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+.btn-bid-action {
+    flex-grow: 1;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+.btn-submit-bid {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+.btn-submit-bid:hover {
+    background-color: var(--accent-color);
+}
+.btn-cancel {
+    background-color: var(--muted-color);
+    color: var(--white);
+}
+.btn-cancel:hover {
+    opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .bidding-detail-layout {
+        grid-template-columns: 1.5fr 1fr; /* 2 cột trên tablet */
+    }
+    .bidding-item-info { order: 1; }
+    .bidding-actions { order: 2; }
+    .bidding-history { 
+        order: 3; 
+        grid-column: 1 / -1; /* Chiếm hết chiều rộng ở hàng 2 */
+    }
+}
+@media (max-width: 768px) {
+     .bidding-detail-layout {
+        grid-template-columns: 1fr; /* 1 cột trên mobile */
+    }
+     .bidding-item-info, .bidding-actions, .bidding-history {
+         order: initial; /* Reset order */
+         grid-column: auto; /* Reset grid column */
+     }
+     .bidding-detail-main-content h1 { font-size: 1.6em; }
+     .bidding-column h2 { font-size: 1.2em; }
+     .action-buttons { flex-direction: column; }
+     
+
+     .price-input-group {
+        margin-bottom: 20px; /* Thêm khoảng cách dưới nếu cần */
+    }
+    
+    .price-input-group label {
+        display: block;
+        margin-bottom: 8px; /* Khoảng cách giữa label và input */
+        font-weight: 600;   /* Chữ label đậm hơn */
+        color: var(--heading-color); /* Màu chữ label */
+        font-size: 1.1em; /* Cỡ chữ label */
+    }
+    
+    /* Lớp bao bọc input để tạo nền xám */
+    .price-input-wrapper {
+        display: flex;
+        align-items: center;
+        background-color: #e9ecef; /* Màu xám nhạt làm nền */
+        border: 1px solid var(--border-color); /* Viền mỏng */
+        border-radius: 6px; /* Bo góc nhẹ */
+        padding: 5px 10px; /* Padding nhỏ bên trong wrapper */
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .price-input-wrapper:focus-within { /* Style khi input bên trong được focus */
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.15); /* Shadow mờ màu xanh khi focus */
+    }
+    
+    
+    /* Định dạng cho chính thẻ input */
+    #bid-amount-input {
+        flex-grow: 1; /* Chiếm hết không gian còn lại */
+        padding: 10px 5px 10px 10px; /* Padding bên trong input */
+        border: none;          /* Bỏ viền mặc định của input */
+        background-color: transparent; /* Nền trong suốt để thấy nền wrapper */
+        font-size: 1.8em;      /* Cỡ chữ LỚN */
+        font-weight: 700;      /* Chữ ĐẬM */
+        color: var(--text-color); /* Màu chữ nhập */
+        text-align: right;     /* Căn phải số tiền */
+        outline: none;         /* Bỏ đường viền focus mặc định */
+        width: 100%;           /* Đảm bảo chiếm hết wrapper */
+        box-sizing: border-box;
+    }
+    
+    /* Ẩn mũi tên tăng giảm của input number trên Chrome, Safari, Edge */
+    #bid-amount-input::-webkit-outer-spin-button,
+    #bid-amount-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    
+    /* (Tùy chọn) Style cho đơn vị tiền tệ nếu bạn thêm vào HTML */
+    .currency-symbol {
+        font-weight: 600;
+        color: var(--muted-color);
+        padding-left: 8px;
+    }
+}

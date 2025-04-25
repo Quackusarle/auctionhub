@@ -54,7 +54,9 @@
                         <p>{{ item.description|default:"Không có mô tả." }}</p>
                     </div>
                     <div class="item-actions">
-                        <button class="bid-now-btn">Đặt cược</button>
+                        <a href="{% url 'bidding-detail-page' pk=item.pk %}" class="bid-now-btn">
+                            <i class="fas fa-gavel"></i> Đặt cược
+                        </a>
                     </div>
                     <div class="item-meta">
                         <div class="meta-item">

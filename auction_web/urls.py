@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.http import HttpResponse
 from . import views
 from apps.items.views import item_detail_view  # Import item_detail_view from apps.items.views
+from apps.bidding.views import bidding_detail_view 
 
 urlpatterns = [
     path('', views.home_view, name='home-template'),  # Trang chủ
@@ -30,5 +31,6 @@ urlpatterns = [
     path('api/reviews/', include('apps.reviews.urls')),
     path('accounts/', include('allauth.urls')),
     path('items/<int:pk>/', item_detail_view, name='item-detail-template'),  # New route for item detail page
+    path('items/<int:pk>/bidding/', bidding_detail_view, name='bidding-detail-page')
 ]
 

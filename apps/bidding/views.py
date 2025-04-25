@@ -1,10 +1,11 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render,get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import Bidserializers
 from .models import Bid, Item
 from django.utils.timezone import now
+from decimal import Decimal
 
 # API 1: Xử lý đặt giá thầu
 @api_view(['POST'])
@@ -80,3 +81,33 @@ def get_highest_bid(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     return Response({"message": "Chưa có giá thầu nào cho sản phẩm này."}, status=status.HTTP_200_OK)
+
+
+def bidding_detail_view(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    bids = Bid.objects.filter(item_id=item).order_by('-bid_time')[:10] 
+
+    # --- THÊM LOGIC TÍNH GIÁ GỢI Ý VÀ GIÁ MIN ---
+    min_bid_increment = Decimal('10000') # Ví dụ bước giá tối thiểu là 10,000 VNĐ (hoặc lấy từ settings/item)
+    current_effective_price = item.current_price if item.current_price > 0 else item.starting_price
+
+    # Giá trị tối thiểu người dùng phải nhập (lớn hơn giá hiện tại)
+    # Dùng max để đảm bảo min_bid luôn >= giá khởi điểm + increment nếu chưa ai bid
+    min_bid_value = max(item.current_price, item.starting_price) + min_bid_increment
+
+    # Giá trị gợi ý hiển thị mặc định trong ô input
+    # Có thể đặt bằng min_bid_value luôn, hoặc chỉ là giá hiện tại + bước nhảy
+    suggested_bid = min_bid_value 
+    # Hoặc bạn có thể muốn nó là giá hiện tại + bước nhảy nhưng không thấp hơn giá khởi điểm + bước nhảy
+    # suggested_bid = max(item.current_price + min_bid_increment, item.starting_price + min_bid_increment)
+    # Hoặc đơn giản chỉ là min_bid_value
+    
+    # --- KẾT THÚC LOGIC TÍNH GIÁ ---
+
+    context = {
+        'item': item,
+        'bids': bids,
+        'min_bid_value': min_bid_value,       # Truyền giá trị min vào context
+        'suggested_bid': suggested_bid,     # Truyền giá trị gợi ý vào context
+    }
+    return render(request, 'bidding/bidding_detail.html', context) 

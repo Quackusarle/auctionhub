@@ -1,0 +1,146 @@
+{% load static %}
+{% load humanize %} 
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đấu giá: {{ item.name|default:"Sản phẩm" }} - AuctionHub</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}?v=theme"> 
+    <link rel="stylesheet" href="{% static 'css/bidding_detail.css' %}"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <header class="site-header plant-theme-header">
+        <div class="container">
+            <div class="logo">Auction<span class="logo-alt">Hub</span></div>
+            <nav class="main-nav plant-theme-nav">
+                 <ul>
+                    <li><a href="{% url 'home-template' %}">Trang chủ</a></li> 
+                    <li><a href="#">Sản phẩm</a></li>
+                    <li><a href="#">Về chúng tôi</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#contact-section">Liên hệ</a></li>
+                 </ul>
+            </nav>
+             <div class="header-actions plant-theme-actions">
+                 <a href="#" class="header-icon" aria-label="Giỏ hàng"><i class="fas fa-shopping-bag"></i></a>
+                 <a href="/accounts/login/" class="header-icon" aria-label="Tài khoản"><i class="fas fa-user"></i></a>
+             </div>
+             </div>
+    </header>
+
+    <main class="container bidding-detail-main-content">
+        <h1>Phiên đấu giá: {{ item.name }}</h1> 
+        
+        <div class="bidding-detail-layout">
+            <section class="bidding-column bidding-item-info">
+                <h2>Thông tin sản phẩm</h2>
+                <div class="item-card-display"> 
+                     <img src="{{ item.image_url|default:'/static/images/placeholder.png' }}" alt="{{ item.name }}">
+                     <h3>{{ item.name }}</h3>
+                     <p>Người bán: {{ item.seller_id.email }}</p> 
+                </div>
+                <div class="price-chart-placeholder">
+                    <p>(Biểu đồ giá sẽ hiển thị ở đây)</p> 
+                </div>
+            </section>
+
+            <section class="bidding-column bidding-history">
+                <h2>Lịch sử đặt giá gần đây</h2>
+                <div class="bid-list">
+                    {% if bids %}
+                        <table>
+                            <thead>
+                                <tr><th>Giá đặt</th><th>Người đặt</th><th>Thời gian</th></tr>
+                            </thead>
+                            <tbody>
+                            {% for bid in bids %}
+                                <tr>
+                                    <td>{{ bid.bid_amount|floatformat:"0"|intcomma }} VNĐ</td> 
+                                    <td>{{ bid.user_id.email }}</td> 
+                                    <td>{{ bid.bid_time|date:"H:i:s d/m" }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>Chưa có lượt đặt giá nào.</p>
+                    {% endif %}
+                </div>
+                 <hr>
+                 <div>
+                    Giá hiện tại: <strong style="color: var(--primary-color); font-size: 1.5em;">{{ item.current_price|floatformat:"0"|intcomma }} VNĐ</strong> 
+                 </div>
+            </section>
+
+            <section class="bidding-column bidding-actions">
+                <h2>Đặt giá</h2>
+                <div class="action-details">
+                    <p>Giá khởi điểm: {{ item.starting_price|floatformat:"0"|intcomma }} VNĐ</p> 
+                    <p>Kết thúc sau: {{ item.end_time|timeuntil }}</p> 
+                </div>
+                <form id="place-bid-form" method="POST"> 
+                    {% csrf_token %} 
+                    
+                    <div class="form-group price-input-group"> 
+                        <label for="bid-amount-input">Giá đặt của bạn (Tối thiểu: {{ min_bid_value|floatformat:"0"|intcomma }} VNĐ):</label> 
+                        <div class="price-input-wrapper"> 
+                            <input 
+                                type="number" 
+                                id="bid-amount-input" 
+                                name="bid_amount" 
+                                min="{{ min_bid_value|floatformat:'0' }}"  step="10000" 
+                                value="{{ item.starting_price|floatformat:'0' }}" placeholder="0" 
+                                required>
+                            <span class="currency-symbol">VNĐ</span> 
+                        </div>
+                    </div>
+                    <input type="hidden" name="item_id" value="{{ item.pk }}">
+                    <input type="hidden" name="user_id" value="{{ request.user.id }}"> 
+                    
+                    <div class="bid-summary">
+                        Tổng giá trị: <span id="total-bid-value">0</span> VNĐ 
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="submit" class="btn-bid-action btn-submit-bid">Đặt giá</button>
+                        <button type="button" class="btn-bid-action btn-cancel">Hủy</button>
+                    </div>
+                    <p id="bid-form-message" style="color: red; margin-top: 10px;"></p>
+                </form>
+            </section>
+        </div> 
+    </main>
+
+    <footer class="site-footer plant-theme-footer">
+        <div class="container">
+             <div class="footer-bottom"> 
+                 <p>&copy; <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p> 
+             </div>
+        </div>
+    </footer>
+
+    <script>
+        // Cập nhật năm bản quyền trong footer
+        const copyrightYearSpan = document.getElementById('copyright-year');
+        if (copyrightYearSpan) { copyrightYearSpan.textContent = new Date().getFullYear(); }
+        
+        // JS tính toán và ĐỊNH DẠNG "Tổng giá trị"
+        const bidAmountInput = document.getElementById('bid-amount-input');
+        const totalValueSpan = document.getElementById('total-bid-value');
+        if (bidAmountInput && totalValueSpan) {
+            // Định dạng giá trị ban đầu (nếu có)
+            const initialAmount = parseFloat(bidAmountInput.value) || 0;
+            totalValueSpan.textContent = initialAmount.toLocaleString('vi-VN'); // <-- Định dạng VNĐ
+
+            // Cập nhật và định dạng khi người dùng nhập
+            bidAmountInput.addEventListener('input', function() {
+                const amount = parseFloat(this.value) || 0;
+                totalValueSpan.textContent = amount.toLocaleString('vi-VN'); // <-- Định dạng VNĐ
+            });
+        }
+    </script>
+    <script src="{% static 'js/bidding_detail.js' %}"></script> 
+</body>
+</html>
