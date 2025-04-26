@@ -1,4 +1,4 @@
-// auction_web/static/js/bidding_standalone.js
+// auction_web/static/js/bidding_detail.js
 
 // --- Hàm phụ trợ ---
 /**
@@ -7,8 +7,9 @@
  * @returns {string} Chuỗi đã định dạng hoặc chuỗi rỗng nếu đầu vào không hợp lệ
  */
 function formatNumber(num) {
-    if (isNaN(parseFloat(num))) return ''; // Kiểm tra nếu không phải số hợp lệ
-    return parseFloat(num).toLocaleString('vi-VN');
+    const number = parseFloat(String(num).replace(/\D/g, '')); // Lấy số, bỏ hết ký tự không phải số
+    if (isNaN(number)) return '0'; // Trả về '0' nếu không phải số
+    return number.toLocaleString('vi-VN');
 }
 
 /**
@@ -63,7 +64,6 @@ function getCookie(name) {
     return cookieValue;
 }
 
-
 // --- Chạy code sau khi DOM tải xong ---
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -74,8 +74,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const bidForm = document.getElementById('place-bid-form'); 
     const bidMessage = document.getElementById('bid-form-message'); 
     const bidTableBody = document.querySelector('.bid-list table tbody'); 
-    const currentPriceStrong = document.querySelector('.bidding-history strong'); 
-    const placeBidButton = document.querySelector('.btn-submit-bid'); 
+    const currentPriceStrong = document.querySelector('.bidding-history strong'); // Thẻ strong hiển thị giá hiện tại
+    const placeBidButton = bidForm ? bidForm.querySelector('.btn-submit-bid') : null; // Lấy nút submit trong form
     const copyrightYearSpan = document.getElementById('copyright-year');
     
     // 2. Cập nhật năm bản quyền
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 3. Xử lý định dạng input khi nhập và khởi tạo
     if (displayInput && hiddenInput) {
         // Định dạng giá trị ban đầu
-         const initialRawValue = unformatNumber(displayInput.value); // Lấy từ value của displayInput (đã được Django render)
+         const initialRawValue = unformatNumber(displayInput.value); 
          hiddenInput.value = initialRawValue; 
          displayInput.value = formatNumber(initialRawValue); 
          if (totalValueSpan) {
@@ -100,15 +100,14 @@ document.addEventListener('DOMContentLoaded', function() {
             hiddenInput.value = numberValue; // Cập nhật input ẩn
             const formattedValue = formatNumber(numberValue);
             
-            // Xử lý vị trí con trỏ (có thể cần cải thiện)
+            // Xử lý vị trí con trỏ 
             let currentCursorPosition = this.selectionStart;
             const originalLength = this.value.length;
             this.value = formattedValue;
             const newLength = this.value.length;
-            if (currentCursorPosition !== null) { // Kiểm tra null trước khi dùng
+            if (currentCursorPosition !== null) { 
                  try {
                     currentCursorPosition = currentCursorPosition + (newLength - originalLength);
-                    // Đảm bảo con trỏ không vượt quá giới hạn
                     currentCursorPosition = Math.max(0, Math.min(currentCursorPosition, newLength)); 
                     this.selectionStart = this.selectionEnd = currentCursorPosition;
                  } catch(err) { /* Bỏ qua lỗi */ }
@@ -121,31 +120,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 4. Xử lý khi SUBMIT FORM ĐẶT GIÁ
-    if (bidForm && placeBidButton && bidMessage) { // Thêm kiểm tra placeBidButton, bidMessage
+    if (bidForm && placeBidButton && bidMessage && hiddenInput && bidTableBody && currentPriceStrong) { 
         bidForm.addEventListener('submit', function(event) {
             event.preventDefault(); 
             bidMessage.textContent = ''; 
             placeBidButton.disabled = true; 
             placeBidButton.textContent = 'Đang xử lý...'; 
 
+            // Lấy dữ liệu từ các input ẩn trong form
             const itemIdInput = this.querySelector('input[name="item_id"]');
             const userIdInput = this.querySelector('input[name="user_id"]');
-            const bidAmountRaw = hiddenInput ? hiddenInput.value : '0'; // Lấy từ input ẩn
+            const bidAmountRaw = hiddenInput.value; // Lấy giá trị số từ input ẩn đã được cập nhật
 
             const itemId = itemIdInput ? itemIdInput.value : null;
-            const userId = userIdInput ? userIdInput.value : null; // Cần đảm bảo user đã đăng nhập
+            const userId = userIdInput ? userIdInput.value : null; 
             const bidAmount = parseFloat(bidAmountRaw) || 0;
             const minBidValue = parseFloat(hiddenInput.min) || 0;
-            const csrfToken = getCookie('csrftoken'); // Lấy CSRF Token
+            const csrfToken = getCookie('csrftoken'); 
 
             // --- Kiểm tra dữ liệu ---
-            if (!itemId || !userId || bidAmount <= 0) {
-                bidMessage.textContent = 'Lỗi: Dữ liệu không hợp lệ.';
-                placeBidButton.disabled = false; 
-                placeBidButton.textContent = 'Đặt giá'; 
-                return; 
-            }
-             if (!userId) { // Kiểm tra User ID rõ ràng hơn
+             if (!itemId || !userId || bidAmount <= 0) {
+                 bidMessage.textContent = 'Lỗi: Dữ liệu không hợp lệ.';
+                 placeBidButton.disabled = false; 
+                 placeBidButton.textContent = 'Đặt giá'; 
+                 return; 
+             }
+             if (!userId || userId === 'None') { // Kiểm tra User ID rõ ràng hơn (Django có thể trả về 'None' nếu chưa đăng nhập)
                  bidMessage.textContent = 'Lỗi: Bạn cần đăng nhập để đặt giá.';
                  placeBidButton.disabled = false; 
                  placeBidButton.textContent = 'Đặt giá';
@@ -168,6 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             console.log('Submitting bid:', { item_id: itemId, user_id: userId, bid_amount: bidAmount });
 
+            // Gọi API place_bid bằng fetch
             fetch('/api/bidding/place_bid/', { 
                 method: 'POST',
                 headers: {
@@ -182,44 +183,39 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json().then(data => ({ ok: response.ok, status: response.status, data }))) 
             .then(({ ok, status, data }) => {
-                if (ok) { 
+                if (ok) { // Thành công
                     console.log('Bid placed successfully:', data);
                     bidMessage.style.color = 'green';
-                    // API cần trả về bid_amount, user_id_email (hoặc chỉ user_id), bid_time
                     bidMessage.textContent = `Đặt giá ${formatNumber(data.bid_amount)} thành công!`; 
 
-                    // Cập nhật bảng lịch sử
-                    if (bidTableBody) {
-                        const newRow = bidTableBody.insertRow(0); 
-                        // Giả sử API trả về data.user_email và data.bid_time_formatted
-                        // Nếu không, cần lấy email từ nơi khác hoặc format thời gian
-                        const userEmail = data.user_email || (userId === '{{ request.user.id }}' ? 'Bạn' : `User ${userId}`); // Cần cách lấy email tốt hơn
-                        const bidTimeFormatted = formatBidTime(data.bid_time); // Format thời gian trả về
+                    // ---- CẬP NHẬT BẢNG LỊCH SỬ ----
+                    const newRow = bidTableBody.insertRow(0); // Chèn lên đầu
+                    // Giả sử API trả về user_email và bid_time đã format hoặc dùng JS format
+                     const userEmail = data.user_email || (String(userId) === '{{ request.user.id }}' ? 'Bạn' : `User ${userId}`); // Cần email thực tế từ API
+                     const bidTimeFormatted = formatBidTime(data.bid_time); // Format thời gian
                         
-                        newRow.innerHTML = `
+                     newRow.innerHTML = `
                             <td>${formatNumber(data.bid_amount)} VNĐ</td>
                             <td>${userEmail}</td> 
                             <td>${bidTimeFormatted}</td>
                         `;
-                        // Xóa thông báo "Chưa có lượt đặt giá nào" nếu có
-                         const noBidRow = bidTableBody.querySelector('.no-bids-row'); // Nên thêm class cho dễ chọn
-                         if (noBidRow) noBidRow.remove();
-                         else { // Hoặc nếu chỉ là thẻ p
-                             const noBidMessageP = bidTableBody.closest('.bid-list').querySelector('p');
-                             if (noBidMessageP && noBidMessageP.textContent.includes('Chưa có lượt đặt giá nào')) noBidMessageP.remove();
-                         }
-                    }
+                     // Xóa thông báo "Chưa có lượt đặt giá nào" nếu có
+                     const noBidRow = bidTableBody.querySelector('.no-bids-row'); 
+                     if (noBidRow) noBidRow.remove();
+                     else { 
+                         const noBidMessageP = bidTableBody.closest('.bid-list').querySelector('p');
+                         if (noBidMessageP && noBidMessageP.textContent.includes('Chưa có lượt đặt giá nào')) noBidMessageP.remove();
+                     }
+                    // -------------------------------
 
                     // Cập nhật giá hiện tại
-                    if (currentPriceStrong) {
-                         currentPriceStrong.textContent = `${formatNumber(data.bid_amount)} VNĐ`;
-                    }
+                    currentPriceStrong.textContent = `${formatNumber(data.bid_amount)} VNĐ`;
                     
                     // Cập nhật input cho lần đặt tiếp theo
                     const minBidIncrement = 10000; // Nên lấy từ cấu hình
                     const newMinBidValue = parseFloat(data.bid_amount) + minBidIncrement; 
                     
-                    hiddenInput.min = newMinBidValue; 
+                    hiddenInput.min = newMinBidValue; // Cập nhật min
                     hiddenInput.value = ''; // Xóa giá trị ẩn
                     displayInput.value = ''; // Xóa giá trị hiển thị
                     displayInput.placeholder = formatNumber(newMinBidValue); // Đặt placeholder là giá min mới
@@ -232,22 +228,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if (totalValueSpan) totalValueSpan.textContent = '0'; // Reset tổng
 
-                } else { 
+                } else { // Lỗi từ API
                     console.error(`API Error (Status ${status}):`, data);
                     bidMessage.style.color = 'red';
                     bidMessage.textContent = `Lỗi: ${data.error || data.detail || `Không thể đặt giá (Lỗi ${status})`}`;
                 }
             })
-            .catch(error => {
+            .catch(error => { // Lỗi mạng hoặc fetch
                 console.error('Fetch Error:', error);
                 bidMessage.style.color = 'red';
                 bidMessage.textContent = 'Lỗi kết nối hoặc xử lý. Vui lòng thử lại.';
             })
-            .finally(() => {
+            .finally(() => { // Luôn chạy sau khi fetch xong
                  placeBidButton.disabled = false; 
                  placeBidButton.textContent = 'Đặt giá'; 
             });
         });
+    } else {
+        console.warn("Bid form or related elements not found. Bidding functionality disabled.");
     }
 
 }); // Kết thúc DOMContentLoaded
