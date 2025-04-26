@@ -26,9 +26,17 @@
                  </ul>
             </nav>
             <div class="header-actions plant-theme-actions" id="user-action-area">
-                <a href="/accounts/login/" class="header-icon" aria-label="Tài khoản">
-                    <i class="fas fa-user"></i>
-                </a>
+                <div class="user-dropdown-container">
+                    <button type="button" class="user-dropdown-trigger" aria-label="Tài khoản" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user header-icon"></i>
+                    </button>
+            
+                    <div class="user-dropdown-menu" style="display: none;">
+                        <ul>
+                            <li><a href="/accounts/login/">Log in</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </header>

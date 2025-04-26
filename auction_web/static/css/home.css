@@ -50,7 +50,97 @@ header::after { /* Đường kẻ mảnh dưới header */
 .header-actions.plant-theme-actions { display: flex; align-items: center; gap: 20px; }
 .header-icon { color: var(--text-color); font-size: 1.3em; text-decoration: none; transition: color 0.3s ease; }
 .header-icon:hover { color: var(--primary-color); }
-.mobile-menu-toggle { display: none; } /* Ẩn nút menu mobile trên desktop */
+
+/* --- CSS cho User Dropdown Menu --- */
+.user-dropdown-container {
+    position: relative; /* Để định vị menu con */
+    display: inline-block; /* Hoặc block tùy layout header */
+}
+
+.user-dropdown-trigger {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    display: inline-flex; /* Để căn giữa avatar/icon nếu cần */
+    align-items: center;
+    vertical-align: middle; /* Căn giữa với các icon khác nếu có */
+}
+
+/* Style cho icon mặc định bên trong nút trigger */
+.user-dropdown-trigger .header-icon {
+    font-size: 30px; /* Giữ kích thước như cũ */
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+.user-dropdown-trigger:hover .header-icon {
+    color: var(--primary-color);
+}
+
+/* Style cho avatar bên trong nút trigger (khi đăng nhập) */
+.user-dropdown-trigger img {
+    width: 30px;  /* Kích thước avatar */
+    height: 30px;
+    border-radius: 50%; /* Bo tròn */
+    display: block; /* Quan trọng */
+    object-fit: cover; /* Đảm bảo ảnh không méo */
+    border: 1px solid var(--border-color); /* Thêm viền nhẹ nếu muốn */
+}
+
+.user-dropdown-menu {
+    display: none; /* ** Mặc định ẩn ** */
+    position: absolute;
+    top: 100%; /* Hiện ngay dưới nút trigger */
+    right: 0; /* Căn lề phải */
+    margin-top: 8px; /* Khoảng cách nhỏ với nút trigger */
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 180px; /* Độ rộng tối thiểu của menu */
+    z-index: 1001; /* Phải cao hơn các element khác */
+    overflow: hidden; /* Đảm bảo nội dung không tràn viền bo */
+}
+
+/* Class để hiện menu bằng JS */
+.user-dropdown-menu.show {
+    display: block !important;
+}
+
+.user-dropdown-menu ul {
+    list-style: none;
+    padding: 8px 0; /* Padding trên dưới cho ul */
+    margin: 0;
+}
+
+.user-dropdown-menu li a {
+    display: block;
+    padding: 10px 20px; /* Padding cho từng mục */
+    font-size: 0.9em;
+    color: var(--text-color);
+    text-decoration: none;
+    white-space: nowrap; /* Không xuống dòng */
+    transition: background-color 0.2s ease;
+}
+
+.user-dropdown-menu li a:hover {
+    background-color: #f4f5f6; /* Màu nền khi hover */
+    color: var(--heading-color);
+}
+
+/* Thêm đường kẻ ngăn cách nếu muốn (như trong ảnh) */
+.user-dropdown-menu li.separator {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 8px 0;
+    padding: 0;
+}
+.user-dropdown-menu li.separator a { /* Ẩn link nếu có */
+    display: none;
+}
+
+/* --- Hết CSS cho User Dropdown Menu --- */
 
 /* --- Hero Section --- */
 .hero-section.plant-theme-hero {
@@ -91,6 +181,13 @@ header::after { /* Đường kẻ mảnh dưới header */
     gap: 25px; /* Khoảng cách giữa các thẻ, có thể điều chỉnh */
     padding-top: 10px; /* Khoảng cách với tiêu đề */
     padding-bottom: 20px; /* Thêm khoảng trống dưới cùng */
+}
+
+/* Căn giữa cho thông báo lỗi/loading/empty bên trong grid */
+#item-grid-container > p {
+    grid-column: 1 / -1; /* QUAN TRỌNG: Cho thẻ p chiếm từ cột 1 đến cột cuối cùng */
+    text-align: center;  /* Cái này đã có trong inline style của JS rồi, nhưng để đây cũng được */
+    padding: 20px;       /* Cái này cũng có trong inline style */
 }
 
 /* Style cho Item Card (trong Grid) */

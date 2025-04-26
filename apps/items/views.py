@@ -5,13 +5,17 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Item
 from .serializers import ItemSerializer
+from rest_framework import permissions
 
 class ItemList(APIView):
+    permission_classes = [permissions.AllowAny]
     def get(self, request):
         items = Item.objects.all()
         serializer = ItemSerializer(items, many=True)
         return Response(serializer.data)
 
+class ItemCreate(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     def post(self, request):
         serializer = ItemSerializer(data=request.data)
         if serializer.is_valid():
