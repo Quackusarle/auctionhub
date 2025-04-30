@@ -80,8 +80,8 @@ header::after { /* Đường kẻ mảnh dưới header */
 
 /* Style cho avatar bên trong nút trigger (khi đăng nhập) */
 .user-dropdown-trigger img {
-    width: 30px;  /* Kích thước avatar */
-    height: 30px;
+    width: 40px;  /* Kích thước avatar */
+    height: 40px;
     border-radius: 50%; /* Bo tròn */
     display: block; /* Quan trọng */
     object-fit: cover; /* Đảm bảo ảnh không méo */

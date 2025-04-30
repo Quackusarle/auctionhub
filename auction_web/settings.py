@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'corsheaders',
 
     # Ứng dụng bên thứ ba
     'rest_framework',
@@ -73,7 +74,20 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+
+# Cấu hình CORS (QUAN TRỌNG!)
+# Cho phép frontend của anh (chạy ở domain khác) gọi API
+# Trong môi trường development, có thể cho phép tất cả:
+CORS_ALLOW_ALL_ORIGINS = True 
+# Khi deploy lên production, phải cấu hình cụ thể hơn:
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000", # Nếu frontend React/Vue chạy ở port 3000
+#     "http://127.0.0.1:3000",
+#     "https://your-frontend-domain.com", # Domain frontend của anh khi deploy
+# ]
 
 ROOT_URLCONF = 'auction_web.urls'
 
@@ -220,6 +234,5 @@ SOCIALACCOUNT_PROVIDERS = {
             'secret': os.environ.get('GOOGLE_CLIENT_SECRET'),
             'key': '' # Cái này thường để trống cho Google
         }
-
     }
 }

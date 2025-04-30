@@ -8,6 +8,8 @@ from .serializers import UserSerializer # Đổi tên serializer cho đúng chu�
 from rest_framework.parsers import MultiPartParser, FormParser # Thêm parser cho file upload
 from django.templatetags.static import static
 from django.urls import reverse
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 # View để lấy danh sách User (Thường chỉ dành cho Admin)
@@ -160,3 +162,27 @@ class DeleteCurrentUserView(APIView):
         user.delete()
         return Response({'detail': 'Tài khoản đã được xóa thành công.'}, status=status.HTTP_204_NO_CONTENT) # Hoặc 200 OK nếu muốn trả về message
     
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        # Có thể thêm thông tin vào payload của token nếu muốn (nhưng cẩn thận bảo mật)
+        # token['email'] = user.email 
+        return token
+
+    def validate(self, attrs):
+        # data chứa access và refresh token sau khi validate thành công
+        data = super().validate(attrs) 
+        
+        # Thêm thông tin của user vào response trả về cho frontend
+        data['user'] = {
+            'id': self.user.id,
+            'email': self.user.email,
+            'balance': str(self.user.balance), # Chuyển Decimal thành string cho JSON
+            'profile_picture_url': self.user.profile_picture.url if self.user.profile_picture else None,
+            # Thêm các trường khác của user nếu cần
+        }
+        return data
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer # Sử dụng serializer custom

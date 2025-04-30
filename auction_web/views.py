@@ -9,3 +9,6 @@ def home_view(request):
     # Nếu file HTML của ông tên khác hoặc nằm ở chỗ khác trong templates, thì sửa lại cho đúng
     context = {} # Có thể truyền thêm dữ liệu vào đây nếu muốn
     return render(request, 'home/home.html', context)
+
+def register_view(request):
+    return render(request, 'account/login-signup.html')

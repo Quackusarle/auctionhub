@@ -6,10 +6,12 @@ from .serializers import Bidserializers
 from .models import Bid, Item
 from django.utils.timezone import now
 from decimal import Decimal
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 # API 1: Xử lý đặt giá thầu
 @api_view(['POST'])
 def place_bid(request):
+    permission_classes = [IsAuthenticated]
     """
     Xử lý đặt giá thầu:
     - Kiểm tra sản phẩm có tồn tại không
@@ -38,8 +40,8 @@ def place_bid(request):
     
     bid_data = {
         "item_id": item_id,
-        "user_id": user_id,
         "bid_amount": bid_amount,
+        user_id: request.user.user_id,  # Lấy user_id từ request.user
     }
     serializer = Bidserializers(data=bid_data)
     
@@ -53,6 +55,7 @@ def place_bid(request):
 # API 2: Lấy danh sách giá thầu của một sản phẩm
 @api_view(['POST'])
 def get_bids_for_item(request):
+    permission_classes = [IsAuthenticated]
     item_id = request.data.get('item_id')
     
     if not item_id:
@@ -68,6 +71,7 @@ def get_bids_for_item(request):
 # API 3: Lấy giá thầu cao nhất của một sản phẩm
 @api_view(['POST'])
 def get_highest_bid(request):
+    permission_classes = [IsAuthenticated]
     item_id = request.data.get('item_id')
     
     if not item_id:
@@ -84,6 +88,8 @@ def get_highest_bid(request):
 
 
 def bidding_detail_view(request, pk):
+    permission_classes = [IsAuthenticated]
+    
     item = get_object_or_404(Item, pk=pk)
     bids = Bid.objects.filter(item_id=item).order_by('-bid_time')[:10] 
 
