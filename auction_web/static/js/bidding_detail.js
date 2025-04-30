@@ -68,23 +68,63 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Fetch API error:', error);
             throw error; // Ném lại lỗi để nơi gọi xử lý
         }
+        /**
+         * Hàm fetchAPI này là một wrapper (hàm bao bọc) xung quanh hàm fetch gốc, cung cấp các tính năng sau:
+
+            -Luôn gửi kèm credentials.
+            -Xử lý lỗi HTTP một cách chi tiết, cố gắng đọc thông báo lỗi JSON từ server.
+            -Trả về null cho response có trạng thái 204.
+            -Trả về dữ liệu JSON cho các response thành công khác.
+            -Ghi log lỗi ra console và ném lại lỗi để nơi gọi có thể xử lý.
+         */
     }
 
     /**
      * Định dạng số tiền sang VNĐ (XXX.XXX.XXX VNĐ)
      */
+    function lamTronTien(amount) {
+        
+        const numAmount = parseFloat(amount);
+        if (isNaN(numAmount)) {
+            return 0; 
+        }
+    
+        const nghin = Math.floor(numAmount / 1000); 
+        const tram = numAmount % 1000;            
+    
+        if (tram >= 500) {
+            return (nghin + 1) * 1000; 
+        } else {
+            return nghin * 1000;      
+        }
+    }
+
     function formatPriceVN(priceValue) {
-         try {
-             // Chuyển đổi sang số, xử lý cả chuỗi và số
-             const price = parseFloat(String(priceValue).replace(/[\.,]/g, ''));
-             if (isNaN(price)) return "0 VNĐ";
-             // Định dạng VNĐ, không có số lẻ
-             return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0, maximumFractionDigits: 0 });
-         } catch (e) {
-             console.error("Error formatting VN price:", priceValue, e);
-             return priceValue ? `${priceValue} VNĐ` : '0 VNĐ';
-         }
-     }
+        try {
+            // Giá trị từ API có thể là chuỗi dạng "20718231.00" hoặc số
+            // parseFloat sẽ xử lý đúng dấu chấm thập phân '.'
+            const price = parseFloat(priceValue);
+
+            // Kiểm tra xem kết quả có phải là số hợp lệ không
+            if (isNaN(price)) {
+                console.warn(`[formatPriceVN] Input could not be parsed to a valid number: ${priceValue}`);
+                return "0 VNĐ"; // Trả về giá trị mặc định nếu không parse được
+            }
+
+            // Định dạng tiền tệ VNĐ, bỏ phần thập phân (minimumFractionDigits: 0)
+            return price.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+                minimumFractionDigits: 0, // Bỏ .00
+                maximumFractionDigits: 0  // Bỏ .00
+               });
+        } catch (e) {
+            console.error("Error formatting VN price:", priceValue, e);
+            // Trong trường hợp lỗi, trả về giá trị gốc để tránh hiển thị sai hoàn toàn
+            return String(priceValue || '0') + ' VNĐ';
+        }
+    }
+
 
      /**
       * Định dạng ngày giờ sang dd/mm hh:mm:ss (Ví dụ)
@@ -122,8 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
          startingPrice = parseFloat(String(itemData.starting_price || 0).replace(/,/g, ''));
          currentHighestBid = parseFloat(String(itemData.current_price || 0).replace(/,/g, ''));
 
-         startingPriceElement.textContent = formatPriceVN(startingPrice);
-         currentPriceElement.textContent = formatPriceVN(currentHighestBid);
+         startingPriceElement.textContent = lamTronTien(formatPriceVN(startingPrice));
+         currentPriceElement.textContent = lamTronTien(formatPriceVN(currentHighestBid));
 
          // Cập nhật giá tối thiểu cho input và label
          updateMinBid();
@@ -136,47 +176,124 @@ document.addEventListener('DOMContentLoaded', () => {
          }
      }
 
-      /**
+      
+    /**
        * Cập nhật giá tối thiểu cho input và label
        */
-      function updateMinBid() {
-          const minBidValue = (currentHighestBid > 0 ? currentHighestBid : startingPrice) + (currentHighestBid > 0 ? bidStep : 0);
-          bidAmountInput.min = Math.max(minBidValue, startingPrice); // Giá đặt không được thấp hơn giá khởi điểm
-          bidAmountInput.step = bidStep;
-          minBidLabel.textContent = `Giá đặt (Tối thiểu: ${formatPriceVN(Math.max(minBidValue, startingPrice))}):`;
 
-           // Cập nhật giá trị mặc định của input nếu cần (ví dụ: bằng giá tối thiểu)
-           // Hoặc giữ nguyên để người dùng tự nhập
-           bidAmountInput.placeholder = formatPriceVN(Math.max(minBidValue, startingPrice)).replace(/\s*VNĐ$/, ''); // Placeholder là số
-           // bidAmountInput.value = Math.max(minBidValue, startingPrice); // Tự điền giá tối thiểu
-           updateTotalValue(); // Cập nhật tổng giá trị nếu input thay đổi
-      }
+      function updateMinBid(nextMinBidFromServer = null) {
+        let minBidValue;
+        let calculationSource = ""; // Để log nguồn tính toán
 
+        if (nextMinBidFromServer !== null && !isNaN(parseFloat(String(nextMinBidFromServer).replace(/,/g, '')))) {
+             // Ưu tiên sử dụng giá tối thiểu do server tính toán và gửi về sau khi bid thành công
+             minBidValue = parseFloat(String(nextMinBidFromServer).replace(/,/g, '')) || 0;
+             calculationSource = "server";
+             console.log(`[updateMinBid] Using next min bid from server: ${minBidValue}`);
+        } else {
+            // Tự tính toán khi tải trang lần đầu hoặc khi không có giá từ server
+            const basePrice = currentHighestBid > 0 ? currentHighestBid : startingPrice;
+            calculationSource = currentHighestBid > 0 ? `currentHighestBid (${currentHighestBid})` : `startingPrice (${startingPrice})`;
 
-     /**
-      * Cập nhật bảng lịch sử bid
-      */
-     function updateBidHistoryUI(bidsData) {
-         bidHistoryTableBody.innerHTML = ''; // Xóa nội dung cũ
-         if (!bidsData || bidsData.length === 0) {
-             bidHistoryTableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 15px; color: var(--muted-color);">Chưa có lượt đặt giá nào.</td></tr>';
-             return;
+            if (isNaN(basePrice) || basePrice < 0) {
+                 console.error(`[updateMinBid] Invalid basePrice: ${basePrice}. Falling back to 0.`);
+                 minBidValue = 0; // Hoặc giá trị mặc định khác nếu cần
+            } else {
+                 const minIncrementValue = basePrice * 0.01; // Tính 1%
+                 minBidValue = basePrice + minIncrementValue; // Áp dụng luật 1%
+                 console.log(`[updateMinBid] Calculated locally: basePrice=${basePrice}, increment=${minIncrementValue}, rawMinBid=${minBidValue}`);
+            }
+
+            // Luôn đảm bảo giá tối thiểu không thấp hơn giá khởi điểm
+             if (!isNaN(startingPrice)) {
+                minBidValue = Math.max(minBidValue, startingPrice);
+             }
+             console.log(`[updateMinBid] Calculated min bid locally based on ${calculationSource}. Final Min (>= starting): ${minBidValue}`);
+        }
+
+        let displayMinBid = Math.ceil(minBidValue);
+        displayMinBid = lamTronTien(displayMinBid);
+
+         // Kiểm tra nếu displayMinBid không hợp lệ
+         if (isNaN(displayMinBid)) {
+            console.error("[updateMinBid] Failed to calculate displayMinBid. Check inputs:", {currentHighestBid, startingPrice, nextMinBidFromServer});
+            minBidLabel.textContent = 'Giá đặt (Tối thiểu: Lỗi)';
+            if(bidAmountInput) {
+                bidAmountInput.min = "0";
+                bidAmountInput.placeholder = "Lỗi";
+            }
+            return;
          }
 
-         // Sắp xếp theo thời gian mới nhất lên đầu (giả định API chưa sắp xếp)
-         bidsData.sort((a, b) => new Date(b.bid_time) - new Date(a.bid_time));
+        // --- Cập nhật các thành phần UI ---
+        console.log(`[updateMinBid] Updating UI: displayMinBid=${displayMinBid}`);
 
-         bidsData.forEach(bid => {
-             const row = document.createElement('tr');
-             row.innerHTML = `
-                 <td>${formatPriceVN(bid.bid_amount)}</td>
-                 <td>${bid.user?.email || bid.user_id?.email || 'Người dùng ẩn'}</td>
-                 <td>${formatDateTimeVN(bid.bid_time)}</td>
-             `;
-             bidHistoryTableBody.appendChild(row);
-         });
-     }
+        if(bidAmountInput) {
+            // 1. Cập nhật thuộc tính 'min' của input (giá trị số nguyên)
+            bidAmountInput.min = displayMinBid;
 
+            // 2. Cập nhật placeholder (ví dụ: hiển thị số tối thiểu đã làm tròn)
+            bidAmountInput.placeholder = displayMinBid.toLocaleString('vi-VN');
+        }
+
+        if(minBidLabel) {
+            // 3. Cập nhật label hiển thị giá tối thiểu (dùng format tiền tệ)
+            minBidLabel.textContent = `Giá đặt (Tối thiểu: ${formatPriceVN(displayMinBid)}):`;
+        }
+
+        // 4. Cập nhật lại giá trị tổng hiển thị (vì placeholder/min đã thay đổi)
+        updateTotalValue();
+    }
+
+    /**
+     * Cập nhật giao diện với thông tin chi tiết item
+     * Hàm này gọi updateMinBid sau khi có dữ liệu item
+     */
+    function updateItemUI(itemData) {
+        if (!itemData || !startingPriceElement || !currentPriceElement || !itemNameHeading || !itemName || !itemImage || !itemSeller || !endTimeElement) {
+             console.error("[updateItemUI] Missing essential DOM elements.");
+             return; // Không cập nhật nếu thiếu element quan trọng
+        }
+
+        document.title = `Đấu giá: ${itemData.name || 'Sản phẩm'} - AuctionHub`;
+        itemNameHeading.textContent = itemData.name || 'Không có tên';
+        itemName.textContent = itemData.name || 'Không có tên';
+        itemImage.src = itemData.image_url || '/static/images/placeholder.png';
+        itemImage.alt = itemData.name || 'Hình ảnh sản phẩm';
+         try {
+            // Kiểm tra seller_id tồn tại và là object trước khi truy cập email
+            if(itemData.seller_id && typeof itemData.seller_id === 'object' && itemData.seller_id !== null) {
+                itemSeller.textContent = itemData.seller_id.email || 'Ẩn danh';
+            } else if(itemData.seller && typeof itemData.seller === 'object' && itemData.seller !== null) { // Fallback cho trường hợp seller là object trực tiếp
+                 itemSeller.textContent = itemData.seller.email || 'Ẩn danh';
+            }
+            else {
+                 itemSeller.textContent = 'Ẩn danh';
+            }
+         } catch (e) {
+             console.warn("Could not access seller email, setting to 'Ẩn danh'.", e);
+             itemSeller.textContent = 'Ẩn danh';
+         }
+
+        // Cập nhật biến state trước khi gọi updateMinBid
+        startingPrice = parseFloat(String(itemData.starting_price || 0).replace(/,/g, ''));
+        currentHighestBid = parseFloat(String(itemData.current_price || 0).replace(/,/g, ''));
+
+         // Log giá trị trước khi cập nhật UI
+         console.log(`[updateItemUI] Fetched data: startingPrice=${startingPrice}, currentHighestBid=${currentHighestBid}`);
+
+        startingPriceElement.textContent = formatPriceVN(startingPrice);
+        currentPriceElement.textContent = formatPriceVN(currentHighestBid);
+
+        // Gọi updateMinBid ĐỂ TÍNH TOÁN LẠI DỰA TRÊN DỮ LIỆU MỚI NHẤT
+        updateMinBid(); // Sẽ tự động tính theo luật 1%
+
+        if (itemData.end_time) {
+            startCountdown(itemData.end_time);
+        } else {
+            endTimeElement.textContent = 'Không xác định';
+        }
+    }
      /**
       * Bắt đầu đồng hồ đếm ngược
       */
@@ -236,69 +353,183 @@ document.addEventListener('DOMContentLoaded', () => {
           totalValueSpan.textContent = formatPriceVN(amount).replace(/\s*VNĐ$/, ''); // Chỉ hiển thị số
      }
 
+     function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    /**
+     * Xử lý việc đặt giá
+     */
     /**
      * Xử lý việc đặt giá
      */
     async function handlePlaceBid(event) {
-        event.preventDefault(); // Ngăn form submit theo cách truyền thống
-        if (!isUserLoggedIn) {
-             showBidMessage('Vui lòng đăng nhập để đặt giá.', true);
-             // Có thể chuyển hướng đến trang đăng nhập
-             // window.location.href = '/accounts/login/';
-             return;
-         }
+        const csrfToken = getCookie('csrftoken');
+        event.preventDefault();
 
-        const bidAmount = parseFloat(bidAmountInput.value);
+        // Clear previous message
+        showBidMessage('');
+
+        if (!isUserLoggedIn) {
+            showBidMessage('Vui lòng đăng nhập để đặt giá.', true);
+            return;
+        }
+
+        // Lấy giá trị số tiền dưới dạng chuỗi số (bỏ các dấu .)
+        const bidAmountRawString = String(bidAmountInput.value).replace(/[.,]/g, ''); // Bỏ dấu . hoặc ,
+        const bidAmount = parseFloat(bidAmountRawString); // Chuyển thành số để validation
         const minBidValue = parseFloat(bidAmountInput.min);
 
+        const userIdInput = placeBidForm.querySelector('input[name="user_id"]');
+        const userId = userIdInput ? userIdInput.value : null;
+
+        // --- Validation ---
+        if (!userId || userId === 'None' || isNaN(parseInt(userId))) {
+            showBidMessage('Lỗi: Không thể xác định người dùng. Vui lòng đăng nhập lại.', true);
+            return;
+        }
+         if (!currentItemId) {
+             showBidMessage('Lỗi: Không thể xác định sản phẩm.', true);
+             return;
+         }
         if (isNaN(bidAmount) || bidAmount <= 0) {
             showBidMessage('Vui lòng nhập số tiền hợp lệ.', true);
             return;
         }
-
-        if (bidAmount < minBidValue) {
-            showBidMessage(`Giá đặt phải tối thiểu là ${formatPriceVN(minBidValue)}.`, true);
+        if (isNaN(minBidValue) || bidAmount < minBidValue) {
+             const displayMinBid = isNaN(minBidValue) ? 'không xác định' : formatPriceVN(minBidValue);
+             showBidMessage(`Giá đặt phải tối thiểu là ${displayMinBid}.`, true);
             return;
         }
+         if (!csrfToken) {
+            showBidMessage('Lỗi: Thiếu mã bảo mật (CSRF). Vui lòng tải lại trang.', true);
+            return;
+         }
+        // --- End Validation ---
 
-        // Vô hiệu hóa nút submit trong khi gửi request
         submitBidButton.disabled = true;
         submitBidButton.textContent = "Đang xử lý...";
-        showBidMessage(''); // Xóa thông báo cũ
 
         try {
+            // *** Đảm bảo gửi bid_amount dưới dạng STRING ***
             const bidData = {
-                item: currentItemId, // Hoặc item_id tùy theo API
-                bid_amount: bidAmount
+                item_id: currentItemId,          // Integer
+                user_id: parseInt(userId),      // Integer
+                bid_amount: String(bidAmount)   // *** GỬI DƯỚI DẠNG STRING ***
             };
+            // **********************************************
 
-            // *** GIẢ ĐỊNH API Endpoint và Method ***
-            const placeBidApiUrl = '/api/bids/';
-            const result = await fetchAPI(placeBidApiUrl, {
+            // **** LOG DỮ LIỆU GỬI ĐI ****
+            console.log("Sending bid data (Raw Object):", bidData);
+            console.log("Sending bid data (JSON String):", JSON.stringify(bidData));
+            // ****************************
+
+            const placeBidApiUrl = '/api/bidding/place_bid/';
+            const response = await fetch(placeBidApiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // Nếu API yêu cầu CSRF token (thường không cần với API token/session riêng)
-                    // 'X-CSRFToken': getCsrfToken() // Cần hàm getCsrfToken()
+                    'X-CSRFToken': csrfToken,
+                    'Accept': 'application/json'
                 },
+                 credentials: 'include',
                 body: JSON.stringify(bidData)
             });
 
-            showBidMessage('Đặt giá thành công!', false); // false = không phải lỗi
-            bidAmountInput.value = ''; // Xóa input sau khi thành công
-            updateTotalValue(); // Cập nhật lại tổng giá trị
+            const responseBody = await response.text(); // Đọc body dưới dạng text trước
 
-            // Sau khi đặt giá thành công, tải lại giá mới nhất và lịch sử bid
-            await loadItemDetails(); // Tải lại chi tiết item (để cập nhật giá hiện tại)
-            await loadBidHistory(); // Tải lại lịch sử bid
+            // **** LOG PHẢN HỒI TỪ SERVER ****
+            console.log("Raw Response Status:", response.status);
+            console.log("Raw Response Body:", responseBody);
+            // *******************************
+
+            if (!response.ok) {
+                 let errorData;
+                 try {
+                     errorData = JSON.parse(responseBody);
+                 } catch (e) {
+                     // Nếu không parse được JSON, dùng text body làm lỗi
+                     errorData = { error: `Lỗi ${response.status}: ${responseBody || response.statusText}` };
+                 }
+                 const error = new Error(errorData.error || JSON.stringify(errorData));
+                 error.status = response.status;
+                 error.data = errorData;
+                 throw error; // Ném lỗi để catch xử lý
+            }
+
+             const result = JSON.parse(responseBody);
+
+            // --- Xử lý thành công ---
+            showBidMessage('Đặt giá thành công!', false);
+            bidAmountInput.value = ''; // Xóa input hiển thị
+             // Quan trọng: Cập nhật lại giá trị min và placeholder sau khi bid thành công
+            const newMinBidValue = parseFloat(result.bid_amount) + bidStep; // Tính min mới
+            bidAmountInput.min = Math.max(newMinBidValue, startingPrice); // Cập nhật min attribute
+            bidAmountInput.placeholder = formatPriceVN(Math.max(newMinBidValue, startingPrice)).replace(/\s*VNĐ$/, ''); // Cập nhật placeholder
+            minBidLabel.textContent = `Giá đặt (Tối thiểu: ${formatPriceVN(Math.max(newMinBidValue, startingPrice))}):`; // Cập nhật label
+
+            updateTotalValue(); // Cập nhật tổng (về 0)
+            await loadItemDetails(); // Tải lại chi tiết item
+            await loadBidHistory();  // Tải lại lịch sử bid
+            // -----------------------
 
         } catch (error) {
             console.error('Error placing bid:', error);
-            // Hiển thị lỗi từ server hoặc lỗi chung
-            showBidMessage(`Đặt giá thất bại: ${error.message || 'Lỗi không xác định'}`, true);
+            // Nếu có error.data thì log ra để xem chi tiết lỗi từ backend
+            if (error.data) console.error('Error Data from Server:', error.data);
+
+            // --- Hiển thị lỗi chi tiết hơn ---
+             let errorMessage = 'Lỗi không xác định';
+             if (error.data) {
+                 if (typeof error.data === 'string') {
+                    errorMessage = error.data;
+                 } else if (error.data.detail) {
+                     errorMessage = error.data.detail;
+                 } else if (error.data.error) { // Ưu tiên lỗi chung từ view nếu có
+                     errorMessage = error.data.error;
+                 } else {
+                     // Xử lý lỗi validation từ serializer
+                     const validationErrors = [];
+                     for (const field in error.data) {
+                         if (Array.isArray(error.data[field])) {
+                             // Lấy tên field dễ đọc hơn nếu có thể
+                             let fieldName = field;
+                             if (field === 'bid_amount') fieldName = 'Giá đặt';
+                             else if (field === 'item_id') fieldName = 'Sản phẩm';
+                             else if (field === 'user_id') fieldName = 'Người dùng';
+                             validationErrors.push(`${fieldName}: ${error.data[field].join(' ')}`);
+                         }
+                     }
+                     if (validationErrors.length > 0) {
+                         errorMessage = validationErrors.join('; ');
+                     } else {
+                         // Fallback nếu không phải các định dạng trên
+                          try {
+                              errorMessage = JSON.stringify(error.data);
+                          } catch {
+                              errorMessage = error.message || 'Lỗi không xác định';
+                          }
+                     }
+                 }
+             } else {
+                 errorMessage = error.message; // Lỗi mạng hoặc lỗi JS khác
+             }
+             showBidMessage(`Đặt giá thất bại: ${errorMessage}`, true);
+             // ----------------------------------
+
         } finally {
-            // Kích hoạt lại nút submit (chỉ nếu phiên đấu giá chưa kết thúc)
-            if (endTimeElement.textContent !== "Đã kết thúc" && isUserLoggedIn) {
+            // Kích hoạt lại nút chỉ khi phiên đấu giá còn và user đăng nhập
+            if (endTimeElement?.textContent !== "Đã kết thúc" && isUserLoggedIn) {
                 submitBidButton.disabled = false;
                 submitBidButton.textContent = "Đặt giá";
             }
@@ -409,17 +640,83 @@ document.addEventListener('DOMContentLoaded', () => {
      * Tải lịch sử bid
      */
     async function loadBidHistory() {
-        if (!currentItemId) return;
-        const bidsApiUrl = `/api/items/${currentItemId}/bids/`; // *** GIẢ ĐỊNH API Endpoint ***
+        if (!currentItemId) {
+             console.error("[loadBidHistory] currentItemId is not set.");
+             bidHistoryTableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 15px; color: red;">Lỗi: Không xác định được sản phẩm.</td></tr>';
+             return;
+        }
+
+        const bidsApiUrl = `/api/bidding/get_bids/`; 
+
+        // Hiển thị trạng thái đang tải
+        if (bidHistoryTableBody) { 
+             bidHistoryTableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 15px; color: var(--muted-color);">Đang tải lịch sử...</td></tr>';
+        } else {
+            console.error("[loadBidHistory] bidHistoryTableBody element not found.");
+            return; // Dừng nếu không tìm thấy bảng
+        }
+
+
         try {
-            const bidsData = await fetchAPI(bidsApiUrl);
+            // *** 2. Sử dụng POST và gửi item_id trong body ***
+            const bidsData = await fetchAPI(bidsApiUrl, {
+                method: 'POST', // Dùng phương thức POST
+                headers: {
+                    'Content-Type': 'application/json',
+                     // Gửi kèm CSRF token cho request POST nếu backend yêu cầu
+                     // (Thường cần nếu dùng SessionAuthentication)
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ item_id: currentItemId }) // Gửi item_id dạng JSON
+            });
+            // Gọi hàm cập nhật UI với dữ liệu nhận được
             updateBidHistoryUI(bidsData);
         } catch (error) {
             console.error("Failed to load bid history:", error);
-             bidHistoryTableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 15px; color: red;">Lỗi tải lịch sử đặt giá.</td></tr>';
+             if (bidHistoryTableBody) { // Kiểm tra lại element trước khi cập nhật lỗi
+                 bidHistoryTableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 15px; color: red;">Lỗi tải lịch sử đặt giá. Vui lòng thử lại.</td></tr>';
+             }
         }
     }
 
+    /**
+      * Cập nhật bảng lịch sử bid
+      */
+     function updateBidHistoryUI(bidsData) {
+         if (!bidHistoryTableBody) { // Luôn kiểm tra element trước khi dùng
+            console.error("[updateBidHistoryUI] bidHistoryTableBody element not found.");
+            return;
+         }
+
+         bidHistoryTableBody.innerHTML = ''; // Xóa nội dung cũ (loading/error)
+
+         if (!bidsData || !Array.isArray(bidsData) || bidsData.length === 0) {
+             bidHistoryTableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 15px; color: var(--muted-color);">Chưa có lượt đặt giá nào.</td></tr>';
+             return;
+         }
+
+         // Backend đã sắp xếp, không cần sort lại ở đây trừ khi muốn logic khác
+         // bidsData.sort((a, b) => new Date(b.bid_time) - new Date(a.bid_time));
+
+         bidsData.forEach(bid => {
+             const row = document.createElement('tr');
+
+             // *** 3. Lấy email từ user_detail (đã sửa ở serializer) ***
+             // Sử dụng optional chaining (?.) để tránh lỗi nếu user_detail không có hoặc không có email
+             const userEmail = bid.user_detail?.email || 'Người dùng ẩn';
+
+             // Lấy thời gian đã được format sẵn từ serializer (nếu có) hoặc format lại
+             // Giả sử serializer chưa format, dùng hàm formatDateTimeVN
+             const bidTimeFormatted = formatDateTimeVN(bid.bid_time); // Format lại ở đây
+
+             row.innerHTML = `
+                 <td>${formatPriceVN(bid.bid_amount)}</td>
+                 <td>${userEmail}</td>
+                 <td>${bidTimeFormatted}</td>
+             `;
+             bidHistoryTableBody.appendChild(row);
+         });
+     }
      /**
       * Khởi tạo trang
       */

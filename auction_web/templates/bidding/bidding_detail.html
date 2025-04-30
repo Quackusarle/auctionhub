@@ -80,6 +80,11 @@
                     <p style="margin-bottom: 10px;">Giá khởi điểm: <strong id="starting-price" style="color: var(--primary-color);">Đang tải...</strong> VNĐ</p> <p>Thời gian còn lại: <strong id="end-time" style="color: #dc3545;">Đang tải...</strong></p> </div>
 
                 <form id="place-bid-form" style="background-color: var(--white); padding: 20px; border-radius: 0.25rem; box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);">
+                     {% csrf_token %} 
+                        
+                     {# Input ẩn chứa ID item và user #}
+                     <input type="hidden" name="item_id" value="{{ item.pk }}"> 
+                     <input type="hidden" name="user_id" value="{{ request.user.id }}"> 
                      <div class="form-group" style="margin-bottom: 15px;">
                         <label for="bid-amount-input" id="min-bid-label" style="display: block; margin-bottom: 5px; font-weight: 500;">Giá đặt (Tối thiểu: Đang tải... VNĐ):</label>
                         <div class="price-input-wrapper" style="display: flex; align-items: center;">
@@ -87,7 +92,7 @@
                                 type="number"
                                 id="bid-amount-input"
                                 name="bid_amount"
-                                min="0"  step="10000" placeholder="Nhập số tiền"
+                                min="0" placeholder="Nhập số tiền"
                                 required
                                 style="flex-grow: 1; padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 3px 0 0 3px; outline: none; font-family: var(--font-family); font-size: 1em; height: 42px;">
                             <span class="currency-symbol" style="padding: 0 15px; background-color: #e9ecef; border: 1px solid var(--border-color); border-left: none; height: 42px; line-height: 40px; border-radius: 0 3px 3px 0; color: var(--muted-color);">VNĐ</span>
