@@ -26,7 +26,6 @@ def place_bid(request):
     bid_amount_str = request.data.get('bid_amount')
 
     if not item_id_str or not bid_amount_str:
-        # ... (error handling for missing data) ...
         return Response({"error": "Thiếu dữ liệu đầu vào."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
@@ -52,30 +51,19 @@ def place_bid(request):
 
     # --- START: MINIMUM BID CALCULATION (1% RULE) ---
     current_effective_price = item.current_price if item.current_price > Decimal('0') else item.starting_price
-
-    # Calculate the minimum 1% increment
     min_increment_percentage = Decimal('0.01') # 1%
     min_increment_value = (current_effective_price * min_increment_percentage)
-
-    # Optional: Round the increment value (e.g., up to nearest 1000)
-    # Uncomment and adjust if needed:
-    # min_increment_value = (min_increment_value / 1000).quantize(Decimal('1'), rounding=ROUND_UP) * 1000
-
-    # Calculate the minimum valid bid
     min_valid_bid = current_effective_price + min_increment_value
     min_valid_bid = Lamtrontien(min_valid_bid)
-    # Ensure min_valid_bid is not lower than starting_price (edge case if starting_price is high and current is 0)
-    # Although the 1% rule on starting_price should inherently be >= starting_price if starting_price > 0
-    # min_valid_bid = max(min_valid_bid, item.starting_price) # Re-check if this line is truly needed
 
     if bid_amount_decimal < min_valid_bid:
-         min_bid_display = Lamtrontien(min_valid_bid.quantize(Decimal('1'))) # Format for display
+         min_bid_display = Lamtrontien(min_valid_bid.quantize(Decimal('1'))) 
          current_display = Lamtrontien(current_effective_price.quantize(Decimal('1')))
-         increment_display = Lamtrontien(min_increment_value.quantize(Decimal('1'))) # Format increment for display
+         increment_display = Lamtrontien(min_increment_value.quantize(Decimal('1'))) 
 
          error_message = (f"Giá đặt phải ít nhất là {min_bid_display:,.0f} VNĐ "
                           f"(cao hơn giá hiện tại {current_display:,.0f} VNĐ "
-                          f"ít nhất 1% ≈ {increment_display:,.0f} VNĐ).") # Updated error message
+                          f"ít nhất 1% ≈ {increment_display:,.0f} VNĐ).") 
          print(f"Bid Amount Check Failed: Bid={bid_amount_decimal}, Min Valid={min_valid_bid}, Increment={min_increment_value}")
          return Response({"error": error_message}, status=status.HTTP_400_BAD_REQUEST)
     # --- END: MINIMUM BID CALCULATION (1% RULE) ---
@@ -99,20 +87,16 @@ def place_bid(request):
             response_data['bid_time'] = bid_instance.bid_time.isoformat()
             response_data['bid_amount'] = str(bid_instance.bid_amount) # Return new bid amount
 
-            # Return the *new* minimum bid required for the *next* bid
-            # Recalculate based on the bid that was just placed
             new_current_price = rounded_bid_amount
             new_min_increment = Lamtrontien(new_current_price * min_increment_percentage)
-            # Optional rounding for next increment display
-            # new_min_increment = (new_min_increment / 1000).quantize(Decimal('1'), rounding=ROUND_UP) * 1000
+            
             next_min_bid = new_current_price + new_min_increment
-            response_data['next_min_bid'] = str(next_min_bid.quantize(Decimal('1'))) # Send next min bid back
+            response_data['next_min_bid'] = str(next_min_bid.quantize(Decimal('1'))) 
 
             return Response(response_data, status=status.HTTP_201_CREATED)
 
         except Exception as e:
             print(f"ERROR saving bid/item: {e}")
-            # import traceback; traceback.print_exc();
             return Response({"error": "Lỗi máy chủ nội bộ khi lưu đặt giá."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     else:
         print(f"Serializer Errors: {serializer.errors}")
@@ -154,28 +138,8 @@ def get_highest_bid(request):
 def bidding_detail_view(request, pk):
     item = get_object_or_404(Item, pk=pk)
     bids = Bid.objects.filter(item_id=item).order_by('-bid_time')[:10] 
-
-    # --- THÊM LOGIC TÍNH GIÁ GỢI Ý VÀ GIÁ MIN ---
-    min_bid_increment = Decimal('10000') # Ví dụ bước giá tối thiểu là 10,000 VNĐ (hoặc lấy từ settings/item)
-    current_effective_price = item.current_price if item.current_price > 0 else item.starting_price
-
-    # Giá trị tối thiểu người dùng phải nhập (lớn hơn giá hiện tại)
-    # Dùng max để đảm bảo min_bid luôn >= giá khởi điểm + increment nếu chưa ai bid
-    min_bid_value = max(item.current_price, item.starting_price) + min_bid_increment
-
-    # Giá trị gợi ý hiển thị mặc định trong ô input
-    # Có thể đặt bằng min_bid_value luôn, hoặc chỉ là giá hiện tại + bước nhảy
-    suggested_bid = min_bid_value 
-    # Hoặc bạn có thể muốn nó là giá hiện tại + bước nhảy nhưng không thấp hơn giá khởi điểm + bước nhảy
-    # suggested_bid = max(item.current_price + min_bid_increment, item.starting_price + min_bid_increment)
-    # Hoặc đơn giản chỉ là min_bid_value
-    
-    # --- KẾT THÚC LOGIC TÍNH GIÁ ---
-
     context = {
         'item': item,
         'bids': bids,
-        'min_bid_value': min_bid_value,       # Truyền giá trị min vào context
-        'suggested_bid': suggested_bid,     # Truyền giá trị gợi ý vào context
     }
     return render(request, 'bidding/bidding_detail.html', context) 

@@ -104,7 +104,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'auctiondb',
         'USER': 'root',
-        'PASSWORD': '18112005',
+        'PASSWORD': '1447928479',
         'HOST': 'localhost',
         'PORT': '3306',
     }

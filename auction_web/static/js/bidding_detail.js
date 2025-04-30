@@ -162,8 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
          startingPrice = parseFloat(String(itemData.starting_price || 0).replace(/,/g, ''));
          currentHighestBid = parseFloat(String(itemData.current_price || 0).replace(/,/g, ''));
 
-         startingPriceElement.textContent = lamTronTien(formatPriceVN(startingPrice));
-         currentPriceElement.textContent = lamTronTien(formatPriceVN(currentHighestBid));
+         startingPriceElement.textContent = formatPriceVN(lamTronTien(startingPrice));
+         currentPriceElement.textContent = formatPriceVN(lamTronTien(currentHighestBid));
 
          // Cập nhật giá tối thiểu cho input và label
          updateMinBid();
@@ -282,8 +282,8 @@ document.addEventListener('DOMContentLoaded', () => {
          // Log giá trị trước khi cập nhật UI
          console.log(`[updateItemUI] Fetched data: startingPrice=${startingPrice}, currentHighestBid=${currentHighestBid}`);
 
-        startingPriceElement.textContent = formatPriceVN(startingPrice);
-        currentPriceElement.textContent = formatPriceVN(currentHighestBid);
+        startingPriceElement.textContent = formatPriceVN(lamTronTien(startingPrice));
+        currentPriceElement.textContent = formatPriceVN(lamTronTien(currentHighestBid));
 
         // Gọi updateMinBid ĐỂ TÍNH TOÁN LẠI DỰA TRÊN DỮ LIỆU MỚI NHẤT
         updateMinBid(); // Sẽ tự động tính theo luật 1%
@@ -558,10 +558,10 @@ document.addEventListener('DOMContentLoaded', () => {
          const profileApiUrl = '/api/profile/get_avatar/';
          const triggerBtn = userActionArea?.querySelector('.user-dropdown-trigger');
          const dropdownMenuUl = userActionArea?.querySelector('.user-dropdown-menu ul');
-         const settingsUrl = "#"; // Thay URL đúng
-         const loginUrl = "/accounts/login/"; // Thay URL đúng
-         const logoutUrl = "/accounts/logout/"; // Thay URL đúng
-         const defaultAvatar = '/static/images/default_avatar.jpg'; // Thay URL đúng
+         const settingsUrl = "#"; 
+         const loginUrl = "/accounts/login/"; 
+         const logoutUrl = "/accounts/logout/"; 
+         const defaultAvatar = '/static/images/default_avatar.jpg'; 
 
          const setDefaultUserState = () => {
              isUserLoggedIn = false;
@@ -591,7 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  isUserLoggedIn = true;
                  console.log('[bidding_detail.js] User is logged in.');
                  const avatarSrc = data.avatarUrl || defaultAvatar;
-                 triggerBtn.innerHTML = `<img src="${avatarSrc}" alt="Avatar" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">`; // Dùng class CSS sẽ tốt hơn
+                 triggerBtn.innerHTML = `<img src="${avatarSrc}" alt="Avatar" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">`; // Dùng class CSS sẽ tốt hơn
                  dropdownMenuUl.innerHTML = `
                      <li><a href="${settingsUrl}">Cài đặt</a></li>
                      <li><a href="${logoutUrl}">Đăng xuất</a></li>`;
@@ -730,11 +730,11 @@ document.addEventListener('DOMContentLoaded', () => {
          }
 
          // Thiết lập dropdown user (giả định hàm này có sẵn từ home.js)
-         if (typeof setupDropdownToggle === 'function') {
-             setupDropdownToggle();
-         } else {
-            console.warn('setupDropdownToggle function not found. User dropdown might not work.');
-         }
+         //if (typeof setupDropdownToggle === 'function') {
+         //    setupDropdownToggle();
+         //} else {
+         //   console.warn('setupDropdownToggle function not found. User dropdown might not work.');
+         //}
 
          // Kiểm tra trạng thái đăng nhập và cập nhật header
          await checkLoginStatusAndUpdateHeader();

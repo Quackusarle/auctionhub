@@ -17,24 +17,26 @@
         <div class="container">
             <div class="logo">Auction<span class="logo-alt">Hub</span></div>
             <nav class="main-nav plant-theme-nav">
-                 <ul>
-                     <li><a href="/">Trang chủ</a></li>
-                     <li><a href="#" class="active">Sản phẩm</a></li> <li><a href="#">Về chúng tôi</a></li>
-                     <li><a href="#">Blog</a></li>
-                     <li><a href="#contact-section">Liên hệ</a></li>
+                <ul>
+                    <li><a href="#" class="active">Trang chủ</a></li>
+                    <li><a href="#">Sản phẩm</a></li>
+                    <li><a href="#">Về chúng tôi</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#contact-section">Liên hệ</a></li>
                  </ul>
             </nav>
             <div class="header-actions plant-theme-actions" id="user-action-area">
-                 <div class="user-dropdown-container">
-                     <button type="button" class="user-dropdown-trigger" aria-label="Tài khoản" aria-haspopup="true" aria-expanded="false">
-                         <i class="fas fa-user header-icon"></i>
-                     </button>
-                     <div class="user-dropdown-menu" style="display: none;">
-                         <ul>
-                             <li><a href="/accounts/login/">Log in</a></li>
-                         </ul>
-                     </div>
-                 </div>
+                <div class="user-dropdown-container">
+                    <button type="button" class="user-dropdown-trigger" aria-label="Tài khoản" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user header-icon"></i>
+                    </button>
+            
+                    <div class="user-dropdown-menu" style="display: none;">
+                        <ul>
+                            <li><a href="/accounts/login/">Log in</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -111,14 +113,24 @@
     </main>
 
     <footer class="site-footer simplified-footer plant-theme-footer" id="contact-section">
-       <div class="container">
-           <div class="footer-content-wrapper" style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 40px; margin-bottom: 50px;">
-                <div class="contact-info" style="flex-basis: 40%; min-width: 280px;"> ... </div>
-                <div class="newsletter-signup" style="flex-basis: 55%; min-width: 280px;"> ... </div>
+        <div class="container">
+            <div class="footer-content-wrapper">
+                <div class="contact-info">
+                    <h5>Kết nối với AuctionHub</h5>
+                    <div class="contact-item"> <i class="fas fa-map-marker-alt contact-icon"></i> <div class="contact-details"> <strong>Địa chỉ:</strong> <span>Trường Đại Học Công Nghệ Thông Tin (UIT), ĐHQG TPHCM</span> </div> </div>
+                    <div class="contact-item"> <i class="fas fa-phone-alt contact-icon"></i> <div class="contact-details"> <strong>Điện thoại:</strong> <a href="tel:0914321432">09.1432.1432</a> </div> </div>
+                    <div class="contact-item"> <i class="fas fa-envelope contact-icon"></i> <div class="contact-details"> <strong>Email:</strong> <a href="mailto:support@auctionhub.com">support@auctionhub.com</a> </div> </div>
+                    <div class="social-icons"> <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a> <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a> <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a> <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a> </div>
+                </div>
+                <div class="newsletter-signup">
+                    <h5>Đăng ký nhận bản tin</h5>
+                    <form class="newsletter-form"> <input type="email" placeholder="Nhập email của bạn" required> <button type="submit">Đăng ký</button> </form>
+                </div>
             </div>
-            <div class="footer-bottom"> <p>&copy; <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p> </div>
-       </div>
+             <div class="footer-bottom"> <p>&copy; <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p> </div>
+        </div>
     </footer>
+
 
     <script src="/static/js/home.js"></script>
     <script src="/static/js/bidding_detail.js"></script>
