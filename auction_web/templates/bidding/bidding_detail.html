@@ -17,24 +17,26 @@
         <div class="container">
             <div class="logo">Auction<span class="logo-alt">Hub</span></div>
             <nav class="main-nav plant-theme-nav">
-                 <ul>
-                     <li><a href="/">Trang chủ</a></li>
-                     <li><a href="#" class="active">Sản phẩm</a></li> <li><a href="#">Về chúng tôi</a></li>
-                     <li><a href="#">Blog</a></li>
-                     <li><a href="#contact-section">Liên hệ</a></li>
+                <ul>
+                    <li><a href="#" class="active">Trang chủ</a></li>
+                    <li><a href="#">Sản phẩm</a></li>
+                    <li><a href="#">Về chúng tôi</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#contact-section">Liên hệ</a></li>
                  </ul>
             </nav>
             <div class="header-actions plant-theme-actions" id="user-action-area">
-                 <div class="user-dropdown-container">
-                     <button type="button" class="user-dropdown-trigger" aria-label="Tài khoản" aria-haspopup="true" aria-expanded="false">
-                         <i class="fas fa-user header-icon"></i>
-                     </button>
-                     <div class="user-dropdown-menu" style="display: none;">
-                         <ul>
-                             <li><a href="/accounts/login/">Log in</a></li>
-                         </ul>
-                     </div>
-                 </div>
+                <div class="user-dropdown-container">
+                    <button type="button" class="user-dropdown-trigger" aria-label="Tài khoản" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user header-icon"></i>
+                    </button>
+            
+                    <div class="user-dropdown-menu" style="display: none;">
+                        <ul>
+                            <li><a href="/accounts/login/">Log in</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -80,6 +82,11 @@
                     <p style="margin-bottom: 10px;">Giá khởi điểm: <strong id="starting-price" style="color: var(--primary-color);">Đang tải...</strong> VNĐ</p> <p>Thời gian còn lại: <strong id="end-time" style="color: #dc3545;">Đang tải...</strong></p> </div>
 
                 <form id="place-bid-form" style="background-color: var(--white); padding: 20px; border-radius: 0.25rem; box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);">
+                     {% csrf_token %} 
+                        
+                     {# Input ẩn chứa ID item và user #}
+                     <input type="hidden" name="item_id" value="{{ item.pk }}"> 
+                     <input type="hidden" name="user_id" value="{{ request.user.id }}"> 
                      <div class="form-group" style="margin-bottom: 15px;">
                         <label for="bid-amount-input" id="min-bid-label" style="display: block; margin-bottom: 5px; font-weight: 500;">Giá đặt (Tối thiểu: Đang tải... VNĐ):</label>
                         <div class="price-input-wrapper" style="display: flex; align-items: center;">
@@ -87,7 +94,7 @@
                                 type="number"
                                 id="bid-amount-input"
                                 name="bid_amount"
-                                min="0"  step="10000" placeholder="Nhập số tiền"
+                                min="0" placeholder="Nhập số tiền"
                                 required
                                 style="flex-grow: 1; padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 3px 0 0 3px; outline: none; font-family: var(--font-family); font-size: 1em; height: 42px;">
                             <span class="currency-symbol" style="padding: 0 15px; background-color: #e9ecef; border: 1px solid var(--border-color); border-left: none; height: 42px; line-height: 40px; border-radius: 0 3px 3px 0; color: var(--muted-color);">VNĐ</span>
@@ -106,14 +113,24 @@
     </main>
 
     <footer class="site-footer simplified-footer plant-theme-footer" id="contact-section">
-       <div class="container">
-           <div class="footer-content-wrapper" style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 40px; margin-bottom: 50px;">
-                <div class="contact-info" style="flex-basis: 40%; min-width: 280px;"> ... </div>
-                <div class="newsletter-signup" style="flex-basis: 55%; min-width: 280px;"> ... </div>
+        <div class="container">
+            <div class="footer-content-wrapper">
+                <div class="contact-info">
+                    <h5>Kết nối với AuctionHub</h5>
+                    <div class="contact-item"> <i class="fas fa-map-marker-alt contact-icon"></i> <div class="contact-details"> <strong>Địa chỉ:</strong> <span>Trường Đại Học Công Nghệ Thông Tin (UIT), ĐHQG TPHCM</span> </div> </div>
+                    <div class="contact-item"> <i class="fas fa-phone-alt contact-icon"></i> <div class="contact-details"> <strong>Điện thoại:</strong> <a href="tel:0914321432">09.1432.1432</a> </div> </div>
+                    <div class="contact-item"> <i class="fas fa-envelope contact-icon"></i> <div class="contact-details"> <strong>Email:</strong> <a href="mailto:support@auctionhub.com">support@auctionhub.com</a> </div> </div>
+                    <div class="social-icons"> <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a> <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a> <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a> <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a> </div>
+                </div>
+                <div class="newsletter-signup">
+                    <h5>Đăng ký nhận bản tin</h5>
+                    <form class="newsletter-form"> <input type="email" placeholder="Nhập email của bạn" required> <button type="submit">Đăng ký</button> </form>
+                </div>
             </div>
-            <div class="footer-bottom"> <p>&copy; <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p> </div>
-       </div>
+             <div class="footer-bottom"> <p>&copy; <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p> </div>
+        </div>
     </footer>
+
 
     <script src="/static/js/home.js"></script>
     <script src="/static/js/bidding_detail.js"></script>

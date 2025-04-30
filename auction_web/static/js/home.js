@@ -1,32 +1,36 @@
-// auction_web/static/js/home.js (Đã sửa lỗi hiển thị Avatar)
-
-// --- Các hàm phụ trợ ---
-
 /**
- * Định dạng chuỗi giá tiền sang dạng $X,XXX
+ * Định dạng một chuỗi/số thành chuỗi tiền tệ USD.
+ * @param {string|number} priceString - Giá trị cần định dạng.
+ * @returns {string} Chuỗi giá đã định dạng (ví dụ: '$1,234') hoặc chuỗi gốc nếu lỗi.
  */
 function formatPrice(priceString) {
     try {
+        // Chuyển đổi thành chuỗi và loại bỏ dấu phẩy
         const price = parseFloat(String(priceString).replace(/,/g, ''));
+
+        // Kiểm tra nếu không phải là số hợp lệ
         if (isNaN(price)) {
             throw new Error("Invalid number for price");
         }
-        // Định dạng tiền tệ không có phần thập phân
+
+        // Định dạng theo kiểu en-US, không có số thập phân
         return `$${price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+
     } catch (e) {
         console.error("Error formatting price:", priceString, e);
-        return priceString ? `$${priceString}` : '$0'; // Trả về giá trị gốc nếu lỗi
+        // Trả về chuỗi gốc có dấu $ nếu có giá trị, hoặc '$0' nếu không
+        return priceString ? `$${priceString}` : '$0';
     }
 }
 
 /**
- * Thiết lập chức năng đóng/mở cho dropdown người dùng
+ * Thiết lập chức năng đóng/mở cho dropdown người dùng.
  */
 function setupDropdownToggle() {
     const container = document.querySelector('.user-dropdown-container');
     if (!container) {
-        console.warn('User dropdown container not found.');
-        return; 
+        console.warn("User dropdown container not found.");
+        return; // Không tìm thấy container thì thôi
     }
 
     const triggerBtn = container.querySelector('.user-dropdown-trigger');
@@ -37,251 +41,215 @@ function setupDropdownToggle() {
         return;
     }
 
-    // Mở/đóng khi bấm vào nút trigger (avatar hoặc icon)
+    // Bật/tắt dropdown khi nhấn nút trigger
     triggerBtn.addEventListener('click', (event) => {
-        event.stopPropagation(); // Ngăn click lan ra document
+        event.stopPropagation(); // Ngăn sự kiện click lan ra document ngay lập tức
         const isShown = dropdownMenu.classList.toggle('show');
         triggerBtn.setAttribute('aria-expanded', isShown);
     });
 
-    // Đóng dropdown khi bấm ra ngoài khu vực dropdown
+    // Đóng dropdown khi bấm ra ngoài
     document.addEventListener('click', (event) => {
-        // Chỉ đóng nếu menu đang mở VÀ click không nằm trong container
-        if (dropdownMenu.classList.contains('show') && !container.contains(event.target)) {
+        if (!container.contains(event.target) && dropdownMenu.classList.contains('show')) {
             dropdownMenu.classList.remove('show');
             triggerBtn.setAttribute('aria-expanded', 'false');
         }
     });
 
-     // Đóng dropdown khi bấm phím Escape
-     document.addEventListener('keydown', (event) => {
+    // Đóng dropdown khi bấm phím Escape
+    document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && dropdownMenu.classList.contains('show')) {
             dropdownMenu.classList.remove('show');
             triggerBtn.setAttribute('aria-expanded', 'false');
         }
-     });
+    });
 }
 
 
-// --- Chạy code chính sau khi toàn bộ DOM đã tải xong ---
+// --- Chạy code sau khi DOM tải xong ---
 document.addEventListener("DOMContentLoaded", function () {
 
-    // == PHẦN 1: Cập nhật năm Copyright và Thiết lập Dropdown ==
+    // == PHẦN 1: Cập nhật năm và Thiết lập Dropdown ==
     const copyrightYearSpan = document.getElementById('copyright-year');
     if (copyrightYearSpan) {
         copyrightYearSpan.textContent = new Date().getFullYear();
     }
 
-    // Gọi hàm thiết lập chức năng đóng/mở cho dropdown
+    // Gọi hàm thiết lập toggle cho dropdown người dùng
     setupDropdownToggle();
 
 
-    // == PHẦN 2: Tải và hiển thị sản phẩm lên Grid (Giữ nguyên logic của anh) ==
+    // == PHẦN 2: Tải và hiển thị sản phẩm lên Grid ==
     const gridContainer = document.getElementById('item-grid-container');
-    const loadingMessage = document.getElementById('loading-message'); // Giả sử có thẻ p#loading-message
-    const itemsApiUrl = '/api/items/'; // URL API lấy danh sách sản phẩm
+    const itemsApiUrl = '/api/items/'; // URL API để lấy danh sách items
 
-    if (gridContainer) { 
-        // Hiển thị loading ban đầu
-        if (loadingMessage) {
-            gridContainer.innerHTML = ''; // Xóa nội dung cũ
-            loadingMessage.style.display = 'block'; // Hiện loading
-            gridContainer.appendChild(loadingMessage);
-        } else {
-            // Nếu không có sẵn thẻ loading thì tạo tạm
-            gridContainer.innerHTML = '<p id="loading-message" style="text-align: center; width: 100%; padding: 20px;">Đang tải danh sách sản phẩm...</p>';
-        }
+    if (gridContainer) {
+        // Hiển thị thông báo đang tải ban đầu
+        gridContainer.innerHTML = '<p id="loading-message" style="text-align: center; width: 100%; padding: 20px;">Đang tải danh sách sản phẩm...</p>';
+        const loadingMessage = gridContainer.querySelector('#loading-message'); // Lấy lại tham chiếu
 
         fetch(itemsApiUrl)
             .then(response => {
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 return response.json();
             })
             .then(items => {
-                const currentLoadingMsg = gridContainer.querySelector('#loading-message');
-                if (currentLoadingMsg) currentLoadingMsg.remove(); // Xóa loading
-                gridContainer.innerHTML = ''; // Xóa sạch grid trước khi thêm item mới
+                if (loadingMessage) loadingMessage.remove(); // Xóa thông báo đang tải
+                gridContainer.innerHTML = ''; // Xóa nội dung hiện tại của grid
 
                 if (items && Array.isArray(items) && items.length > 0) {
-                    // Logic sort và filter của anh (giữ nguyên)
+                    // Lọc bỏ item không có giá và sắp xếp giảm dần theo giá
                     const sortedItems = items
                         .filter(item => item && typeof item.current_price !== 'undefined')
                         .sort((a, b) => {
                             const priceA = parseFloat(String(a.current_price || 0).replace(/,/g, ''));
                             const priceB = parseFloat(String(b.current_price || 0).replace(/,/g, ''));
+                            // Đảm bảo NaN được xử lý như 0 để không làm hỏng việc sắp xếp
                             return (isNaN(priceB) ? 0 : priceB) - (isNaN(priceA) ? 0 : priceA);
-                          });
+                        });
 
-                    const top9Items = sortedItems.slice(0, 9); // Lấy tối đa 9 item
-                    console.log(`[home.js] Displaying top ${top9Items.length} items in grid.`);
+                    const top9Items = sortedItems.slice(0, 9); // Lấy tối đa 9 item đầu tiên
+                    console.log(`Displaying top ${top9Items.length} items in grid.`);
 
                     if (top9Items.length > 0) {
                         top9Items.forEach(item => {
-                            // Logic tạo card item của anh (giữ nguyên)
                             const linkWrapper = document.createElement('a');
-                            const itemId = item.item_id || item.id || item.pk; // Lấy ID item
-                            if (itemId) linkWrapper.href = `/items/${itemId}/`; // Link đến chi tiết item
+                            const itemId = item.item_id || item.id || item.pk; // Lấy ID ưu tiên item_id, id, rồi pk
+                            if (itemId) {
+                                linkWrapper.href = `/items/${itemId}/`;
+                            } else {
+                                console.warn("Item found without a usable ID:", item);
+                                linkWrapper.href = '#'; // Hoặc không đặt href nếu không có ID
+                            }
                             linkWrapper.classList.add('item-card-link');
 
                             const article = document.createElement('article');
                             article.classList.add('item-card');
-                            
+
                             const img = document.createElement('img');
-                            img.src = item.image_url || '/static/images/placeholder.png'; // Ảnh item hoặc ảnh mặc định
+                            img.src = item.image_url || '/static/images/placeholder.png'; // Ảnh mặc định nếu không có
                             img.alt = item.name || 'Auction Item';
-                            img.loading = 'lazy'; // Tải lười ảnh
+                            img.loading = 'lazy'; // Tải ảnh lười
 
                             const cardContent = document.createElement('div');
                             cardContent.classList.add('card-content');
 
                             const heading = document.createElement('h3');
-                            heading.textContent = item.name || 'N/A'; // Tên item
+                            heading.textContent = item.name || 'N/A'; // Tên mặc định nếu không có
 
                             const pricePara = document.createElement('span');
                             pricePara.classList.add('price');
-                            pricePara.textContent = formatPrice(item.current_price || 0); // Giá item đã format
+                            pricePara.textContent = formatPrice(item.current_price || 0); // Định dạng giá
 
+                            // Gắn các element con vào nhau
                             cardContent.appendChild(heading);
                             cardContent.appendChild(pricePara);
                             article.appendChild(img);
                             article.appendChild(cardContent);
-
                             linkWrapper.appendChild(article);
-                            gridContainer.appendChild(linkWrapper); // Thêm vào grid
+                            gridContainer.appendChild(linkWrapper);
                         });
                     } else {
-                         gridContainer.innerHTML = '<p style="text-align: center; width: 100%; padding: 20px;">Không có sản phẩm nào phù hợp để hiển thị.</p>';
+                        // Trường hợp mảng items có phần tử nhưng sau khi lọc/sort không còn gì phù hợp
+                        gridContainer.innerHTML = '<p style="text-align: center; width: 100%; padding: 20px;">Không có sản phẩm nào phù hợp để hiển thị.</p>';
                     }
                 } else {
+                    // Trường hợp API trả về mảng rỗng hoặc không phải mảng
                     gridContainer.innerHTML = '<p style="text-align: center; width: 100%; padding: 20px;">Hiện chưa có sản phẩm nào được đấu giá.</p>';
                 }
             })
             .catch(error => {
                 console.error('Error fetching or processing items:', error);
-                const currentLoadingMsg = gridContainer.querySelector('#loading-message');
-                if (currentLoadingMsg) currentLoadingMsg.remove();
-                // Hiển thị lỗi thân thiện hơn trên UI
+                if (loadingMessage) loadingMessage.remove();
+                // Hiển thị thông báo lỗi thân thiện hơn trên UI
                 gridContainer.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; padding: 20px; color: red;">Oops! Có lỗi xảy ra khi tải sản phẩm. Vui lòng thử lại sau.</p>`;
             });
     } else {
-         console.warn("Grid container '#item-grid-container' not found. Skipping item loading.");
+        console.warn("Grid container '#item-grid-container' not found. Skipping item loading.");
     }
 
 
-    // == PHẦN 3: Kiếm tra trạng thái đăng nhập và cập nhật Header Dropdown (ĐÃ SỬA LỖI) ==
-    const userActionArea = document.getElementById('user-action-area'); // ID của div chứa dropdown
-    const profileApiUrl = '/api/profile/get_avatar/'; // URL API lấy avatar
+    // == PHẦN 3: Kiểm tra trạng thái đăng nhập và cập nhật Header Dropdown ==
+    const userActionArea = document.getElementById('user-action-area');
+    const profileApiUrl = '/api/profile/get_avatar/'; // URL API lấy avatar/profile
 
-    if (userActionArea) { 
-        const triggerBtn = userActionArea.querySelector('.user-dropdown-trigger'); // Nút bấm mở dropdown (chứa icon hoặc avatar)
-        const dropdownMenuUl = userActionArea.querySelector('.user-dropdown-menu ul'); // Thẻ ul chứa các link trong dropdown
+    if (userActionArea) {
+        const triggerBtn = userActionArea.querySelector('.user-dropdown-trigger');
+        const dropdownMenuUl = userActionArea.querySelector('.user-dropdown-menu ul');
 
-        // Kiểm tra xem có tìm thấy các element cần thiết không
         if (!triggerBtn || !dropdownMenuUl) {
-            console.error("User action area is present, but trigger button (.user-dropdown-trigger) or menu list (ul) is missing.");
-            return; // Bỏ qua nếu HTML không đúng cấu trúc
+            console.error("User action area is present, but trigger or menu UL is missing.");
+            return; // Bỏ qua nếu cấu trúc HTML không đúng
         }
 
-        // Hàm tiện ích: Đặt lại giao diện về trạng thái chưa đăng nhập
+        // Hàm để thiết lập trạng thái mặc định (chưa đăng nhập)
         const setDefaultUserState = () => {
-            console.log("[home.js] Setting default user state (logged out).");
-            const settingsUrl = "#"; // Link tới trang cài đặt (nếu có)
-            const loginUrl = "/login-signup/"; // Link tới trang đăng nhập/đăng ký của anh
-            // Đặt lại nút trigger thành icon người dùng mặc định (ví dụ dùng Font Awesome)
-            triggerBtn.innerHTML = '<i class="fas fa-user header-icon"></i>'; // Đảm bảo class icon này tồn tại và được load
-            // Đặt lại các mục trong menu dropdown
-            dropdownMenuUl.innerHTML = 
-            `<li><a href="${settingsUrl}">Cài đặt</a></li> 
-             <li class="separator"></li> {/* Thẻ li để tạo dòng kẻ nếu muốn */}
-             <li><a href="${loginUrl}">Đăng nhập hoặc Đăng ký</a></li>`;
+            console.log("Setting default user state (not logged in).");
+            const settingsUrl = "#"; // Hoặc URL trang cài đặt chung nếu có
+            const loginUrl = "/accounts/login/"; // ** NHỚ THAY URL ĐÚNG **
+
+            triggerBtn.innerHTML = '<i class="fas fa-user header-icon"></i>'; // Icon người dùng mặc định
+            dropdownMenuUl.innerHTML = `
+                <li><a href="${settingsUrl}">Cài đặt</a></li>
+                <li class="separator"></li>
+                <li><a href="${loginUrl}">Đăng nhập</a></li>
+            `;
         };
 
         console.log('[home.js] Checking login status for header dropdown...');
-
-        // 1. Lấy access token từ localStorage
-        const accessToken = localStorage.getItem('accessToken');
-
-        // 2. Nếu không có token -> Chắc chắn chưa đăng nhập -> Gọi hàm đặt lại trạng thái
-        if (!accessToken) {
-            console.log('[home.js] No access token found in localStorage.');
-            setDefaultUserState(); 
-        } else {
-            // 3. Có token -> Gọi API kiểm tra token và lấy thông tin avatar
-            console.log('[home.js] Access token found. Fetching profile...');
-            fetch(profileApiUrl, { 
-                method: 'GET', 
-                headers: {
-                    // *** GỬI KÈM TOKEN TRONG HEADER AUTHORIZATION ***
-                    'Authorization': `Bearer ${accessToken}`, 
-                    'Accept': 'application/json' // Nên thêm Accept header
-                }
-            })
+        fetch(profileApiUrl, { credentials: 'include' }) // Gửi kèm cookie
             .then(response => {
-                // 4. Xử lý Response từ API
                 if (!response.ok) {
-                    // Nếu Server trả về lỗi (401 Unauthorized - token sai/hết hạn, 403 Forbidden, 500...)
                     if (response.status === 401 || response.status === 403) {
-                        console.warn(`[home.js] Login check: Invalid/Expired Token or no permission (${response.status}). Clearing potentially stale tokens.`);
-                         // Xóa token cũ khỏi localStorage vì nó không hợp lệ nữa
-                         localStorage.removeItem('accessToken');
-                         localStorage.removeItem('refreshToken');
-                         localStorage.removeItem('user');
-                         return null; // Trả về null để bước .then tiếp theo biết là chưa đăng nhập
+                        // 401 (Unauthorized) hoặc 403 (Forbidden) thường có nghĩa là chưa đăng nhập hoặc không có quyền
+                        console.log(`[home.js] Login check: Not logged in or no permission (${response.status}).`);
+                        return null; // Trả về null để xử lý ở .then tiếp theo là chưa đăng nhập
                     } else {
-                        // Lỗi server khác (5xx)
-                        throw new Error(`Server error checking profile: ${response.status} ${response.statusText}`);
+                        // Các lỗi khác từ server
+                        throw new Error(`Server error checking profile: ${response.status}`);
                     }
                 }
-                // Nếu response.ok (status 200) -> Token hợp lệ -> Parse dữ liệu JSON
-                return response.json(); 
+                // Nếu response.ok là true, parse JSON
+                return response.json();
             })
             .then(data => {
-                // 5. Xử lý dữ liệu trả về (hoặc null nếu có lỗi 401/403)
                 console.log('[home.js] Profile data received:', data);
-                if (data) { 
-                    // Có data hợp lệ -> Đã đăng nhập -> Cập nhật giao diện
-                    console.log('[home.js] User confirmed logged in. Updating dropdown UI.');
-                    
-                    const defaultAvatar = '/static/images/default_avatar.jpg'; // Đường dẫn ảnh đại diện mặc định
-                    // Lấy avatarUrl từ data, nếu không có thì dùng ảnh mặc định
-                    const avatarSrc = data.avatarUrl || defaultAvatar; 
-                    
-                    // Cập nhật nút trigger thành ảnh avatar (dùng class CSS sẽ đẹp hơn inline style)
-                    triggerBtn.innerHTML = `<img src="${avatarSrc}" alt="Avatar" class="header-avatar">`; // Thêm class .header-avatar
+                // Kiểm tra xem có dữ liệu hợp lệ không (ví dụ: có profileUrl hoặc avatarUrl)
+                if (data && (data.profileUrl || data.avatarUrl)) {
+                    console.log('[home.js] User logged in. Updating dropdown.');
 
-                    // Cập nhật menu dropdown cho người đã đăng nhập
-                    const settingsUrl = "#"; // Thay bằng URL trang cài đặt
-                    // URL Đăng xuất: Có thể là link trực tiếp của Django hoặc URL gọi API logout
-                    const logoutUrl = "/api/logout/"; // Hoặc ví dụ: /api/auth/logout/
-                    // Thêm link tới trang profile nếu API trả về profileUrl
-                    const profileLink = data.profileUrl ? `<li><a href="${data.profileUrl}">Hồ sơ</a></li>` : '';
+                    // Cập nhật nút trigger với avatar
+                    const defaultAvatar = '/static/images/default_avatar.jpg'; // ** NHỚ THAY PATH ĐÚNG **
+                    const avatarSrc = data.avatarUrl || defaultAvatar; // Ưu tiên avatarUrl, nếu không có dùng ảnh mặc định
+                    // Dùng class CSS thay vì inline style sẽ tốt hơn
+                    triggerBtn.innerHTML = `<img src="${avatarSrc}" alt="Avatar" class="user-avatar-trigger">`; // Ví dụ class 'user-avatar-trigger'
+
+                    // Cập nhật menu dropdown cho người dùng đã đăng nhập
+                    const userProfileUrl = data.profileUrl || '#'; // Link đến trang profile nếu có
+                    const settingsUrl = "#"; // ** NHỚ THAY URL ĐÚNG ** trang cài đặt tài khoản
+                    const logoutUrl = "/accounts/logout/"; // ** NHỚ THAY URL ĐÚNG **
 
                     dropdownMenuUl.innerHTML = `
-                        ${profileLink}
+                        <li><a href="${userProfileUrl}">Trang cá nhân</a></li>
                         <li><a href="${settingsUrl}">Cài đặt</a></li>
                         <li class="separator"></li>
-                        <li><a href="${logoutUrl}">Đăng xuất</a></li> 
+                        <li><a href="${logoutUrl}">Đăng xuất</a></li>
                     `;
-                } else { 
-                    // Data là null (do lỗi 401/403 ở bước trước) -> Chưa đăng nhập
-                    console.log('[home.js] User considered not logged in (null data). Setting default state.');
-                    setDefaultUserState(); // Đặt lại trạng thái mặc định
+                } else {
+                    // Không có dữ liệu hợp lệ hoặc API trả về null/undefined -> Chưa đăng nhập
+                    console.log('[home.js] User not logged in or data invalid. Setting default state.');
+                    setDefaultUserState();
                 }
             })
             .catch(error => {
-                // Xử lý lỗi mạng (fetch không thành công) hoặc lỗi khi parse JSON
-                console.error('[home.js] Error in fetch chain while checking login status:', error);
-                 // Gặp lỗi cũng nên xóa token cũ và coi như chưa đăng nhập
-                 localStorage.removeItem('accessToken');
-                 localStorage.removeItem('refreshToken');
-                 localStorage.removeItem('user');
-                 setDefaultUserState(); // Đặt lại trạng thái mặc định
+                console.error('[home.js] Error checking login status or updating dropdown:', error);
+                // Gặp lỗi mạng hoặc lỗi server không xử lý được -> Đặt về trạng thái chưa đăng nhập cho an toàn
+                setDefaultUserState();
             });
-        } // Kết thúc else (có accessToken)
-
     } else {
-        // Không tìm thấy khu vực user action trên trang này
-        console.warn("User action area '#user-action-area' not found. Skipping login status check.");
+        console.warn("User action area '#user-action-area' not found. Skipping login check.");
     }
 
 }); // Kết thúc DOMContentLoaded
