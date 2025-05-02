@@ -1,94 +1,189 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Trang Đấu Giá Hiện Đại</title>
-    
-    <link rel="stylesheet" href="static/css/home.css">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
 
-</head>
-<body>
+    <link rel="stylesheet" href="static/css/home.css" />
 
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
+  </head>
+  <body>
     <header class="site-header plant-theme-header">
-        <div class="container">
-            <div class="logo">Auction<span class="logo-alt">Hub</span></div>
-            <nav class="main-nav plant-theme-nav">
-                <ul>
-                    <li><a href="#" class="active">Trang chủ</a></li>
-                    <li><a href="#">Sản phẩm</a></li>
-                    <li><a href="#">Về chúng tôi</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#contact-section">Liên hệ</a></li>
-                 </ul>
-            </nav>
-            <div class="header-actions plant-theme-actions" id="user-action-area">
-                <div class="user-dropdown-container">
-                    <button type="button" class="user-dropdown-trigger" aria-label="Tài khoản" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user header-icon"></i>
-                    </button>
-            
-                    <div class="user-dropdown-menu" style="display: none;">
-                        <ul>
-                            <li><a href="/accounts/login/">Log in</a></li>
-                        </ul>
-                    </div>
-                </div>
+      <div class="container">
+        <div class="logo">Auction<span class="logo-alt">Hub</span></div>
+        <nav class="main-nav plant-theme-nav">
+          <ul>
+            <li><a href="#" class="active">Trang chủ</a></li>
+            <li><a href="#">Sản phẩm</a></li>
+            <li><a href="#">Về chúng tôi</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#contact-section">Liên hệ</a></li>
+          </ul>
+        </nav>
+        <div class="header-actions plant-theme-actions" id="user-action-area">
+          <button
+            type="button"
+            id="search-button"
+            class="search-trigger"
+            aria-label="Tìm kiếm"
+          >
+            <i class="fas fa-search header-icon"></i>
+          </button>
+          <div class="user-dropdown-container">
+            <button
+              type="button"
+              class="user-dropdown-trigger"
+              aria-label="Tài khoản"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i class="fas fa-user header-icon"></i>
+            </button>
+
+            <div class="user-dropdown-menu" style="display: none">
+              <ul>
+                <li><a href="/accounts/login/">Log in</a></li>
+              </ul>
             </div>
+          </div>
         </div>
+      </div>
     </header>
 
     <section class="hero-section plant-theme-hero">
-        <div class="container hero-container">
-            <div class="hero-text-content">
-                <h1>Khám Phá Phiên<br><span class="highlight">Đấu Giá</span> Độc Quyền</h1>
-                <p>Tìm kiếm những món đồ độc đáo từ khắp nơi trên thế giới với mức giá tốt nhất.</p>
-                <a href="#listings-section" class="btn btn-primary btn-lg hero-btn">Khám Phá Ngay</a> 
-            </div>
-            <div class="hero-image-content">
-                <img src="static/images/logo.png" alt="Hình ảnh trang trí">
-            </div>
+      <div class="container hero-container">
+        <div class="hero-text-content">
+          <h1>
+            Khám Phá Phiên<br /><span class="highlight">Đấu Giá</span> Độc Quyền
+          </h1>
+          <p>
+            Tìm kiếm những món đồ độc đáo từ khắp nơi trên thế giới với mức giá
+            tốt nhất.
+          </p>
+          <a href="#listings-section" class="btn btn-primary btn-lg hero-btn"
+            >Khám Phá Ngay</a
+          >
         </div>
+        <div class="hero-image-content">
+          <img src="static/images/logo.png" alt="Hình ảnh trang trí" />
+        </div>
+      </div>
     </section>
 
     <main class="site-main container">
-        <section class="listings" id="listings-section">
-            <div class="section-title-wrapper">
-                <h2>Phiên Đấu Giá Nổi Bật</h2>
-            </div>
-            
-            <div id="item-grid-container">
-                <p id="loading-message" style="text-align: center; width: 100%; padding: 20px;">Đang tải danh sách sản phẩm...</p>
-            </div>
-
-        </section>
-    </main>
-    
-    <footer class="site-footer simplified-footer plant-theme-footer" id="contact-section">
-        <div class="container">
-            <div class="footer-content-wrapper">
-                <div class="contact-info">
-                    <h5>Kết nối với AuctionHub</h5>
-                    <div class="contact-item"> <i class="fas fa-map-marker-alt contact-icon"></i> <div class="contact-details"> <strong>Địa chỉ:</strong> <span>Trường Đại Học Công Nghệ Thông Tin (UIT), ĐHQG TPHCM</span> </div> </div>
-                    <div class="contact-item"> <i class="fas fa-phone-alt contact-icon"></i> <div class="contact-details"> <strong>Điện thoại:</strong> <a href="tel:0914321432">09.1432.1432</a> </div> </div>
-                    <div class="contact-item"> <i class="fas fa-envelope contact-icon"></i> <div class="contact-details"> <strong>Email:</strong> <a href="mailto:support@auctionhub.com">support@auctionhub.com</a> </div> </div>
-                    <div class="social-icons"> <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a> <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a> <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a> <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a> </div>
-                </div>
-                <div class="newsletter-signup">
-                    <h5>Đăng ký nhận bản tin</h5>
-                    <form class="newsletter-form"> <input type="email" placeholder="Nhập email của bạn" required> <button type="submit">Đăng ký</button> </form>
-                </div>
-            </div>
-             <div class="footer-bottom"> <p>&copy; <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p> </div>
+      <section class="listings" id="listings-section">
+        <div class="section-title-wrapper">
+          <h2>Phiên Đấu Giá Nổi Bật</h2>
         </div>
+
+        <div id="item-grid-container">
+          <p
+            id="loading-message"
+            style="text-align: center; width: 100%; padding: 20px"
+          >
+            Đang tải danh sách sản phẩm...
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer
+      class="site-footer simplified-footer plant-theme-footer"
+      id="contact-section"
+    >
+      <div class="container">
+        <div class="footer-content-wrapper">
+          <div class="contact-info">
+            <h5>Kết nối với AuctionHub</h5>
+            <div class="contact-item">
+              <i class="fas fa-map-marker-alt contact-icon"></i>
+              <div class="contact-details">
+                <strong>Địa chỉ:</strong>
+                <span
+                  >Trường Đại Học Công Nghệ Thông Tin (UIT), ĐHQG TPHCM</span
+                >
+              </div>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-phone-alt contact-icon"></i>
+              <div class="contact-details">
+                <strong>Điện thoại:</strong>
+                <a href="tel:0914321432">09.1432.1432</a>
+              </div>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-envelope contact-icon"></i>
+              <div class="contact-details">
+                <strong>Email:</strong>
+                <a href="mailto:support@auctionhub.com"
+                  >support@auctionhub.com</a
+                >
+              </div>
+            </div>
+            <div class="social-icons">
+              <a href="#" aria-label="Facebook"
+                ><i class="fab fa-facebook-f"></i
+              ></a>
+              <a href="#" aria-label="Instagram"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a href="#" aria-label="Twitter"
+                ><i class="fab fa-twitter"></i
+              ></a>
+              <a href="#" aria-label="LinkedIn"
+                ><i class="fab fa-linkedin-in"></i
+              ></a>
+            </div>
+          </div>
+          <div class="newsletter-signup">
+            <h5>Đăng ký nhận bản tin</h5>
+            <form class="newsletter-form">
+              <input type="email" placeholder="Nhập email của bạn" required />
+              <button type="submit">Đăng ký</button>
+            </form>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>
+            &copy; <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi
+            quyền.
+          </p>
+        </div>
+      </div>
     </footer>
 
+    <div class="search-modal-simple" id="searchModalSimple">
+      <div class="modal-content-simple">
+        <button class="close-button-simple" id="closeModalSimple">×</button>
+        <h3>Tìm kiếm Sản phẩm</h3>
+        <form id="searchFormSimple" class="search-form-simple">
+          <input
+            type="text"
+            id="searchInputSimple"
+            placeholder="Nhập tên, mô tả..."
+            required
+          />
+          <button type="submit">Tìm</button>
+        </form>
+      </div>
+    </div>
     <script src="static/js/home.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  </body>
 </html>
