@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}AuctionHub{% endblock title %}</title>
+
+    <!-- Common CSS -->
+    <link rel="stylesheet" href="{% static 'css/auth_form.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <!-- Page-specific CSS -->
+    {% block extra_css %}{% endblock extra_css %}
+</head>
+<body>
+    <header class="site-header plant-theme-header">
+        <div class="container">
+            <div class="logo"><a href="{% url 'home-template' %}">Auction<span class="logo-alt">Hub</span></a></div>
+            <nav class="main-nav plant-theme-nav">
+                <ul>
+                    <li><a href="{% url 'home-template' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Trang chủ</a></li>
+                    <li><a href="{% url 'home-template' %}" class="{% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">Sản phẩm</a></li>
+                    <li><a href="{% url 'home-template' %}" class="{% if request.resolver_match.url_name == 'about_us' %}active{% endif %}">Về chúng tôi</a></li>
+                    <li><a href="{% url 'home-template' %}" class="{% if request.resolver_match.url_name == 'blog' %}active{% endif %}">Blog</a></li>
+                    <li><a href="#contact-section">Liên hệ</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions plant-theme-actions" id="user-action-area">
+                <button type="button" class="search-trigger" aria-label="Tìm kiếm">
+                    <i class="fas fa-search header-icon"></i>
+                </button>
+                <div class="user-dropdown-container">
+                    <button type="button" class="user-dropdown-trigger" aria-label="Tài khoản" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user header-icon"></i>
+                    </button>
+                    <div class="user-dropdown-menu" style="display: none;">
+                        <ul>
+                            {% if user.is_authenticated %}
+                                <li><a href="{% url 'profile' %}">Tài khoản của tôi</a></li>
+                                <li><a href="{% url 'account_logout' %}">Đăng xuất</a></li>
+                            {% else %}
+                                <li><a href="{% url 'account_login' %}">Đăng nhập</a></li>
+                                <li><a href="{% url 'account_signup' %}">Đăng ký</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    {% block content %}
+    <!-- Page-specific content will be inserted here -->
+    {% endblock content %}
+
+    <footer class="site-footer simplified-footer plant-theme-footer" id="contact-section">
+        <div class="container">
+            <div class="footer-content-wrapper">
+                <div class="contact-info">
+                    <h5>Kết nối với AuctionHub</h5>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt contact-icon"></i>
+                        <div class="contact-details">
+                            <strong>Địa chỉ:</strong>
+                            <span>Trường Đại Học Công Nghệ Thông Tin (UIT), ĐHQG TPHCM</span>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone-alt contact-icon"></i>
+                        <div class="contact-details">
+                            <strong>Điện thoại:</strong>
+                            <a href="tel:0914321432">09.1432.1432</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope contact-icon"></i>
+                        <div class="contact-details">
+                            <strong>Email:</strong>
+                            <a href="mailto:support@auctionhub.com">support@auctionhub.com</a>
+                        </div>
+                    </div>
+                    <div class="social-icons">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="newsletter-signup">
+                    <h5>Đăng ký nhận bản tin</h5>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Nhập email của bạn" required />
+                        <button type="submit">Đăng ký</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Common JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="{% static 'js/base_script.js' %}"></script>
+
+    <!-- Page-specific JS -->
+    {% block extra_js %}{% endblock extra_js %}
+
+    <script>
+        // Basic dropdown toggle for user menu
+        const userDropdownTrigger = document.querySelector('.user-dropdown-trigger');
+        const userDropdownMenu = document.querySelector('.user-dropdown-menu');
+        if (userDropdownTrigger && userDropdownMenu) {
+            userDropdownTrigger.addEventListener('click', function() {
+                const isExpanded = this.getAttribute('aria-expanded') === 'true' || false;
+                this.setAttribute('aria-expanded', !isExpanded);
+                userDropdownMenu.style.display = isExpanded ? 'none' : 'block';
+            });
+            document.addEventListener('click', function(event) {
+                if (userDropdownMenu && userDropdownTrigger && !userDropdownTrigger.contains(event.target) && !userDropdownMenu.contains(event.target)) {
+                    userDropdownMenu.style.display = 'none';
+                    userDropdownTrigger.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+        // Update copyright year
+        document.getElementById('copyright-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
