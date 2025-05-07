@@ -1,0 +1,119 @@
+{# === File: templates/account/login.html (Standalone Version) === #}
+{# IMPORTANT: This version DOES NOT extend any base template. #}
+{# You must manually include ALL necessary CSS and JS. #}
+
+{% load static i18n allauth account %} {# Vẫn cần load tag để dùng bên dưới #}
+
+<!DOCTYPE html>
+<html lang="vi"> {# Hoặc lang="en" tùy ngôn ngữ chính của trang #}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Sign In" %}</title>
+
+    {# === Tự link CSS === #}
+    <link rel="stylesheet" href="{% static 'css/login-signup.css' %}">
+    {# <<< Nếu có file CSS chung khác cho toàn trang web, anh phải tự link ở đây >>> #}
+    {# Ví dụ: <link rel="stylesheet" href="{% static 'css/base.css' %}"> #}
+
+    {# <<< Các thẻ meta, link hoặc script khác trong head nếu cần >>> #}
+
+</head>
+<body>
+
+    {# === Wrapper Div để chứa và căn giữa nội dung === #}
+    <div class="login-wrapper">
+
+        {% element h1 %}
+            {% trans "Sign In" %}
+        {% endelement %}
+
+        {% if not SOCIALACCOUNT_ONLY %}
+            {% setvar link %}<a href="{{ signup_url }}">{% endsetvar %}
+            {% setvar end_link %}</a>{% endsetvar %}
+            {% element p %}
+                {% blocktranslate %}If you have not created an account yet, then please {{ link }}sign up{{ end_link }} first.{% endblocktranslate %}
+            {% endelement %}
+
+            {% url 'account_login' as login_url %}
+            {% element form form=form method="post" action=login_url tags="entrance,login" %}
+                {% slot body %}
+                    {% csrf_token %}
+
+                    {# === Hiển thị từng trường form thủ công để dễ style === #}
+                    {% for field in form %}
+                        <div class="form-group mb-3"> {# Bọc mỗi trường #}
+                             {% if field.name == 'remember' %}
+                                {# Checkbox "Remember Me" #}
+                                <div class="form-check">
+                                     {{ field }} {# Render checkbox input #}
+                                     <label class="form-check-label" for="{{ field.id_for_label }}">
+                                         {{ field.label }}
+                                     </label>
+                                </div>
+                             {% else %}
+                                {# Các trường khác (login, password) #}
+                                {# Placeholder nên được thêm trong forms.py #}
+                                {# Ví dụ: self.fields['login'].widget.attrs.update({'placeholder': _('Email or Username')}) #}
+                                {{ field }} {# Render input #}
+                             {% endif %}
+
+                             {% if field.errors %}
+                                <div class="invalid-feedback d-block"> {# Hiện lỗi nếu có #}
+                                    {{ field.errors|striptags }}
+                                </div>
+                             {% endif %}
+                        </div>
+                    {% endfor %}
+
+                     {# Link Forgot password #}
+                    <div class="text-end mb-3" style="text-align: right; font-size: 0.9em;">
+                         <a href="{% url 'account_reset_password' %}" class="forgot-password-link">{% trans "Forgot your password?" %}</a>
+                    </div>
+                    {# === Kết thúc hiển thị form thủ công === #}
+
+                    {{ redirect_field }}
+                {% endslot %}
+                {% slot actions %}
+                    {% element button type="submit" tags="prominent,login" %}
+                        {% trans "Sign In" %}
+                    {% endelement %}
+                {% endslot %}
+            {% endelement %}
+        {% endif %}
+
+        {% if LOGIN_BY_CODE_ENABLED or PASSKEY_LOGIN_ENABLED %}
+            {% element hr %}
+            {% endelement %}
+            {% element button_group vertical=True %}
+                {% if PASSKEY_LOGIN_ENABLED %}
+                    {% element button type="submit" form="mfa_login" id="passkey_login" tags="prominent,login,outline,primary" %}
+                        {% trans "Sign in with a passkey" %}
+                    {% endelement %}
+                {% endif %}
+                {% if LOGIN_BY_CODE_ENABLED %}
+                    {% element button href=request_login_code_url tags="prominent,login,outline,primary" %}
+                        {% trans "Send me a sign-in code" %}
+                    {% endelement %}
+                {% endif %}
+            {% endelement %}
+        {% endif %}
+
+        {% if SOCIALACCOUNT_ENABLED %}
+            {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+        {% endif %}
+
+    </div> {# === End of login-wrapper Div === #}
+
+
+    {# === Tự thêm các file JavaScript cần thiết vào cuối body === #}
+    {# <<< Nếu có file JS chung cho toàn trang web, anh phải tự thêm ở đây >>> #}
+    {# Ví dụ: <script src="{% static 'js/base.js' %}"></script> #}
+
+    {# Script cho Passkey login (nếu bật) - Vẫn cần include nếu dùng tính năng này #}
+    {% if PASSKEY_LOGIN_ENABLED %}
+        {% include "mfa/webauthn/snippets/login_script.html" with button_id="passkey_login" %}
+    {% endif %}
+
+</body>
+</html>
