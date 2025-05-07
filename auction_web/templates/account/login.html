@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load account %}
+{% load socialaccount %}
+{% load static %}
+
+{% block title %}{% trans "Sign In" %} - AuctionHub{% endblock title %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+<div class="modern-auth-wrapper">
+    <div class="modern-auth-container">
+        <div class="modern-auth-header">
+            <a href="{% url 'home-template' %}" class="auth-logo-link">
+               <span class="logo">Auction<span class="logo-alt">Hub</span></span>
+            </a>
+            <h2>{% trans "Welcome Back!" %}</h2>
+            <p>{% trans "Sign in to continue to AuctionHub." %}</p>
+        </div>
+
+        {% if form.non_field_errors %}
+            <div class="auth-alert auth-alert-danger">
+                {% for error in form.non_field_errors %}
+                    {{ error }}{% if not forloop.last %}<br>{% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form class="modern-auth-form login" method="POST" action="{% url 'account_login' %}">
+            {% csrf_token %}
+
+            <div class="form-field-group">
+                <label for="{{ form.login.id_for_label }}">{% trans "Email or Username" %}</label>
+                {{ form.login }}
+                {% if form.login.errors %}
+                    <div class="field-error-message">
+                        {% for error in form.login.errors %}
+                            {{ error }}{% if not forloop.last %}<br>{% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-field-group">
+                <label for="{{ form.password.id_for_label }}">{% trans "Password" %}</label>
+                {{ form.password }}
+                 {% if form.password.errors %}
+                    <div class="field-error-message">
+                        {% for error in form.password.errors %}
+                            {{ error }}{% if not forloop.last %}<br>{% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+
+            <div class="form-options">
+                {% if form.remember %}
+                <div class="form-check-custom">
+                    {{ form.remember }}
+                    <label for="{{ form.remember.id_for_label }}">
+                        {% trans "Remember Me" %}
+                    </label>
+                </div>
+                {% endif %}
+                <a class="forgot-password-link" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+            </div>
+            
+            <button class="btn-auth-submit" type="submit">{% trans "Sign In" %}</button>
+        </form>
+
+        {% get_providers as socialaccount_providers %}
+        {% if socialaccount_providers %}
+        <div class="social-login-section">
+            <div class="divider-with-text">
+                <span>{% trans "Or sign in with" %}</span>
+            </div>
+            <div class="social-login-buttons">
+                {% for provider in socialaccount_providers %}
+                <a href="{% provider_login_url provider.id process="login" %}" class="social-btn social-btn-{{ provider.id }}">
+                    <i class="fab fa-{{ provider.id }}"></i> {{ provider.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="auth-footer-link">
+            <p>Don't have an account? <a href="{% url 'account_signup' %}">Create one now</a></p>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.querySelector('form.login');
+    if (loginForm) {
+        const inputs = loginForm.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
+        inputs.forEach(function(input) {
+            input.classList.add('form-input-modern');
+            if (input.id === 'id_login') {
+                 input.placeholder = "{% trans 'Enter your email or username' %}";
+            } else if (input.id === 'id_password') {
+                input.placeholder = "{% trans 'Enter your password' %}";
+            }
+        });
+
+        const rememberCheckbox = loginForm.querySelector('#id_remember');
+        if (rememberCheckbox) {
+            rememberCheckbox.classList.add('form-check-input-modern');
+        }
+    }
+});
+</script>
+{% endblock extra_js %}
