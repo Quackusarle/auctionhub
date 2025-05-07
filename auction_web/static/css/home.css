@@ -318,4 +318,86 @@ a.item-card-link:focus-visible {
      border-radius: 1rem; /* Hợp với bo tròn của thẻ */
 }
 
+.search-modal-simple {
+    display: none; /* Ẩn ban đầu */
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Nền mờ */
+    z-index: 1000;
+    /* Dùng flex để căn giữa nội dung modal */
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content-simple {
+    background-color: white;
+    padding: 30px;
+    border-radius: 5px;
+    min-width: 300px;
+    max-width: 90%; /* Giới hạn chiều rộng trên màn hình nhỏ */
+    position: relative; /* Để định vị nút đóng */
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Thêm bóng đổ nhẹ */
+  }
+  
+  .close-button-simple {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px; /* To hơn chút */
+    font-weight: bold;
+    color: #aaa; /* Màu xám nhạt */
+    cursor: pointer;
+    border: none;
+    background: none;
+    line-height: 1; /* Căn chỉnh dấu X */
+    padding: 5px; /* Tăng vùng click */
+  }
+  
+  .close-button-simple:hover {
+    color: #333; /* Đậm hơn khi hover */
+  }
+  
+  .search-form-simple {
+      margin-top: 15px; /* Khoảng cách với tiêu đề */
+      display: flex; /* Để input và button nằm ngang */
+      gap: 5px; /* Khoảng cách giữa input và button */
+  }
+  
+  .search-form-simple input[type="text"] {
+    flex-grow: 1; /* Cho input chiếm phần lớn không gian */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-sizing: border-box;
+    font-size: 1rem;
+  }
+  
+  .search-form-simple button[type="submit"] {
+    padding: 10px 15px;
+    background-color: #4CAF50; /* Màu xanh lá theme */
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 1rem;
+    flex-shrink: 0; /* Ngăn button bị co lại */
+  }
+  
+  .modal-content-simple h3 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: #333;
+      font-weight: 600; /* Đậm hơn chút */
+  }
+  
+  /* Class để hiện modal - Sẽ được thêm/xóa bằng JS */
+  body.modal-visible .search-modal-simple {
+    display: flex; /* Hiện modal */
+  }
+  
+
 /* --- KẾT THÚC CSS --- */
