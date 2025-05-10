@@ -18,9 +18,9 @@ from django.contrib import admin
 from django.urls import path, include
 from django.http import HttpResponse
 from . import views
-from apps.items.views import item_detail_view  # Import item_detail_view from apps.items.views
+from apps.items.views import item_detail_view
+from apps.items.views import item_search_view
 from apps.bidding.views import bidding_detail_view 
-from .views import register_view
 
 
 urlpatterns = [
@@ -35,5 +35,6 @@ urlpatterns = [
     path('items/<int:pk>/', item_detail_view, name='item-detail-template'),  # New route for item detail page
     path('items/<int:pk>/bidding/', bidding_detail_view, name='bidding-detail-page'),
     path('login-signup/', views.register_view, name='login-signup'),  # New route for login/signup page
+    path('search/', item_search_view, name='search_results'),  # New route for search results page
 ]
 

@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from .models import Item
 from .serializers import ItemSerializer
 from rest_framework import permissions
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 
 class ItemList(APIView):
     permission_classes = [permissions.AllowAny]
@@ -64,3 +65,45 @@ def item_detail_view(request, pk):
     else:
         discount = 0
     return render(request, 'items/item_detail.html', {'item': item, 'discount': discount})
+
+
+class ItemSearchAPI(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        query_text = request.query_params.get('q', '').strip()
+        results = Item.objects.none()
+        
+        VIETNAMESE_FTS_CONFIG = 'public.vietnamese_fts' # Hoặc tên config của bạn
+
+        if query_text:
+            # 1. Định nghĩa SearchVector (giống như trước)
+            search_vector_expression = ( # Đổi tên biến để tránh nhầm lẫn với trường annotate
+                SearchVector('name', weight='A', config=VIETNAMESE_FTS_CONFIG) +
+                SearchVector('description', weight='B', config=VIETNAMESE_FTS_CONFIG)
+            )
+
+            # 2. Tạo SearchQuery (giống như trước)
+            search_query_object = SearchQuery(query_text, search_type='websearch', config=VIETNAMESE_FTS_CONFIG) # Đổi tên biến
+
+            # 3. Thực hiện tìm kiếm, annotate, filter và order
+            results = (
+                Item.objects.annotate(
+                    # Annotate cả search_vector và rank
+                    search=search_vector_expression, # Tạo trường 'search' chứa tsvector
+                    rank=SearchRank(search_vector_expression, search_query_object) # Dùng lại search_vector_expression
+                )
+                # Filter trên trường 'search' đã được annotate
+                .filter(search=search_query_object, rank__gte=0.01) 
+                .order_by('-rank')
+            )
+            
+        serializer = ItemSerializer(results, many=True, context={'request': request})
+        return Response(serializer.data)
+    
+def item_search_view(request):
+    query_text = request.GET.get('q', '').strip()
+    context = {
+        'query_from_url': query_text,
+    }
+    return render(request, 'items/search_results.html', context)

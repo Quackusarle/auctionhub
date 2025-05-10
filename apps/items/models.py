@@ -6,12 +6,12 @@ from django.conf import settings
 # Create your models here.
 class Item(models.Model):
     item_id = models.AutoField(primary_key=True)
-    seller_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    seller = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    image_url = models.CharField(max_length=255, blank=True, null=True)
-    starting_price = models.DecimalField(max_digits=10, decimal_places=2)
-    current_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    image_url = models.ImageField(max_length=255, blank=True, null=True)
+    starting_price = models.DecimalField(max_digits=15, decimal_places=0)
+    current_price = models.DecimalField(max_digits=15, decimal_places=0, default=0)
     end_time = models.DateTimeField()
     status = models.CharField(
         max_length=10,
