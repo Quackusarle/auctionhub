@@ -6,8 +6,8 @@
     <title>{% block title %}AuctionHub{% endblock title %}</title>
 
     <!-- Common CSS -->
-    <link rel="stylesheet" href="{% static 'css/auth_form.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/auth_form.css' %}" /> <!-- Giữ lại nếu bạn dùng cho trang auth -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" /> <!-- File CSS chính cho base -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
@@ -21,25 +21,27 @@
             <div class="logo"><a href="{% url 'home-template' %}">Auction<span class="logo-alt">Hub</span></a></div>
             <nav class="main-nav plant-theme-nav">
                 <ul>
-                    <li><a href="{% url 'home-template' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Trang chủ</a></li>
-                    <li><a href="{% url 'home-template' %}" class="{% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">Sản phẩm</a></li>
-                    <li><a href="{% url 'home-template' %}" class="{% if request.resolver_match.url_name == 'about_us' %}active{% endif %}">Về chúng tôi</a></li>
-                    <li><a href="{% url 'home-template' %}" class="{% if request.resolver_match.url_name == 'blog' %}active{% endif %}">Blog</a></li>
+                    <li><a href="{% url 'home-template' %}" class="{% if request.resolver_match.url_name == 'home-template' %}active{% endif %}">Trang chủ</a></li> {# Sửa điều kiện active #}
+                    <li><a href="#" class="{% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">Sản phẩm</a></li> {# Thêm URL name nếu có #}
+                    <li><a href="#" class="{% if request.resolver_match.url_name == 'about_us' %}active{% endif %}">Về chúng tôi</a></li> {# Thêm URL name nếu có #}
+                    <li><a href="#" class="{% if request.resolver_match.url_name == 'blog' %}active{% endif %}">Blog</a></li> {# Thêm URL name nếu có #}
                     <li><a href="#contact-section">Liên hệ</a></li>
                 </ul>
             </nav>
             <div class="header-actions plant-theme-actions" id="user-action-area">
-                <button type="button" class="search-trigger" aria-label="Tìm kiếm">
-                    <i class="fas fa-search header-icon"></i>
+                <!-- Nút Search -->
+                <button type="button" class="header-icon" id="search-modal-trigger" aria-label="Tìm kiếm"> {# Đổi class trigger cũ thành header-icon và thêm id #}
+                    <i class="fas fa-search"></i> {# Bỏ class header-icon ở đây nếu đã có ở button cha #}
                 </button>
+                <!-- User Dropdown -->
                 <div class="user-dropdown-container">
-                    <button type="button" class="user-dropdown-trigger" aria-label="Tài khoản" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user header-icon"></i>
+                    <button type="button" class="user-dropdown-trigger header-icon" aria-label="Tài khoản" aria-haspopup="true" aria-expanded="false"> {# Thêm class header-icon #}
+                        <i class="fas fa-user"></i> {# Bỏ class header-icon ở đây #}
                     </button>
                     <div class="user-dropdown-menu" style="display: none;">
                         <ul>
                             {% if user.is_authenticated %}
-                                <li><a href="{% url 'profile' %}">Tài khoản của tôi</a></li>
+                                <li><a href="{% url 'profile' %}">Tài khoản của tôi</a></li> {# Đảm bảo URL 'profile' tồn tại #}
                                 <li><a href="{% url 'account_logout' %}">Đăng xuất</a></li>
                             {% else %}
                                 <li><a href="{% url 'account_login' %}">Đăng nhập</a></li>
@@ -57,6 +59,7 @@
     {% endblock content %}
 
     <footer class="site-footer simplified-footer plant-theme-footer" id="contact-section">
+        <!-- Nội dung footer giữ nguyên -->
         <div class="container">
             <div class="footer-content-wrapper">
                 <div class="contact-info">
@@ -103,32 +106,111 @@
         </div>
     </footer>
 
+    <!-- === HTML cho Search Modal (Thêm vào đây) === -->
+    <div class="search-modal-simple" id="search-modal-container" role="dialog" aria-modal="true" aria-labelledby="search-modal-title" style="display: none;">
+        <div class="modal-content-simple">
+            <button type="button" class="close-button-simple" id="search-modal-close" aria-label="Đóng">×</button>
+            <h3 id="search-modal-title">Tìm kiếm sản phẩm</h3>
+            <form class="search-form-simple" action="{% url 'search_results' %}" method="GET"> {# Thay 'search_results' bằng URL xử lý của bạn #}
+                <input type="text" name="q" placeholder="Nhập từ khóa..." aria-label="Từ khóa tìm kiếm" required>
+                <button type="submit">Tìm</button>
+            </form>
+        </div>
+    </div>
+    <!-- === Kết thúc HTML cho Search Modal === -->
+
     <!-- Common JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="{% static 'js/base_script.js' %}"></script>
+    <script src="{% static 'js/base_script.js' %}"></script> <!-- Script chung của bạn -->
 
     <!-- Page-specific JS -->
     {% block extra_js %}{% endblock extra_js %}
 
+    <!-- Script cho Dropdown, Modal và Copyright Year -->
     <script>
-        // Basic dropdown toggle for user menu
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- User Dropdown ---
         const userDropdownTrigger = document.querySelector('.user-dropdown-trigger');
-        const userDropdownMenu = document.querySelector('.user-dropdown-menu');
+        const userDropdownMenu = userDropdownTrigger ? userDropdownTrigger.nextElementSibling : null; // Lấy menu ngay sau trigger
+
         if (userDropdownTrigger && userDropdownMenu) {
-            userDropdownTrigger.addEventListener('click', function() {
+            userDropdownTrigger.addEventListener('click', function(event) {
+                event.stopPropagation(); // Ngăn sự kiện click nổi bọt lên document
                 const isExpanded = this.getAttribute('aria-expanded') === 'true' || false;
                 this.setAttribute('aria-expanded', !isExpanded);
                 userDropdownMenu.style.display = isExpanded ? 'none' : 'block';
             });
+
+            // Đóng dropdown khi click bên ngoài
             document.addEventListener('click', function(event) {
-                if (userDropdownMenu && userDropdownTrigger && !userDropdownTrigger.contains(event.target) && !userDropdownMenu.contains(event.target)) {
-                    userDropdownMenu.style.display = 'none';
-                    userDropdownTrigger.setAttribute('aria-expanded', 'false');
+                if (userDropdownMenu && userDropdownTrigger && 
+                    userDropdownMenu.style.display === 'block' && 
+                    !userDropdownTrigger.contains(event.target) && 
+                    !userDropdownMenu.contains(event.target)) {
+                        userDropdownMenu.style.display = 'none';
+                        userDropdownTrigger.setAttribute('aria-expanded', 'false');
                 }
             });
         }
-        // Update copyright year
-        document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+        // --- Search Modal ---
+        const searchModalTrigger = document.getElementById('search-modal-trigger');
+        const searchModalContainer = document.getElementById('search-modal-container');
+        const searchModalCloseButton = document.getElementById('search-modal-close');
+        const searchInputInModal = searchModalContainer ? searchModalContainer.querySelector('input[name="q"]') : null;
+
+        function openSearchModal() {
+            if (searchModalContainer) {
+                searchModalContainer.style.display = 'flex';
+                document.body.classList.add('modal-open');
+                if (searchInputInModal) {
+                    searchInputInModal.focus();
+                }
+                document.addEventListener('keydown', handleEscKeySearchModal);
+            }
+        }
+
+        function closeSearchModal() {
+            if (searchModalContainer) {
+                searchModalContainer.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                document.removeEventListener('keydown', handleEscKeySearchModal);
+            }
+        }
+
+        function handleEscKeySearchModal(event) {
+            if (event.key === 'Escape') {
+                closeSearchModal();
+            }
+        }
+
+        if (searchModalTrigger) {
+            searchModalTrigger.addEventListener('click', function(event) {
+                event.preventDefault(); // Quan trọng nếu nút search là thẻ <a>
+                openSearchModal();
+            });
+        }
+
+        if (searchModalCloseButton) {
+            searchModalCloseButton.addEventListener('click', function() {
+                closeSearchModal();
+            });
+        }
+
+        if (searchModalContainer) {
+            searchModalContainer.addEventListener('click', function (event) {
+                if (event.target === searchModalContainer) { // Chỉ đóng khi click vào nền mờ
+                    closeSearchModal();
+                }
+            });
+        }
+        
+        // --- Copyright Year ---
+        const copyrightYearEl = document.getElementById('copyright-year');
+        if (copyrightYearEl) {
+            copyrightYearEl.textContent = new Date().getFullYear();
+        }
+    });
     </script>
 </body>
 </html>

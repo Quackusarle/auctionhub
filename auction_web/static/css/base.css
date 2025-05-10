@@ -1,7 +1,9 @@
+/* static/css/base.css */
+
 /* Reset CSS cơ bản & Thiết lập biến Theme Sáng - Green */
 :root {
     --primary-color: #198754;
-    --secondary-color: #ffffff;
+    --secondary-color: #ffffff; /* Có vẻ biến này không hợp lý lắm, thường secondary là một màu khác */
     --text-color: #212529;
     --heading-color: #212529;
     --accent-color: #157347;
@@ -10,8 +12,10 @@
     --bg-color: #f8f9fa;
     --muted-color: #6c757d;
     --dark-green-footer-bg: #157347;
-    --active-card-bg: #146c43; /* Màu nền khi hover thẻ sản phẩm - có thể giữ lại hoặc chuyển nếu chỉ dùng ở 1 chỗ */
+    --active-card-bg: #146c43;
     --font-family: 'Montserrat', sans-serif;
+    /* Thêm biến RGB cho box-shadow nếu dùng var() trong rgba() */
+    --primary-color-rgb: 25, 135, 84;
 }
 
 * {
@@ -30,7 +34,7 @@ body {
     background-color: var(--bg-color);
     line-height: 1.6;
     font-size: 16px;
-    overflow-x: hidden; /* Ngăn cuộn ngang */
+    overflow-x: hidden;
 }
 
 .container {
@@ -40,24 +44,21 @@ body {
 }
 
 /* --- Header --- */
-.site-header { /* Sử dụng class chung hơn, bỏ .plant-theme-header ở đây nếu nó là mặc định */
+.site-header {
     background-color: var(--bg-color);
     padding: 20px 0;
     position: sticky;
     top: 0;
     z-index: 1000;
-    /* border-bottom: 1px solid var(--border-color); /* Cân nhắc thêm border nhẹ nếu bỏ after */
-    /* box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Cân nhắc thêm shadow nhẹ nếu bỏ after */
 }
 
-/* Đường kẻ mảnh dưới header - Có thể giữ lại hoặc thay bằng border/shadow cho .site-header */
 .site-header::after {
     content: "";
     display: block;
     width: 100%;
     height: 2px;
-    background-color: #ccc; /* Hoặc var(--border-color) */
-    margin-top: 20px; /* Điều chỉnh nếu padding của header thay đổi */
+    background-color: #ccc;
+    margin-top: 20px;
 }
 
 .site-header .container {
@@ -66,17 +67,24 @@ body {
     align-items: center;
 }
 
+/* Logo Styles (Đã gộp và chọn phiên bản tốt hơn) */
 .logo {
     font-size: 1.6em;
     font-weight: 700;
-    color: var(--heading-color);
-    text-decoration: none; /* Thêm để đảm bảo link logo không bị gạch chân */
 }
-
+.logo a,
+.logo a:link,
+.logo a:visited,
+.logo a:hover,
+.logo a:active {
+    color: var(--heading-color);
+    text-decoration: none;
+}
 .logo-alt {
     color: var(--primary-color);
     font-weight: 700;
 }
+
 
 .main-nav ul {
     list-style: none;
@@ -94,7 +102,7 @@ body {
 }
 
 .main-nav ul li a:hover,
-.main-nav ul li a.active { /* Class .active sẽ được Django thêm vào */
+.main-nav ul li a.active {
     color: var(--primary-color);
 }
 
@@ -104,76 +112,41 @@ body {
     gap: 20px;
 }
 
-.header-icon { /* Dùng chung cho search, user icon */
+.header-icon {
     color: var(--text-color);
-    font-size: 1.3em; /* Có thể điều chỉnh cho từng icon cụ thể nếu cần */
+    font-size: 1.3em;
     text-decoration: none;
     transition: color 0.3s ease;
-    background: none; /* Cho các icon dạng button */
-    border: none;     /* Cho các icon dạng button */
-    padding: 0;       /* Cho các icon dạng button */
-    cursor: pointer;  /* Cho các icon dạng button */
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
 }
-
 .header-icon:hover {
     color: var(--primary-color);
 }
 
-
-.logo {
-    font-size: 1.6em; /* Kích thước và độ đậm của chữ "AuctionHub" nói chung */
-    font-weight: 700;
-}
-
-/* Quan trọng: Style cho thẻ <a> bên trong .logo để reset màu và gạch chân */
-.logo a,
-.logo a:link,
-.logo a:visited,
-.logo a:hover,
-.logo a:active {
-    color: var(--heading-color); /* Đặt màu chữ "Auction" thành màu đen hoặc màu tiêu đề */
-    text-decoration: none;      /* Bỏ gạch chân */
-}
-
-.logo-alt {
-    color: var(--primary-color); /* Màu xanh cho chữ "Hub" */
-    font-weight: 700; /* Đảm bảo chữ "Hub" cũng đậm nếu muốn */
-}
-
-/* --- CSS cho User Dropdown Menu --- */
+/* --- User Dropdown Menu --- */
 .user-dropdown-container {
     position: relative;
     display: inline-block;
 }
-
-.user-dropdown-trigger {
-    background: none;
-    border: none;
-    padding: 0;
-    margin: 0;
-    cursor: pointer;
+.user-dropdown-trigger { /* Class này đã bao gồm .header-icon từ HTML */
+    /* background, border, padding, margin, cursor đã được .header-icon xử lý */
     display: inline-flex;
     align-items: center;
     vertical-align: middle;
 }
+/* .user-dropdown-trigger .header-icon (bên trong <i>) không cần thiết nếu button đã có class .header-icon */
 
-/* Style cho icon mặc định bên trong nút trigger */
-.user-dropdown-trigger .header-icon {
-    font-size: 1.3em; /* Điều chỉnh lại cho đồng bộ với .header-icon chung */
-    /* color, transition đã kế thừa từ .header-icon */
-}
-/* :hover đã kế thừa từ .header-icon */
-
-/* Style cho avatar bên trong nút trigger (khi đăng nhập) */
-.user-dropdown-trigger img.user-avatar { /* Thêm class user-avatar để rõ ràng hơn */
-    width: 36px;  /* Kích thước avatar */
+.user-dropdown-trigger img.user-avatar {
+    width: 36px;
     height: 36px;
     border-radius: 50%;
     display: block;
     object-fit: cover;
     border: 1px solid var(--border-color);
 }
-
 .user-dropdown-menu {
     display: none;
     position: absolute;
@@ -188,19 +161,15 @@ body {
     z-index: 1001;
     overflow: hidden;
 }
-
-/* Class để hiện menu bằng JS (hoặc aria-expanded) */
-.user-dropdown-menu.show,
-.user-dropdown-trigger[aria-expanded="true"] + .user-dropdown-menu {
-    display: block !important;
+.user-dropdown-menu.show, /* Dùng cho JS nếu muốn thêm class 'show' */
+.user-dropdown-trigger[aria-expanded="true"] + .user-dropdown-menu { /* Hoặc dùng aria-expanded */
+    display: block !important; /* !important có thể cần nếu có xung đột */
 }
-
 .user-dropdown-menu ul {
     list-style: none;
     padding: 8px 0;
     margin: 0;
 }
-
 .user-dropdown-menu li a {
     display: block;
     padding: 10px 20px;
@@ -210,12 +179,10 @@ body {
     white-space: nowrap;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
-
 .user-dropdown-menu li a:hover {
-    background-color: #f4f5f6; /* Hoặc một var(--light-bg-hover) */
-    color: var(--primary-color); /* Hoặc var(--heading-color) */
+    background-color: #f4f5f6;
+    color: var(--primary-color);
 }
-
 .user-dropdown-menu li.separator {
     height: 1px;
     background-color: var(--border-color);
@@ -223,19 +190,15 @@ body {
     padding: 0;
 }
 
-/* --- Hết CSS cho User Dropdown Menu --- */
-
-
-/* --- FOOTER --- */
+/* --- Footer --- */
 .site-footer {
     background-color: var(--dark-green-footer-bg);
     color: var(--white);
-    padding: 50px 0 0 0; /* Padding-bottom sẽ do .footer-bottom xử lý */
-    margin-top: 60px; /* Khoảng cách với nội dung chính */
-    font-family: var(--font-family); /* Đảm bảo font đồng nhất */
-    border-top: none; /* Bỏ border top nếu có từ style khác */
+    padding: 50px 0 0 0;
+    margin-top: 60px;
+    font-family: var(--font-family);
+    border-top: none;
 }
-
 .footer-content-wrapper {
     display: flex;
     flex-wrap: wrap;
@@ -243,17 +206,14 @@ body {
     gap: 40px;
     margin-bottom: 50px;
 }
-
-.contact-info, .newsletter-signup { /* Class chung cho các cột footer */
-    flex-basis: 40%; /* Điều chỉnh nếu cần layout khác */
-    min-width: 280px; /* Đảm bảo không quá hẹp trên mobile */
+.contact-info, .newsletter-signup {
+    flex-basis: 40%;
+    min-width: 280px;
 }
 .newsletter-signup {
     flex-basis: 55%;
 }
-
-
-.contact-info h5, .newsletter-signup h5 { /* Tiêu đề cột footer */
+.contact-info h5, .newsletter-signup h5 {
     color: var(--white);
     font-size: 0.9em;
     font-weight: 700;
@@ -261,195 +221,149 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
-
 .contact-item {
     display: flex;
     align-items: flex-start;
     margin-bottom: 15px;
     font-size: 0.9em;
-    color: var(--white); /* Đã có ở .site-footer, nhưng để đây cho rõ */
+    color: var(--white);
 }
-
 .contact-icon {
-    font-size: 1em; /* Kích thước icon so với text */
-    color: rgba(255, 255, 255, 0.7); /* Icon hơi mờ hơn text */
+    font-size: 1em;
+    color: rgba(255, 255, 255, 0.7);
     margin-right: 10px;
-    width: 1.2em; /* Dành không gian cho icon */
+    width: 1.2em;
     text-align: center;
-    margin-top: 0.15em; /* Căn chỉnh dọc với text */
+    margin-top: 0.15em;
 }
-
 .contact-details {
     flex: 1;
     line-height: 1.7;
 }
-
 .contact-details strong {
     color: var(--white);
     font-weight: 700;
     margin-right: 5px;
 }
-
 .contact-details a {
     color: var(--white);
     text-decoration: underline;
     transition: opacity 0.3s ease;
 }
-.contact-details a:hover {
-    opacity: 0.8;
-}
-
-.social-icons {
-    margin-top: 20px;
-}
-
+.contact-details a:hover { opacity: 0.8; }
+.social-icons { margin-top: 20px; }
 .social-icons a {
     color: var(--white);
     font-size: 1.2em;
     margin-right: 18px;
     transition: opacity 0.3s ease;
 }
-.social-icons a:hover {
-    opacity: 0.8;
-}
-
+.social-icons a:hover { opacity: 0.8; }
 .newsletter-form {
     display: flex;
     margin-top: 10px;
-    height: 42px; /* Chiều cao cố định cho form */
+    height: 42px;
 }
-
 .newsletter-form input[type="email"] {
-    flex-grow: 1;
-    padding: 10px 15px;
-    border: none;
-    background-color: var(--white);
-    color: var(--text-color);
-    border-radius: 3px 0 0 3px;
-    outline: none;
-    font-family: var(--font-family);
-    font-size: 0.9em;
-    height: 100%;
+    flex-grow: 1; padding: 10px 15px; border: none;
+    background-color: var(--white); color: var(--text-color);
+    border-radius: 3px 0 0 3px; outline: none;
+    font-family: var(--font-family); font-size: 0.9em; height: 100%;
 }
-
-.newsletter-form input[type="email"]::placeholder {
-    color: #999;
-    font-style: italic;
-}
-
+.newsletter-form input[type="email"]::placeholder { color: #999; font-style: italic; }
 .newsletter-form button {
-    padding: 10px 25px;
-    background-color: #444; /* Màu nút đăng ký bản tin */
-    color: var(--white);
-    border: none;
-    cursor: pointer;
-    border-radius: 0 3px 3px 0;
-    font-family: var(--font-family);
-    font-size: 0.9em;
-    font-weight: 500;
-    text-transform: none;
-    white-space: nowrap;
-    transition: background-color 0.3s ease;
-    height: 100%;
-    line-height: normal; /* Reset line-height */
+    padding: 10px 25px; background-color: #444; color: var(--white);
+    border: none; cursor: pointer; border-radius: 0 3px 3px 0;
+    font-family: var(--font-family); font-size: 0.9em; font-weight: 500;
+    text-transform: none; white-space: nowrap; transition: background-color 0.3s ease;
+    height: 100%; line-height: normal;
 }
-.newsletter-form button:hover {
-    background-color: #555;
-}
-
+.newsletter-form button:hover { background-color: #555; }
 .footer-bottom {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 15px 0;
-    text-align: center;
-    font-size: 0.85em;
-    color: rgba(255, 255, 255, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.1); padding: 15px 0;
+    text-align: center; font-size: 0.85em; color: rgba(255, 255, 255, 0.7);
 }
-
-.footer-bottom p {
-    margin: 0;
-}
-/* --- Hết Footer --- */
+.footer-bottom p { margin: 0; }
 
 
-/* --- Search Modal (Simple Version - Base Styles) --- */
-/* Các style này là cơ bản, có thể cần tùy chỉnh thêm nếu modal phức tạp hơn */
+/* --- Search Modal --- (Đã thống nhất và giữ lại một khối) */
 .search-modal-simple {
-    display: none; /* Ẩn ban đầu */
+    display: none;
     position: fixed;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.65); /* Nền mờ đậm hơn chút */
-    z-index: 1050; /* Cao hơn header, dropdown */
+    background-color: rgba(0, 0, 0, 0.65);
+    z-index: 1050;
     justify-content: center;
-    align-items: center;
-    opacity: 0; /* Thêm opacity để làm hiệu ứng fade */
-    visibility: hidden; /* Thêm visibility để làm hiệu ứng fade */
-    transition: opacity 0.3s ease, visibility 0s linear 0.3s; /* Hiệu ứng fade out */
+    align-items: flex-start; /* Để modal dịch lên trên một chút */
+    padding-top: 10vh;      /* Khoảng cách từ đỉnh màn hình */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s; /* Fade out */
 }
 
-body.modal-visible .search-modal-simple {
-    display: flex; /* Hiện modal */
+body.modal-open .search-modal-simple { /* Sử dụng modal-open */
+    display: flex;
     opacity: 1;
     visibility: visible;
-    transition: opacity 0.3s ease, visibility 0s linear 0s; /* Hiệu ứng fade in */
+    transition: opacity 0.3s ease, visibility 0s linear 0s; /* Fade in */
 }
 
 .modal-content-simple {
     background-color: var(--white);
-    padding: 30px 35px; /* Tăng padding ngang */
-    border-radius: 8px; /* Bo tròn nhiều hơn */
-    min-width: 320px; /* Tăng min-width */
-    max-width: 500px; /* Giới hạn chiều rộng tối đa */
-    width: 90%; /* Chiều rộng trên màn hình nhỏ */
+    padding: 30px 35px;
+    border-radius: 8px;
+    min-width: 320px;
+    max-width: 550px;
+    width: 90%;
     position: relative;
-    text-align: center; /* Nội dung modal căn giữa */
+    text-align: center;
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    transform: scale(0.95); /* Hiệu ứng scale khi hiện */
-    transition: transform 0.3s ease;
+    transform: translateY(-20px) scale(0.95); /* Hiệu ứng ban đầu */
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease; /* Thêm cubic-bezier cho mượt */
+    opacity: 0;
 }
 
-body.modal-visible .modal-content-simple {
-    transform: scale(1);
+body.modal-open .modal-content-simple { /* Sử dụng modal-open */
+    transform: translateY(0) scale(1);
+    opacity: 1;
 }
 
 .close-button-simple {
     position: absolute;
-    top: 12px; /* Điều chỉnh vị trí */
+    top: 12px;
     right: 12px;
-    font-size: 1.8em; /* Kích thước icon đóng */
-    font-weight: normal; /* Font weight bình thường */
+    font-size: 1.8em;
+    font-weight: normal;
     color: var(--muted-color);
     cursor: pointer;
     border: none;
     background: none;
     line-height: 1;
-    padding: 8px; /* Vùng click lớn hơn */
+    padding: 8px;
     transition: color 0.2s ease;
 }
-
 .close-button-simple:hover {
     color: var(--text-color);
 }
 
 .modal-content-simple h3 {
     margin-top: 0;
-    margin-bottom: 25px; /* Khoảng cách lớn hơn */
+    margin-bottom: 25px;
     color: var(--heading-color);
     font-weight: 600;
     font-size: 1.4em;
 }
 
 .search-form-simple {
-    margin-top: 0; /* Bỏ margin-top nếu đã có từ h3 */
     display: flex;
-    gap: 10px; /* Khoảng cách lớn hơn */
+    gap: 10px;
 }
-
 .search-form-simple input[type="text"] {
     flex-grow: 1;
-    padding: 12px 15px; /* Padding lớn hơn */
+    padding: 12px 15px;
     border: 1px solid var(--border-color);
     border-radius: 5px;
     box-sizing: border-box;
@@ -459,27 +373,29 @@ body.modal-visible .modal-content-simple {
 .search-form-simple input[type="text"]:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(var(--primary-color-rgb, 25, 135, 84), 0.25);
-    /* Tạo --primary-color-rgb: 25, 135, 84; trong :root nếu dùng var() */
+    box-shadow: 0 0 0 0.2rem rgba(var(--primary-color-rgb), 0.25); /* Dùng biến RGB */
 }
-
-
 .search-form-simple button[type="submit"] {
-    padding: 12px 20px; /* Padding lớn hơn */
+    padding: 12px 20px;
     background-color: var(--primary-color);
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 1rem;
-    font-weight: 500; /* Font weight cho nút */
+    font-weight: 500;
     flex-shrink: 0;
     transition: background-color 0.2s ease;
 }
 .search-form-simple button[type="submit"]:hover {
-    background-color: var(--accent-color); /* Màu hover đậm hơn */
+    background-color: var(--accent-color);
 }
-/* --- Hết Search Modal --- */
+
+/* --- Để khóa cuộn trang nền --- */
+body.modal-open {
+    overflow: hidden;
+}
+
 
 /* --- Các lớp tiện ích chung (Utility Classes) --- */
 .text-center { text-align: center; }
@@ -488,4 +404,3 @@ body.modal-visible .modal-content-simple {
 .mb-3 { margin-bottom: 1rem !important; }
 .mb-4 { margin-bottom: 1.5rem !important; }
 .mb-5 { margin-bottom: 3rem !important; }
-/* Thêm các utility class khác nếu bạn thường xuyên sử dụng */
