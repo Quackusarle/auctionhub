@@ -1,119 +1,123 @@
-{# === File: templates/account/login.html (Standalone Version) === #}
-{# IMPORTANT: This version DOES NOT extend any base template. #}
-{# You must manually include ALL necessary CSS and JS. #}
+{% extends "base.html" %}
+{% load i18n %}
+{% load account %}
+{% load socialaccount %}
+{% load static %}
 
-{% load static i18n allauth account %} {# Vẫn cần load tag để dùng bên dưới #}
+{% block title %}{% trans "Sign In" %} - AuctionHub{% endblock title %}
 
-<!DOCTYPE html>
-<html lang="vi"> {# Hoặc lang="en" tùy ngôn ngữ chính của trang #}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% trans "Sign In" %}</title>
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock extra_css %}
 
-    {# === Tự link CSS === #}
-    <link rel="stylesheet" href="{% static 'css/login-signup.css' %}">
-    {# <<< Nếu có file CSS chung khác cho toàn trang web, anh phải tự link ở đây >>> #}
-    {# Ví dụ: <link rel="stylesheet" href="{% static 'css/base.css' %}"> #}
+{% block content %}
+<div class="modern-auth-wrapper">
+    <div class="modern-auth-container">
+        <div class="modern-auth-header">
+            <a href="{% url 'home-template' %}" class="auth-logo-link">
+               <span class="logo">Auction<span class="logo-alt">Hub</span></span>
+            </a>
+            <h2>{% trans "Welcome Back!" %}</h2>
+            <p>{% trans "Sign in to continue to AuctionHub." %}</p>
+        </div>
 
-    {# <<< Các thẻ meta, link hoặc script khác trong head nếu cần >>> #}
+        {% if form.non_field_errors %}
+            <div class="auth-alert auth-alert-danger">
+                {% for error in form.non_field_errors %}
+                    {{ error }}{% if not forloop.last %}<br>{% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
 
-</head>
-<body>
+        <form class="modern-auth-form login" method="POST" action="{% url 'account_login' %}">
+            {% csrf_token %}
 
-    {# === Wrapper Div để chứa và căn giữa nội dung === #}
-    <div class="login-wrapper">
-
-        {% element h1 %}
-            {% trans "Sign In" %}
-        {% endelement %}
-
-        {% if not SOCIALACCOUNT_ONLY %}
-            {% setvar link %}<a href="{{ signup_url }}">{% endsetvar %}
-            {% setvar end_link %}</a>{% endsetvar %}
-            {% element p %}
-                {% blocktranslate %}If you have not created an account yet, then please {{ link }}sign up{{ end_link }} first.{% endblocktranslate %}
-            {% endelement %}
-
-            {% url 'account_login' as login_url %}
-            {% element form form=form method="post" action=login_url tags="entrance,login" %}
-                {% slot body %}
-                    {% csrf_token %}
-
-                    {# === Hiển thị từng trường form thủ công để dễ style === #}
-                    {% for field in form %}
-                        <div class="form-group mb-3"> {# Bọc mỗi trường #}
-                             {% if field.name == 'remember' %}
-                                {# Checkbox "Remember Me" #}
-                                <div class="form-check">
-                                     {{ field }} {# Render checkbox input #}
-                                     <label class="form-check-label" for="{{ field.id_for_label }}">
-                                         {{ field.label }}
-                                     </label>
-                                </div>
-                             {% else %}
-                                {# Các trường khác (login, password) #}
-                                {# Placeholder nên được thêm trong forms.py #}
-                                {# Ví dụ: self.fields['login'].widget.attrs.update({'placeholder': _('Email or Username')}) #}
-                                {{ field }} {# Render input #}
-                             {% endif %}
-
-                             {% if field.errors %}
-                                <div class="invalid-feedback d-block"> {# Hiện lỗi nếu có #}
-                                    {{ field.errors|striptags }}
-                                </div>
-                             {% endif %}
-                        </div>
-                    {% endfor %}
-
-                     {# Link Forgot password #}
-                    <div class="text-end mb-3" style="text-align: right; font-size: 0.9em;">
-                         <a href="{% url 'account_reset_password' %}" class="forgot-password-link">{% trans "Forgot your password?" %}</a>
+            <div class="form-field-group">
+                <label for="{{ form.login.id_for_label }}">{% trans "Email or Username" %}</label>
+                {{ form.login }}
+                {% if form.login.errors %}
+                    <div class="field-error-message">
+                        {% for error in form.login.errors %}
+                            {{ error }}{% if not forloop.last %}<br>{% endif %}
+                        {% endfor %}
                     </div>
-                    {# === Kết thúc hiển thị form thủ công === #}
-
-                    {{ redirect_field }}
-                {% endslot %}
-                {% slot actions %}
-                    {% element button type="submit" tags="prominent,login" %}
-                        {% trans "Sign In" %}
-                    {% endelement %}
-                {% endslot %}
-            {% endelement %}
-        {% endif %}
-
-        {% if LOGIN_BY_CODE_ENABLED or PASSKEY_LOGIN_ENABLED %}
-            {% element hr %}
-            {% endelement %}
-            {% element button_group vertical=True %}
-                {% if PASSKEY_LOGIN_ENABLED %}
-                    {% element button type="submit" form="mfa_login" id="passkey_login" tags="prominent,login,outline,primary" %}
-                        {% trans "Sign in with a passkey" %}
-                    {% endelement %}
                 {% endif %}
-                {% if LOGIN_BY_CODE_ENABLED %}
-                    {% element button href=request_login_code_url tags="prominent,login,outline,primary" %}
-                        {% trans "Send me a sign-in code" %}
-                    {% endelement %}
+            </div>
+
+            <div class="form-field-group">
+                <label for="{{ form.password.id_for_label }}">{% trans "Password" %}</label>
+                {{ form.password }}
+                 {% if form.password.errors %}
+                    <div class="field-error-message">
+                        {% for error in form.password.errors %}
+                            {{ error }}{% if not forloop.last %}<br>{% endif %}
+                        {% endfor %}
+                    </div>
                 {% endif %}
-            {% endelement %}
+            </div>
+            
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+
+            <div class="form-options">
+                {% if form.remember %}
+                <div class="form-check-custom">
+                    {{ form.remember }}
+                    <label for="{{ form.remember.id_for_label }}">
+                        {% trans "Remember Me" %}
+                    </label>
+                </div>
+                {% endif %}
+                <a class="forgot-password-link" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+            </div>
+            
+            <button class="btn-auth-submit" type="submit">{% trans "Sign In" %}</button>
+        </form>
+
+        {% get_providers as socialaccount_providers %}
+        {% if socialaccount_providers %}
+        <div class="social-login-section">
+            <div class="divider-with-text">
+                <span>{% trans "Or sign in with" %}</span>
+            </div>
+            <div class="social-login-buttons">
+                {% for provider in socialaccount_providers %}
+                <a href="{% provider_login_url provider.id process="login" %}" class="social-btn social-btn-{{ provider.id }}">
+                    <i class="fab fa-{{ provider.id }}"></i> {{ provider.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
         {% endif %}
 
-        {% if SOCIALACCOUNT_ENABLED %}
-            {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
-        {% endif %}
+        <div class="auth-footer-link">
+            <p>Don't have an account? <a href="{% url 'account_signup' %}">Create one now</a></p>
+        </div>
+    </div>
+</div>
+{% endblock content %}
 
-    </div> {# === End of login-wrapper Div === #}
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.querySelector('form.login');
+    if (loginForm) {
+        const inputs = loginForm.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
+        inputs.forEach(function(input) {
+            input.classList.add('form-input-modern');
+            if (input.id === 'id_login') {
+                 input.placeholder = "{% trans 'Enter your email or username' %}";
+            } else if (input.id === 'id_password') {
+                input.placeholder = "{% trans 'Enter your password' %}";
+            }
+        });
 
-
-    {# === Tự thêm các file JavaScript cần thiết vào cuối body === #}
-    {# <<< Nếu có file JS chung cho toàn trang web, anh phải tự thêm ở đây >>> #}
-    {# Ví dụ: <script src="{% static 'js/base.js' %}"></script> #}
-
-    {# Script cho Passkey login (nếu bật) - Vẫn cần include nếu dùng tính năng này #}
-    {% if PASSKEY_LOGIN_ENABLED %}
-        {% include "mfa/webauthn/snippets/login_script.html" with button_id="passkey_login" %}
-    {% endif %}
-
-</body>
-</html>
+        const rememberCheckbox = loginForm.querySelector('#id_remember');
+        if (rememberCheckbox) {
+            rememberCheckbox.classList.add('form-check-input-modern');
+        }
+    }
+});
+</script>
+{% endblock extra_js %}

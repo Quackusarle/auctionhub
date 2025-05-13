@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}
+    {% if query_from_url %}
+        Kết quả tìm kiếm cho "{{ query_from_url }}"
+    {% else %}
+        Tìm kiếm sản phẩm
+    {% endif %}
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="search-page-header mb-4">
+        {% if query_from_url %}
+            <h1>Kết quả tìm kiếm cho: <span class="text-primary">"{{ query_from_url|escape }}"</span></h1>
+        {% else %}
+            <h1>Tìm kiếm sản phẩm</h1>
+            <p class="text-muted">Vui lòng sử dụng ô tìm kiếm ở đầu trang.</p>
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <div id="search-page-loading" style="display: none; margin-top: 20px; text-align:center;">
+        <p class="text-muted">Đang tải kết quả...</p>
+        <!-- Bạn có thể thêm spinner ở đây -->
+    </div>
+
+    <div id="search-page-results" class="row">
+        <!-- Kết quả tìm kiếm từ API sẽ được JavaScript chèn vào đây -->
+    </div>
+    <div id="search-page-no-results" class="text-center" style="display:none; margin-top:20px;">
+        <p>Không tìm thấy sản phẩm nào phù hợp.</p>
+    </div>
+     <div id="search-page-error" class="text-center text-danger" style="display:none; margin-top:20px;">
+        <p>Có lỗi xảy ra khi tìm kiếm. Vui lòng thử lại.</p>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const queryFromUrl = "{{ query_from_url|escapejs }}"; // Lấy query từ context Django
+    const resultsContainer = document.getElementById('search-page-results');
+    const loadingIndicator = document.getElementById('search-page-loading');
+    const noResultsMessage = document.getElementById('search-page-no-results');
+    const errorMessage = document.getElementById('search-page-error');
+
+    function displayResults(data) {
+        resultsContainer.innerHTML = ''; // Xóa kết quả cũ
+        noResultsMessage.style.display = 'none';
+        errorMessage.style.display = 'none';
+
+        if (data && data.length > 0) {
+            data.forEach(item => {
+                const placeholderImg = "{% static 'images/placeholder.png' %}";
+                const imageUrl = item.image_url || placeholderImg;
+                const detailUrl = item.detail_page_url || '#'; // detail_page_url từ ItemSerializer
+
+                // Tạo HTML cho mỗi item (ví dụ dùng card của Bootstrap)
+                const itemHtml = `
+                    <div class="col-md-4 col-sm-6 mb-4">
+                        <div class="card h-100 item-card-result">
+                            <a href="${detailUrl}" class="item-card-link">
+                                <img src="${imageUrl}" class="card-img-top" alt="${item.name || 'Sản phẩm'}">
+                                <div class="card-body">
+                                    <h5 class="card-title">${item.name || 'Không có tên'}</h5>
+                                    ${item.current_price ? `<p class="card-text text-success font-weight-bold">${parseFloat(item.current_price).toLocaleString('vi-VN')} VNĐ</p>` : ''}
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                `;
+                resultsContainer.innerHTML += itemHtml;
+            });
+        } else {
+            noResultsMessage.style.display = 'block';
+        }
+    }
+
+    if (queryFromUrl && resultsContainer && loadingIndicator && noResultsMessage && errorMessage) {
+        loadingIndicator.style.display = 'block';
+        noResultsMessage.style.display = 'none';
+        errorMessage.style.display = 'none';
+        resultsContainer.innerHTML = '';
+
+        const searchApiUrl = `/api/items/search/?q=${encodeURIComponent(queryFromUrl)}`;
+
+
+        fetch(searchApiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                loadingIndicator.style.display = 'none';
+                displayResults(data);
+            })
+            .catch(error => {
+                loadingIndicator.style.display = 'none';
+                errorMessage.style.display = 'block';
+                console.error('Error fetching search results:', error);
+            });
+    } else if (!queryFromUrl && !loadingIndicator.style.display !== 'none') { // Nếu không có query, ẩn loading
+        loadingIndicator.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}
+
+{% block extra_css %}
+    {{ block.super }}
+    <style>
+        /* CSS cho thẻ sản phẩm kết quả (tương tự như trước) */
+        .item-card-result {
+            border: 1px solid var(--border-color, #dee2e6);
+            border-radius: 0.5rem;
+            transition: box-shadow 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        .item-card-result:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
+        }
+        .item-card-result .card-img-top {
+            width: 100%;
+            height: 200px; /* Hoặc tỷ lệ khung hình mong muốn */
+            object-fit: cover;
+            border-top-left-radius: calc(0.5rem - 1px);
+            border-top-right-radius: calc(0.5rem - 1px);
+            background-color: #f8f9fa; /* Màu nền cho ảnh */
+        }
+        .item-card-result .card-body { padding: 1rem; }
+        .item-card-result .card-title {
+            font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--heading-color);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;
+        }
+        a.item-card-link:hover h5.card-title { color: var(--primary-color); }
+        .mt-4 { margin-top: 1.5rem !important; }
+        .mb-4 { margin-bottom: 1.5rem !important; }
+        .mb-5 { margin-bottom: 3rem !important; }
+        .text-primary { color: var(--primary-color) !important; }
+        .text-danger { color: var(--error-color) !important; }
+        .text-muted { color: var(--muted-color) !important; }
+        .text-success { color: var(--primary-color) !important; }
+        .font-weight-bold { font-weight: 700 !important; }
+        #search-page-loading p, #search-page-no-results p, #search-page-error p {
+            font-size: 1.1rem;
+        }
+    </style>
+{% endblock %}

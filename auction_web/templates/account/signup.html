@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load account %}
+{% load socialaccount %}
+{% load static %}
+
+{% block title %}{% trans "Create Account" %} - AuctionHub{% endblock title %}
+
+{% block extra_css %}
+    <!-- Sử dụng file CSS tương tự hoặc một file riêng cho signup nếu cần tùy chỉnh nhiều -->
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+<div class="auth-page-wrapper signup-page-wrapper">
+    <div class="auth-form-container signup-form-container">
+        <div class="auth-header">
+            <a href="{% url 'home-template' %}" class="auth-logo-link">
+               <span class="logo">Auction<span class="logo-alt">Hub</span></span>
+            </a>
+            <h2>{% trans "Create Your Account" %}</h2>
+        </div>
+
+        {% if form.non_field_errors %}
+            <div class="form-alert form-alert-danger">
+                {% for error in form.non_field_errors %}
+                    {{ error }}{% if not forloop.last %}<br>{% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form class="auth-form signup-form" id="signup_form" method="post" action="{% url 'account_signup' %}">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-group-auth">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }} {# JS sẽ thêm class 'form-input-custom' #}
+                    {% if field.help_text %}
+                        <small class="form-help-text">{{ field.help_text|safe }}</small>
+                    {% endif %}
+                    {% if field.errors %}
+                        <div class="form-field-error">
+                            {% for error in field.errors %}
+                                {{ error }}{% if not forloop.last %}<br>{% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+            
+            <button class="btn btn-submit-auth" type="submit">{% trans "Create Account" %}</button>
+        </form>
+
+        {% get_providers as socialaccount_providers %}
+        {% if socialaccount_providers %}
+        <div class="social-auth-section">
+            <div class="divider-auth">
+                <span>{% trans "Or sign up with" %}</span>
+            </div>
+            <div class="social-buttons-auth">
+                {% for provider in socialaccount_providers %}
+                    {% if provider.id == 'google' %}
+                    <a href="{% provider_login_url provider.id process="login" %}" class="btn-social btn-social-{{ provider.id }}">
+                        <i class="fab fa-{{ provider.id }}"></i> {{ provider.name }}
+                    </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="auth-footer-nav">
+            <p>{% trans "Already have an account?" %} <a href="{% url 'account_login' %}">{% trans "Sign In" %}</a></p>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const signupForm = document.getElementById('signup_form');
+    if (signupForm) {
+        const inputs = signupForm.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], select');
+        inputs.forEach(function(input) {
+            input.classList.add('form-input-custom');
+            // Thêm placeholder nếu muốn (Allauth có thể đã có label)
+            // const label = signupForm.querySelector(`label[for="${input.id}"]`);
+            // if (label && !input.placeholder) {
+            //    input.placeholder = `Enter your ${label.textContent.toLowerCase().replace(':', '')}`;
+            // }
+            // Ví dụ cụ thể hơn:
+            if (input.name === 'username' && !input.placeholder) {
+                input.placeholder = "{% trans 'Choose a username' %}";
+            } else if (input.name === 'email' && !input.placeholder) {
+                input.placeholder = "{% trans 'Enter your email address' %}";
+            } else if (input.name === 'password1' && !input.placeholder) { // Tên field mặc định của Allauth
+                input.placeholder = "{% trans 'Create a password' %}";
+            } else if (input.name === 'password2' && !input.placeholder) { // Tên field mặc định của Allauth
+                input.placeholder = "{% trans 'Confirm your password' %}";
+            }
+        });
+    }
+});
+</script>
+{% endblock extra_js %}
