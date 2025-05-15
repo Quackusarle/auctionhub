@@ -1,5 +1,7 @@
 /* static/css/base.css */
-
+html {
+    overflow-y: scroll;
+}
 /* Reset CSS cơ bản & Thiết lập biến Theme Sáng - Green */
 :root {
     --primary-color: #198754; /* Xanh lá chính */

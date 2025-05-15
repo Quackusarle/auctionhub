@@ -186,7 +186,7 @@ function updateUserAuthUI(isLoggedIn, userData = {}) {
         register: "/accounts/register/",
         profile: userData.profileUrl || "/accounts/profile/",
         myAuctions: "/my-auctions/",
-        createAuction: "/items/create-auction/", // Sửa lại từ code cậu gửi, có thể là create-auction
+        createAuction: "/api/items/create-auction/", // Sửa lại từ code cậu gửi, có thể là create-auction
         settings: "/accounts/settings/",
         logout: "/accounts/logout/",
         howItWorks: "/how-it-works/", // Thêm link này cho trạng thái chưa đăng nhập

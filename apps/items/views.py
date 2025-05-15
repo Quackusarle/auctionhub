@@ -17,12 +17,47 @@ class ItemList(APIView):
 
 class ItemCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        # Render template create_auction.html (hoặc tên template anh dùng)
+        return render(request, 'items/create_item.html')
+
     def post(self, request):
-        serializer = ItemSerializer(data=request.data)
+        # Dữ liệu từ form giờ không còn file ảnh nữa
+        print("Request data:", request.data)
+
+        serializer = ItemSerializer(data=request.data, context={'request': request})
+
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                # Gán seller là người dùng hiện tại đang đăng nhập
+                serializer.save(seller=request.user)
+
+                context = {
+                    'message': 'Tạo phiên đấu giá thành công (không có ảnh)!',
+                }
+                # Render lại trang với thông báo thành công
+                return render(request, 'items/create_item.html', context)
+
+                # Hoặc redirect, ví dụ:
+                # from django.urls import reverse
+                # return redirect(reverse('item_detail_url_name', args=[serializer.instance.item_id]))
+
+            except Exception as e:
+                print(f"Error during save: {e}")
+                context = {
+                    'errors': {'non_field_errors': [f'Có lỗi xảy ra trong quá trình lưu: {e}']},
+                    'form_data': request.data
+                }
+                return render(request, 'items/create_item.html', context, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            # Nếu serializer không hợp lệ, hiển thị lỗi
+            print("Serializer errors:", serializer.errors) # Rất quan trọng để debug
+            context = {
+                'errors': serializer.errors,
+                'form_data': request.data
+            }
+            return render(request, 'items/create_item.html', context, status=status.HTTP_400_BAD_REQUEST)
 
 class ItemDetail(APIView):
     def get_object(self, pk):
