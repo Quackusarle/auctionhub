@@ -36,5 +36,6 @@ urlpatterns = [
     path('items/<int:pk>/bidding/', bidding_detail_view, name='bidding-detail-page'),
     path('login-signup/', views.register_view, name='login-signup'),  # New route for login/signup page
     path('search/', item_search_view, name='search_results'),  # New route for search results page
+    path('user/profile/', views.profile_view, name='profile'),  # New route for user profile page
 ]
 

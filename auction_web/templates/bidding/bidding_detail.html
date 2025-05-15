@@ -1,139 +1,95 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đang tải phiên đấu giá... - AuctionHub</title>
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %} {# Nếu bạn dùng i18n cho các chuỗi text động #}
+{# {% load humanize %} Nếu bạn dùng để format số, ngày giờ #}
 
-    <link rel="stylesheet" href="/static/css/home.css">
-    <link rel="stylesheet" href="/static/css/bidding_detail.css">
+{% block title %}Đặt giá{% endblock title %}
 
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
-<body>
+{% block page_specific_css %}
+    {# <link rel="stylesheet" href="{% static 'css/home.css' %}"> #}
+    <link rel="stylesheet" href="{% static 'css/bidding_detail.css' %}">
+{% endblock page_specific_css %}
 
-    <header class="site-header plant-theme-header">
-        <div class="container">
-            <div class="logo">Auction<span class="logo-alt">Hub</span></div>
-            <nav class="main-nav plant-theme-nav">
-                <ul>
-                    <li><a href="#" class="active">Trang chủ</a></li>
-                    <li><a href="#">Sản phẩm</a></li>
-                    <li><a href="#">Về chúng tôi</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#contact-section">Liên hệ</a></li>
-                 </ul>
-            </nav>
-            <div class="header-actions plant-theme-actions" id="user-action-area">
-                <div class="user-dropdown-container">
-                    <button type="button" class="user-dropdown-trigger" aria-label="Tài khoản" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user header-icon"></i>
-                    </button>
-            
-                    <div class="user-dropdown-menu" style="display: none;">
-                        <ul>
-                            <li><a href="/accounts/login/">Log in</a></li>
-                        </ul>
-                    </div>
+{% block content %}
+<main class="container bidding-detail-main-content">
+    <h1 id="item-name-heading" class="page-main-title">Đang tải thông tin sản phẩm...</h1>
+
+    <div class="bidding-detail-layout">
+
+        <section class="bidding-column bidding-item-info">
+            <h2 class="section-title">Thông tin sản phẩm</h2>
+            <div class="item-card-display">
+                <!-- Ảnh sản phẩm sẽ được JS cập nhật -->
+                <div class="item-image-container">
+                    <img id="item-image" src="{% static 'images/placeholder_item_large.png' %}" alt="Hình ảnh sản phẩm">
                 </div>
+                <h3 id="item-name" class="item-title-detail"></h3>
+                <p class="item-seller-info">Người bán: <span id="item-seller">Đang tải...</span></p>
             </div>
-        </div>
-    </header>
+            <div class="price-chart-placeholder" id="price-chart-container">
+                <p>(Biểu đồ lịch sử giá sẽ được hiển thị ở đây)</p>
+            </div>
+        </section>
 
-    <main class="container bidding-detail-main-content" style="padding-top: 40px; padding-bottom: 40px;">
-        <h1 id="item-name-heading" style="text-align: center; margin-bottom: 30px; color: var(--heading-color);">Đang tải thông tin sản phẩm...</h1>
-
-        <div class="bidding-detail-layout" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
-
-            <section class="bidding-column bidding-item-info">
-                <h2 style="margin-bottom: 15px; font-size: 1.4em; color: var(--heading-color); border-bottom: 2px solid var(--primary-color); display: inline-block; padding-bottom: 5px;">Thông tin sản phẩm</h2>
-                <div class="item-card-display" style="background-color: var(--white); border-radius: 0.5rem; box-shadow: 0 .125rem .25rem rgba(0,0,0,.075); padding: 20px; text-align: center; margin-bottom: 20px;">
-                     <img id="item-image" src="static/images/placeholder.png" alt="Hình ảnh sản phẩm" style="max-width: 100%; height: 300px; object-fit: cover; margin-bottom: 15px; border-radius: 0.25rem;">
-                     <h3 id="item-name" style="font-size: 1.2em; font-weight: 600; color: var(--heading-color); margin-bottom: 8px;"></h3> <p style="font-size: 0.9em; color: var(--muted-color);">Người bán: <span id="item-seller">Đang tải...</span></p> </div>
-                <div class="price-chart-placeholder" id="price-chart-container">
-                     <p style="text-align:center; color: var(--muted-color);">(Biểu đồ giá)</p>
-                </div>
-            </section>
-
-            <section class="bidding-column bidding-history">
-                <h2 style="margin-bottom: 15px; font-size: 1.4em; color: var(--heading-color); border-bottom: 2px solid var(--primary-color); display: inline-block; padding-bottom: 5px;">Lịch sử đặt giá</h2>
-                 <div class="bid-list" style="max-height: 350px; overflow-y: auto; border: 1px solid var(--border-color); margin-bottom: 20px; border-radius: 0.25rem; background-color: var(--white); padding: 10px;">
-                    <table style="width: 100%; border-collapse: collapse;">
+        <section class="bidding-column bidding-history">
+            <h2 class="section-title">Lịch sử đặt giá</h2>
+            <div class="bid-list-wrapper">
+                <div class="bid-list">
+                    <table class="bid-history-table">
                         <thead>
                             <tr>
-                                <th style="text-align: left; padding: 8px; border-bottom: 1px solid var(--border-color); font-size: 0.9em; color: var(--muted-color);">Giá đặt</th>
-                                <th style="text-align: left; padding: 8px; border-bottom: 1px solid var(--border-color); font-size: 0.9em; color: var(--muted-color);">Người đặt</th>
-                                <th style="text-align: left; padding: 8px; border-bottom: 1px solid var(--border-color); font-size: 0.9em; color: var(--muted-color);">Thời gian</th>
+                                <th>Giá đặt</th>
+                                <th>Người đặt</th>
+                                <th>Thời gian</th>
                             </tr>
                         </thead>
                         <tbody id="bid-history-table-body">
-                            <tr><td colspan="3" style="text-align: center; padding: 15px; color: var(--muted-color);">Đang tải lịch sử...</td></tr>
+                            <tr><td colspan="3" class="loading-text">Đang tải lịch sử đấu giá...</td></tr>
                         </tbody>
                     </table>
                 </div>
-                <div style="text-align: right; font-size: 1.1em;">
-                    Giá hiện tại: <strong id="current-price" style="color: var(--primary-color); font-size: 1.8em; margin-left: 10px;">Đang tải...</strong> </div>
-            </section>
-
-            <section class="bidding-column bidding-actions">
-                 <h2 style="margin-bottom: 15px; font-size: 1.4em; color: var(--heading-color); border-bottom: 2px solid var(--primary-color); display: inline-block; padding-bottom: 5px;">Đặt giá của bạn</h2>
-                <div class="action-details" style="margin-bottom: 20px; background-color: var(--white); padding: 15px; border-radius: 0.25rem; box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);">
-                    <p style="margin-bottom: 10px;">Giá khởi điểm: <strong id="starting-price" style="color: var(--primary-color);">Đang tải...</strong> VNĐ</p> <p>Thời gian còn lại: <strong id="end-time" style="color: #dc3545;">Đang tải...</strong></p> </div>
-
-                <form id="place-bid-form" style="background-color: var(--white); padding: 20px; border-radius: 0.25rem; box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);">
-                     {% csrf_token %} 
-                        
-                     {# Input ẩn chứa ID item và user #}
-                     <input type="hidden" name="item_id" value="{{ item.pk }}"> 
-                     <input type="hidden" name="user_id" value="{{ request.user.id }}"> 
-                     <div class="form-group" style="margin-bottom: 15px;">
-                        <label for="bid-amount-input" id="min-bid-label" style="display: block; margin-bottom: 5px; font-weight: 500;">Giá đặt (Tối thiểu: Đang tải... VNĐ):</label>
-                        <div class="price-input-wrapper" style="display: flex; align-items: center;">
-                            <input
-                                type="number"
-                                id="bid-amount-input"
-                                name="bid_amount"
-                                min="0" placeholder="Nhập số tiền"
-                                required
-                                style="flex-grow: 1; padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 3px 0 0 3px; outline: none; font-family: var(--font-family); font-size: 1em; height: 42px;">
-                            <span class="currency-symbol" style="padding: 0 15px; background-color: #e9ecef; border: 1px solid var(--border-color); border-left: none; height: 42px; line-height: 40px; border-radius: 0 3px 3px 0; color: var(--muted-color);">VNĐ</span>
-                        </div>
-                    </div>
-
-                    <div class="bid-summary" style="margin-bottom: 20px; font-size: 1.1em; text-align: right;">
-                        Tổng: <strong id="total-bid-value" style="color: var(--primary-color); font-size: 1.3em;">0</strong> VNĐ
-                    </div>
-
-                    <div class="action-buttons" style="display: flex; justify-content: flex-end; gap: 10px;">
-                        <button type="button" class="btn btn-secondary btn-cancel" style="padding: 10px 20px; border-radius: 50px; border: 1px solid var(--muted-color); background: none; color: var(--muted-color);">Hủy</button> <button type="submit" class="btn btn-primary hero-btn btn-submit-bid" style="padding: 10px 30px;">Đặt giá</button> </div>
-                    <p id="bid-form-message" style="color: red; margin-top: 15px; text-align: center; min-height: 1.2em;"></p> </form>
-            </section>
-        </div>
-    </main>
-
-    <footer class="site-footer simplified-footer plant-theme-footer" id="contact-section">
-        <div class="container">
-            <div class="footer-content-wrapper">
-                <div class="contact-info">
-                    <h5>Kết nối với AuctionHub</h5>
-                    <div class="contact-item"> <i class="fas fa-map-marker-alt contact-icon"></i> <div class="contact-details"> <strong>Địa chỉ:</strong> <span>Trường Đại Học Công Nghệ Thông Tin (UIT), ĐHQG TPHCM</span> </div> </div>
-                    <div class="contact-item"> <i class="fas fa-phone-alt contact-icon"></i> <div class="contact-details"> <strong>Điện thoại:</strong> <a href="tel:0914321432">09.1432.1432</a> </div> </div>
-                    <div class="contact-item"> <i class="fas fa-envelope contact-icon"></i> <div class="contact-details"> <strong>Email:</strong> <a href="mailto:support@auctionhub.com">support@auctionhub.com</a> </div> </div>
-                    <div class="social-icons"> <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a> <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a> <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a> <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a> </div>
-                </div>
-                <div class="newsletter-signup">
-                    <h5>Đăng ký nhận bản tin</h5>
-                    <form class="newsletter-form"> <input type="email" placeholder="Nhập email của bạn" required> <button type="submit">Đăng ký</button> </form>
-                </div>
             </div>
-             <div class="footer-bottom"> <p>&copy; <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p> </div>
-        </div>
-    </footer>
+            <div class="current-price-display">
+                Giá hiện tại: <strong id="current-price" class="current-price-value">Đang tải...</strong>
+            </div>
+        </section>
 
+        <section class="bidding-column bidding-actions">
+            <h2 class="section-title">Đặt giá của bạn</h2>
+            <div class="action-details-box">
+                <p>Giá khởi điểm: <strong id="starting-price">Đang tải...</strong> VNĐ</p>
+                <p>Thời gian còn lại: <strong id="time-remaining" class="time-critical">Đang tải...</strong></p>
+            </div>
 
-    <script src="/static/js/home.js"></script>
-    <script src="/static/js/bidding_detail.js"></script>
+            <form id="place-bid-form" class="bid-form-box">
+                {% csrf_token %}
+                <!-- Input ẩn chứa ID item (sẽ được JS điền vào hoặc server render nếu có context item) -->
+                <input type="hidden" name="item_id" id="form-item-id" value="{{ item.pk | default:'' }}">
+                {# user_id không nên lấy từ client, backend nên tự lấy request.user.id khi xử lý bid #}
 
-</body>
-</html>
+                <div class="form-group">
+                    <label for="bid-amount-input" id="min-bid-label">Giá đặt (Tối thiểu: <span id="min-bid-value">Đang tải...</span> VNĐ):</label>
+                    <div class="price-input-wrapper">
+                        <input type="number" id="bid-amount-input" name="bid_amount" min="0" placeholder="Nhập số tiền" required>
+                        <span class="currency-symbol">VNĐ</span>
+                    </div>
+                </div>
+
+                <div class="bid-summary">
+                    Tổng cộng: <strong id="total-bid-value">0</strong> VNĐ
+                </div>
+
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-secondary btn-cancel-bid">Hủy</button>
+                    <button type="submit" class="btn btn-primary btn-submit-bid">Đặt giá</button>
+                </div>
+                <p id="bid-form-message" class="form-message"></p>
+            </form>
+        </section>
+    </div>
+</main>
+{% endblock content %}
+
+{% block page_specific_js %}
+    <script src="{% static 'js/bidding_detail.js' %}"></script>
+{% endblock page_specific_js %}

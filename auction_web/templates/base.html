@@ -1,52 +1,40 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8" />
-    <title>{% block title %}AuctionHub{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AuctionHub - Sàn Đấu Giá Trực Tuyến{% endblock %}</title>
 
-    <!-- Common CSS -->
-    <link rel="stylesheet" href="{% static 'css/auth_form.css' %}" /> <!-- Giữ lại nếu bạn dùng cho trang auth -->
-    <link rel="stylesheet" href="{% static 'css/base.css' %}" /> <!-- File CSS chính cho base -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-    <!-- Page-specific CSS -->
-    {% block extra_css %}{% endblock extra_css %}
+    <link rel="stylesheet" href="/static/css/base.css" /> {% block page_specific_css %}{% endblock %}
 </head>
 <body>
     <header class="site-header plant-theme-header">
         <div class="container">
-            <div class="logo"><a href="{% url 'home-template' %}">Auction<span class="logo-alt">Hub</span></a></div>
+            <a href="/" class="logo">Auction<span class="logo-alt">Hub</span></a>
             <nav class="main-nav plant-theme-nav">
                 <ul>
-                    <li><a href="{% url 'home-template' %}" class="{% if request.resolver_match.url_name == 'home-template' %}active{% endif %}">Trang chủ</a></li> {# Sửa điều kiện active #}
-                    <li><a href="#" class="{% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">Sản phẩm</a></li> {# Thêm URL name nếu có #}
-                    <li><a href="#" class="{% if request.resolver_match.url_name == 'about_us' %}active{% endif %}">Về chúng tôi</a></li> {# Thêm URL name nếu có #}
-                    <li><a href="#" class="{% if request.resolver_match.url_name == 'blog' %}active{% endif %}">Blog</a></li> {# Thêm URL name nếu có #}
-                    <li><a href="#contact-section">Liên hệ</a></li>
+                    <li><a href="/" data-nav-path="/">Trang chủ</a></li>
+                    <li><a href="/items/" data-nav-path="/items/">Sản phẩm</a></li>
+                    <li><a href="/about/" data-nav-path="/about/">Về chúng tôi</a></li>
+                    <li><a href="/blog/" data-nav-path="/blog/">Blog</a></li>
+                    <li><a href="#contact-section" class="nav-contact-link">Liên hệ</a></li>
                 </ul>
             </nav>
             <div class="header-actions plant-theme-actions" id="user-action-area">
-                <!-- Nút Search -->
-                <button type="button" class="header-icon" id="search-modal-trigger" aria-label="Tìm kiếm"> {# Đổi class trigger cũ thành header-icon và thêm id #}
-                    <i class="fas fa-search"></i> {# Bỏ class header-icon ở đây nếu đã có ở button cha #}
+                <button type="button" class="search-trigger-btn" aria-label="Tìm kiếm" title="Tìm kiếm">
+                    <i class="fas fa-search header-icon"></i>
                 </button>
-                <!-- User Dropdown -->
                 <div class="user-dropdown-container">
-                    <button type="button" class="user-dropdown-trigger header-icon" aria-label="Tài khoản" aria-haspopup="true" aria-expanded="false"> {# Thêm class header-icon #}
-                        <i class="fas fa-user"></i> {# Bỏ class header-icon ở đây #}
+                    <button type="button" class="user-dropdown-trigger" aria-label="Tài khoản người dùng" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user header-icon"></i>
                     </button>
                     <div class="user-dropdown-menu" style="display: none;">
                         <ul>
-                            {% if user.is_authenticated %}
-                                <li><a href="{% url 'profile' %}">Tài khoản của tôi</a></li> {# Đảm bảo URL 'profile' tồn tại #}
-                                <li><a href="{% url 'account_logout' %}">Đăng xuất</a></li>
-                            {% else %}
-                                <li><a href="{% url 'account_login' %}">Đăng nhập</a></li>
-                                <li><a href="{% url 'account_signup' %}">Đăng ký</a></li>
-                            {% endif %}
+                            <li><a href="/accounts/login/">Đăng nhập</a></li>
                         </ul>
                     </div>
                 </div>
@@ -54,163 +42,61 @@
         </div>
     </header>
 
-    {% block content %}
-    <!-- Page-specific content will be inserted here -->
-    {% endblock content %}
+    <div class="search-modal-simple" id="searchModal" aria-hidden="true" role="dialog" aria-labelledby="searchModalTitle">
+        <div class="modal-content-simple">
+            <button type="button" class="close-button-simple" id="closeSearchModalBtn" aria-label="Đóng tìm kiếm">&times;</button>
+            <h3 id="searchModalTitle">Tìm kiếm sản phẩm</h3>
+            <form class="search-form-simple" id="siteSearchForm" action="/search/" method="get">
+                <input type="text" name="q" id="searchInputModal" placeholder="Nhập từ khóa tìm kiếm..." required aria-label="Từ khóa tìm kiếm"/>
+                <button type="submit">Tìm</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="site-main-content-wrapper">
+        {% block content %}{% endblock %}
+    </div>
 
     <footer class="site-footer simplified-footer plant-theme-footer" id="contact-section">
-        <!-- Nội dung footer giữ nguyên -->
         <div class="container">
             <div class="footer-content-wrapper">
                 <div class="contact-info">
                     <h5>Kết nối với AuctionHub</h5>
                     <div class="contact-item">
                         <i class="fas fa-map-marker-alt contact-icon"></i>
-                        <div class="contact-details">
-                            <strong>Địa chỉ:</strong>
-                            <span>Trường Đại Học Công Nghệ Thông Tin (UIT), ĐHQG TPHCM</span>
-                        </div>
+                        <div class="contact-details"><strong>Địa chỉ:</strong><span> Trường Đại Học Công Nghệ Thông Tin (UIT), ĐHQG TPHCM</span></div>
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-phone-alt contact-icon"></i>
-                        <div class="contact-details">
-                            <strong>Điện thoại:</strong>
-                            <a href="tel:0914321432">09.1432.1432</a>
-                        </div>
+                        <div class="contact-details"><strong>Điện thoại:</strong><a href="tel:0914321432">09.1432.1432</a></div>
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-envelope contact-icon"></i>
-                        <div class="contact-details">
-                            <strong>Email:</strong>
-                            <a href="mailto:support@auctionhub.com">support@auctionhub.com</a>
-                        </div>
+                        <div class="contact-details"><strong>Email:</strong><a href="mailto:support@auctionhub.com">support@auctionhub.com</a></div>
                     </div>
                     <div class="social-icons">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="Facebook" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Twitter" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
                 <div class="newsletter-signup">
                     <h5>Đăng ký nhận bản tin</h5>
-                    <form class="newsletter-form">
-                        <input type="email" placeholder="Nhập email của bạn" required />
-                        <button type="submit">Đăng ký</button>
+                    <form class="newsletter-form" id="newsletterForm">
+                        <input type="email" id="newsletterEmailInput" name="email" placeholder="Nhập email của bạn" required aria-label="Email đăng ký bản tin" />
+                        <button type="submit" id="newsletterSubmitBtn">Đăng ký</button>
                     </form>
+                    <p id="newsletterMessage" class="newsletter-message" aria-live="polite"></p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p>
+                <p>&copy; <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p>
             </div>
         </div>
     </footer>
 
-    <!-- === HTML cho Search Modal (Thêm vào đây) === -->
-    <div class="search-modal-simple" id="search-modal-container" role="dialog" aria-modal="true" aria-labelledby="search-modal-title" style="display: none;">
-        <div class="modal-content-simple">
-            <button type="button" class="close-button-simple" id="search-modal-close" aria-label="Đóng">×</button>
-            <h3 id="search-modal-title">Tìm kiếm sản phẩm</h3>
-            <form class="search-form-simple" action="{% url 'search_results' %}" method="GET"> {# Thay 'search_results' bằng URL xử lý của bạn #}
-                <input type="text" name="q" placeholder="Nhập từ khóa..." aria-label="Từ khóa tìm kiếm" required>
-                <button type="submit">Tìm</button>
-            </form>
-        </div>
-    </div>
-    <!-- === Kết thúc HTML cho Search Modal === -->
-
-    <!-- Common JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="{% static 'js/base_script.js' %}"></script> <!-- Script chung của bạn -->
-
-    <!-- Page-specific JS -->
-    {% block extra_js %}{% endblock extra_js %}
-
-    <!-- Script cho Dropdown, Modal và Copyright Year -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // --- User Dropdown ---
-        const userDropdownTrigger = document.querySelector('.user-dropdown-trigger');
-        const userDropdownMenu = userDropdownTrigger ? userDropdownTrigger.nextElementSibling : null; // Lấy menu ngay sau trigger
-
-        if (userDropdownTrigger && userDropdownMenu) {
-            userDropdownTrigger.addEventListener('click', function(event) {
-                event.stopPropagation(); // Ngăn sự kiện click nổi bọt lên document
-                const isExpanded = this.getAttribute('aria-expanded') === 'true' || false;
-                this.setAttribute('aria-expanded', !isExpanded);
-                userDropdownMenu.style.display = isExpanded ? 'none' : 'block';
-            });
-
-            // Đóng dropdown khi click bên ngoài
-            document.addEventListener('click', function(event) {
-                if (userDropdownMenu && userDropdownTrigger && 
-                    userDropdownMenu.style.display === 'block' && 
-                    !userDropdownTrigger.contains(event.target) && 
-                    !userDropdownMenu.contains(event.target)) {
-                        userDropdownMenu.style.display = 'none';
-                        userDropdownTrigger.setAttribute('aria-expanded', 'false');
-                }
-            });
-        }
-
-        // --- Search Modal ---
-        const searchModalTrigger = document.getElementById('search-modal-trigger');
-        const searchModalContainer = document.getElementById('search-modal-container');
-        const searchModalCloseButton = document.getElementById('search-modal-close');
-        const searchInputInModal = searchModalContainer ? searchModalContainer.querySelector('input[name="q"]') : null;
-
-        function openSearchModal() {
-            if (searchModalContainer) {
-                searchModalContainer.style.display = 'flex';
-                document.body.classList.add('modal-open');
-                if (searchInputInModal) {
-                    searchInputInModal.focus();
-                }
-                document.addEventListener('keydown', handleEscKeySearchModal);
-            }
-        }
-
-        function closeSearchModal() {
-            if (searchModalContainer) {
-                searchModalContainer.style.display = 'none';
-                document.body.classList.remove('modal-open');
-                document.removeEventListener('keydown', handleEscKeySearchModal);
-            }
-        }
-
-        function handleEscKeySearchModal(event) {
-            if (event.key === 'Escape') {
-                closeSearchModal();
-            }
-        }
-
-        if (searchModalTrigger) {
-            searchModalTrigger.addEventListener('click', function(event) {
-                event.preventDefault(); // Quan trọng nếu nút search là thẻ <a>
-                openSearchModal();
-            });
-        }
-
-        if (searchModalCloseButton) {
-            searchModalCloseButton.addEventListener('click', function() {
-                closeSearchModal();
-            });
-        }
-
-        if (searchModalContainer) {
-            searchModalContainer.addEventListener('click', function (event) {
-                if (event.target === searchModalContainer) { // Chỉ đóng khi click vào nền mờ
-                    closeSearchModal();
-                }
-            });
-        }
-        
-        // --- Copyright Year ---
-        const copyrightYearEl = document.getElementById('copyright-year');
-        if (copyrightYearEl) {
-            copyrightYearEl.textContent = new Date().getFullYear();
-        }
-    });
-    </script>
+    <script src="/static/js/base.js"></script> {% block page_specific_js %}{% endblock %}
 </body>
 </html>

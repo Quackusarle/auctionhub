@@ -1,123 +1,57 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ item.name }} - AuctionHub</title>
-    <link rel="stylesheet" href="/static/css/item_detail.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <header class="site-header plant-theme-header">
-        <div class="container">
-            <div class="logo">Auction<span class="logo-alt">Hub</span></div>
-            <nav class="main-nav plant-theme-nav">
-                <ul>
-                    <li><a href="/">Trang chủ</a></li>
-                    <li><a href="#" class="active">Sản phẩm</a></li>
-                    <li><a href="#">Về chúng tôi</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#contact-section">Liên hệ</a></li>
-                </ul>
-            </nav>
-            <div class="header-actions plant-theme-actions">
-                <a href="#" class="header-icon" aria-label="Giỏ hàng"><i class="fas fa-shopping-bag"></i></a>
-                <a href="/accounts/login/" class="header-icon" aria-label="Tài khoản"><i class="fas fa-user"></i></a>
-            </div>
-            <button class="mobile-menu-toggle">☰</button>
-        </div>
-    </header>
+{% extends "base.html" %}
+{% load static %} {# Hoặc cách bạn load static file trong project #}
 
-    <main class="container item-detail-container">
-        <section class="item-detail">
-            <div class="item-detail-wrapper">
-                <!-- Left: Item Image -->
-                <div class="item-image-section">
-                    {% if item.image_url %}
-                        <img src="{{ item.image_url }}" alt="{{ item.name }}" class="item-main-image">
-                    {% else %}
-                        <img src="/static/images/placeholder.png" alt="Placeholder" class="item-main-image">
-                    {% endif %}
-                </div>
+{% block title %}{{ item.name }} - AuctionHub{% endblock title %}
 
-                <!-- Right: Item Details -->
-                <div class="item-info-section">
-                    <h1 class="item-title">{{ item.name }}</h1>
-                    <div class="item-price">
-                        <span class="current-price">đ{{ item.current_price }}</span>
-                        <span class="original-price">đ{{ item.starting_price }}</span>
-                    </div>
-                    <div class="item-description">
-                        <h3>Mô tả sản phẩm</h3>
-                        <p>{{ item.description|default:"Không có mô tả." }}</p>
-                    </div>
-                    <div class="item-actions">
-                        <a href="{% url 'bidding-detail-page' pk=item.pk %}" class="bid-now-btn">
-                            <i class="fas fa-gavel"></i> Đặt cược
-                        </a>
-                    </div>
-                    <div class="item-meta">
-                        <div class="meta-item">
-                            <span class="meta-label">Trạng thái:</span>
-                            <span class="meta-value">{{ item.status }}</span>
-                        </div>
-                        <div class="meta-item">
-                            <span class="meta-label">Kết thúc:</span>
-                            <span class="meta-value">{{ item.end_time }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
+{% block page_specific_css %}
+    {# <link rel="stylesheet" href="{% static 'css/home.css' %}"> #}
+    <link rel="stylesheet" href="{% static 'css/item_detail.css' %}">
+{% endblock page_specific_css %}
 
-    <footer class="site-footer simplified-footer plant-theme-footer" id="contact-section">
-        <div class="container">
-            <div class="footer-content-wrapper">
-                <div class="contact-info">
-                    <h5>Kết nối với AuctionHub</h5>
-                    <div class="contact-item">
-                        <i class="fas fa-map-marker-alt contact-icon"></i>
-                        <div class="contact-details">
-                            <strong>Địa chỉ:</strong>
-                            <span>Trường Đại Học Công Nghệ Thông Tin (UIT), ĐHQG TPHCM</span>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-phone-alt contact-icon"></i>
-                        <div class="contact-details">
-                            <strong>Điện thoại:</strong>
-                            <a href="tel:0914321432">09.1432.1432</a>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-envelope contact-icon"></i>
-                        <div class="contact-details">
-                            <strong>Email:</strong>
-                            <a href="mailto:support@auctionhub.com">support@auctionhub.com</a>
-                        </div>
-                    </div>
-                    <div class="social-icons">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-                <div class="newsletter-signup">
-                    <h5>Đăng ký nhận bản tin</h5>
-                    <form class="newsletter-form">
-                        <input type="email" placeholder="Nhập email của bạn" required>
-                        <button type="submit">Đăng ký</button>
-                    </form>
-                </div>
+{% block content %}
+<main class="container item-detail-container">
+    <section class="item-detail">
+        <div class="item-detail-wrapper">
+            <div class="item-image-section">
+                {% if item.image_url %}
+                    <img src="{{ item.image_url }}" alt="{{ item.name }}" class="item-main-image">
+                {% else %}
+                    <img src="{% static 'images/placeholder.png' %}" alt="Placeholder" class="item-main-image"> {# Sửa lại đường dẫn static nếu cần #}
+                {% endif %}
             </div>
-            <div class="footer-bottom">
-                <p>© <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p>
+
+            <div class="item-info-section">
+                <h1 class="item-title">{{ item.name }}</h1>
+                
+                {# Đổi class item-price thành item-price-block như trong CSS yêu cầu #}
+                <div class="item-price-block"> 
+                    <span class="current-price">đ{{ item.current_price }}</span>
+                    <span class="original-price">đ{{ item.starting_price }}</span>
+                </div>
+                
+                <div class="item-description">
+                    <h3>Mô tả sản phẩm</h3>
+                    <p>{{ item.description|default:"Không có mô tả." }}</p>
+                </div>
+                
+                <div class="item-actions">
+                    <a href="{% url 'bidding-detail-page' pk=item.pk %}" class="bid-now-btn">
+                        <i class="fas fa-gavel"></i> Đặt cược
+                    </a>
+                </div>
+                
+                <div class="item-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Trạng thái:</span>
+                        <span class="meta-value">{{ item.status }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Kết thúc:</span>
+                        <span class="meta-value">{{ item.end_time }}</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </footer>
-</body>
-</html>
+    </section>
+</main>
+{% endblock content %}

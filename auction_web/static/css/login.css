@@ -1,68 +1,73 @@
-/* static/css/modern_auth.css */
+/* static/css/login.css (hoặc modern_auth.css) */
 
-/* Variables - Điều chỉnh màu sắc cho phù hợp với "plant-theme" của bạn */
-:root {
-    --auth-primary-color: #4CAF50; /* Màu xanh lá cây chính (ví dụ) */
-    --auth-primary-hover-color: #45a049;
-    --auth-secondary-color: #3498db; /* Màu xanh dương cho link, social (ví dụ) */
-    --auth-text-color: #333;
-    --auth-label-color: #555;
-    --auth-border-color: #ddd;
-    --auth-input-bg: #f9f9f9;
-    --auth-bg-color: #f4f7f6; /* Màu nền nhẹ nhàng cho trang */
-    --auth-card-bg: #ffffff;
-    --auth-error-color: #e74c3c;
-    --font-family-sans-serif: 'Montserrat', sans-serif; /* Sử dụng font bạn đã có */
-}
+/*
+    QUAN TRỌNG: File này giả định rằng base.css đã được load TRƯỚC NÓ
+    và base.css đã định nghĩa các biến CSS toàn cục như:
+    --primary-color, --primary-rgb, --accent-color, --text-color, --muted-color,
+    --border-color, --bg-color (cho nền trang), --white (cho nền card/input),
+    --error-color, --font-family.
+    Nếu các biến này không có trong base.css, bạn cần định nghĩa chúng (có thể ngay trong :root của file này
+    HOẶC tốt hơn là thêm vào :root của base.css để dùng chung toàn trang).
+*/
 
-body {
-    background-color: var(--auth-bg-color);
-    font-family: var(--font-family-sans-serif);
-    color: var(--auth-text-color);
+/* Style để căn giữa form trên trang */
+.login-page-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    width: 100%;
+    padding: 40px 15px;
+    background-color: var(--bg-color); /* Kế thừa màu nền chung từ base.css */
+    font-family: var(--font-family);   /* Kế thừa font chung từ base.css */
 }
 
 .modern-auth-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: calc(100vh - 100px); /* Trừ đi chiều cao header/footer */
-    padding: 40px 15px;
+    width: 100%;
 }
 
 .modern-auth-container {
-    background-color: var(--auth-card-bg);
+    background-color: var(--white, #ffffff); /* Nền card */
     padding: 40px 35px;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     width: 100%;
-    max-width: 480px; /* Giới hạn chiều rộng của form */
+    max-width: 480px;
     text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    color: var(--text-color, #333); /* Màu chữ mặc định trong container này */
 }
 
+/* Header CỦA FORM LOGIN (không phải header trang) */
 .modern-auth-header .auth-logo-link .logo {
     font-size: 2.2rem;
     font-weight: 700;
-    color: var(--auth-text-color);
+    color: var(--text-color, #333); /* Hoặc var(--heading-color) nếu có */
     text-decoration: none;
     display: inline-block;
     margin-bottom: 10px;
 }
 .modern-auth-header .auth-logo-link .logo .logo-alt {
-    color: var(--auth-primary-color); /* Hoặc màu phụ của logo */
+    color: var(--primary-color); /* **SỬ DỤNG MÀU CHỦ ĐẠO TỪ BASE.CSS** */
 }
 
 .modern-auth-header h2 {
     font-size: 1.8rem;
     font-weight: 700;
-    color: var(--auth-text-color);
+    color: var(--text-color, #333); /* Hoặc var(--heading-color) */
     margin-bottom: 8px;
 }
 
 .modern-auth-header p {
     font-size: 0.95rem;
-    color: var(--auth-label-color);
+    color: var(--muted-color, #555); /* Dùng màu text phụ */
     margin-bottom: 30px;
 }
+
+/* Các style còn lại cho form, input, button, social login...
+   SẼ ƯU TIÊN SỬ DỤNG CÁC BIẾN MÀU TỪ BASE.CSS */
 
 .auth-alert {
     padding: 12px 15px;
@@ -72,9 +77,9 @@ body {
     text-align: left;
 }
 .auth-alert-danger {
-    background-color: #fdecea;
-    color: var(--auth-error-color);
-    border: 1px solid var(--auth-error-color);
+    background-color: #fdecea; /* Có thể tạo biến --error-bg-color */
+    color: var(--error-color, #e74c3c);
+    border: 1px solid var(--error-color, #e74c3c);
 }
 
 .modern-auth-form .form-field-group {
@@ -86,34 +91,32 @@ body {
     display: block;
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--auth-label-color);
+    color: var(--muted-color, #555);
     margin-bottom: 8px;
 }
 
-.form-input-modern {
+.form-input-modern { /* Class này được JS thêm vào */
     width: 100%;
     padding: 12px 15px;
     font-size: 0.95rem;
-    border: 1px solid var(--auth-border-color);
+    border: 1px solid var(--border-color, #ddd);
     border-radius: 6px;
-    background-color: var(--auth-input-bg);
+    background-color: var(--input-bg, var(--white, #f9f9f9)); /* Nên có biến --input-bg */
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    box-sizing: border-box; /* Quan trọng */
+    box-sizing: border-box;
+    color: var(--text-color, #333);
+    font-family: inherit; /* Kế thừa font từ .login-page-content-wrapper */
 }
-.form-input-modern::placeholder {
-    color: #aaa;
-}
+.form-input-modern::placeholder { color: #aaa; }
 .form-input-modern:focus {
     outline: none;
-    border-color: var(--auth-primary-color);
-    box-shadow: 0 0 0 3px rgba(var(--auth-primary-color-rgb, 76, 175, 80), 0.2); /* Tạo --auth-primary-color-rgb nếu cần */
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 25, 135, 84), 0.2); /* Dùng --primary-rgb từ base.css */
 }
-/* Để box-shadow hoạt động với var(), bạn cần định nghĩa màu RGB: */
-/* Ví dụ: --auth-primary-color-rgb: 76, 175, 80; */
 
 .field-error-message {
     font-size: 0.8rem;
-    color: var(--auth-error-color);
+    color: var(--error-color, #e74c3c);
     margin-top: 6px;
 }
 
@@ -125,34 +128,31 @@ body {
     font-size: 0.85rem;
 }
 
-.form-check-custom {
-    display: flex;
-    align-items: center;
-}
-.form-check-input-modern {
+.form-check-custom { display: flex; align-items: center; }
+.form-check-input-modern { /* Class này được JS thêm vào */
     margin-right: 8px;
     width: 16px;
     height: 16px;
-    accent-color: var(--auth-primary-color); /* Màu cho checkbox khi được check */
+    accent-color: var(--primary-color); /* Dùng màu chính */
+    cursor: pointer;
 }
 .form-check-custom label {
-    color: var(--auth-label-color);
+    color: var(--muted-color, #555);
     font-weight: normal;
     margin-bottom: 0;
+    cursor: pointer;
 }
 
 .forgot-password-link {
-    color: var(--auth-secondary-color);
+    color: var(--primary-color); /* Dùng màu chính cho link quan trọng */
     text-decoration: none;
     font-weight: 500;
 }
-.forgot-password-link:hover {
-    text-decoration: underline;
-}
+.forgot-password-link:hover { text-decoration: underline; }
 
 .btn-auth-submit {
-    background-color: var(--auth-primary-color);
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--white, #ffffff);
     border: none;
     padding: 14px 20px;
     width: 100%;
@@ -165,89 +165,44 @@ body {
     letter-spacing: 0.5px;
 }
 .btn-auth-submit:hover {
-    background-color: var(--auth-primary-hover-color);
+    background-color: var(--accent-color); /* Dùng màu accent cho hover */
 }
 
-.social-login-section {
-    margin-top: 30px;
-    margin-bottom: 25px;
-}
-
+.social-login-section { margin-top: 30px; margin-bottom: 25px; }
 .divider-with-text {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #aaa;
-    font-size: 0.85rem;
-    margin-bottom: 20px;
+    display: flex; align-items: center; text-align: center;
+    color: #aaa; font-size: 0.85rem; margin-bottom: 20px;
 }
-.divider-with-text::before,
-.divider-with-text::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid var(--auth-border-color);
+.divider-with-text::before, .divider-with-text::after {
+    content: ''; flex: 1; border-bottom: 1px solid var(--border-color, #ddd);
 }
-.divider-with-text:not(:empty)::before {
-    margin-right: .5em;
-}
-.divider-with-text:not(:empty)::after {
-    margin-left: .5em;
-}
+.divider-with-text:not(:empty)::before { margin-right: .5em; }
+.divider-with-text:not(:empty)::after { margin-left: .5em; }
 .divider-with-text span {
-    white-space: nowrap;
-    padding: 0 10px;
-    color: var(--auth-label-color);
-    font-weight: 500;
+    white-space: nowrap; padding: 0 10px;
+    color: var(--muted-color, #555); font-weight: 500;
 }
 
-.social-login-buttons {
-    display: flex;
-    flex-direction: column; /* Hoặc row nếu muốn các nút nằm ngang */
-    gap: 10px; /* Khoảng cách giữa các nút social */
-}
-
+.social-login-buttons { display: flex; flex-direction: column; gap: 12px; }
 .social-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 15px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: opacity 0.2s ease;
-    border: 1px solid var(--auth-border-color);
-    color: var(--auth-text-color);
-    background-color: #fff; /* Nền trắng cho các nút social */
+    display: flex; align-items: center; justify-content: center;
+    padding: 11px 15px; border-radius: 6px; text-decoration: none;
+    font-size: 0.9rem; font-weight: 500;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+    border: 1px solid var(--border-color, #ddd);
+    color: var(--text-color, #333);
+    background-color: var(--white, #fff);
 }
-.social-btn:hover {
-    opacity: 0.85;
-}
-.social-btn i {
-    margin-right: 10px;
-    font-size: 1.2em; /* Kích thước icon */
-}
-/* Màu sắc cho từng social provider (ví dụ) */
-.social-btn-google i { color: #DB4437; }
-.social-btn-facebook i { color: #3b5998; }
-.social-btn-github i { color: #333; }
-/* Bạn có thể thêm style nền khác nhau nếu muốn */
-/* .social-btn-google { background-color: #DB4437; color: white; border:none; } */
+.social-btn:hover { opacity: 1; background-color: #f5f5f5; }
+.social-btn i.fab { margin-right: 10px; font-size: 1.2em; line-height: 1; }
+.social-btn-google i.fa-google { color: #DB4437; }
+.social-btn-facebook i.fa-facebook { color: #3b5998; }
+.social-btn-github i.fa-github { color: #333; }
 
-
-.auth-footer-link {
-    margin-top: 30px;
-    font-size: 0.9rem;
-}
-.auth-footer-link p {
-    color: var(--auth-label-color);
-    margin-bottom: 0;
-}
+.auth-footer-link { margin-top: 30px; font-size: 0.9rem; }
+.auth-footer-link p { color: var(--muted-color, #555); margin-bottom: 0; }
 .auth-footer-link a {
-    color: var(--auth-primary-color);
-    font-weight: 600;
-    text-decoration: none;
+    color: var(--primary-color);
+    font-weight: 600; text-decoration: none;
 }
-.auth-footer-link a:hover {
-    text-decoration: underline;
-}
+.auth-footer-link a:hover { text-decoration: underline; }

@@ -1,5 +1,6 @@
-/* --- Biến màu và font (Copy từ home.css) --- */
-:root {
+/* --- Biến màu và font (Giả sử đã được định nghĩa trong base.css hoặc một file global) --- */
+/* Nếu base.css chưa có các biến này, bạn cần đảm bảo chúng được khai báo ở một nơi dùng chung */
+/* :root {
     --primary-color: #198754;
     --secondary-color: #ffffff;
     --text-color: #212529;
@@ -7,127 +8,31 @@
     --accent-color: #157347;
     --white: #ffffff;
     --border-color: #dee2e6;
-    --bg-color: #f8f9fa;       /* Màu nền chính từ home.css */
+    --bg-color: #f8f9fa;
     --muted-color: #6c757d;
-    --dark-green-footer-bg: #157347; /* Màu footer từ home.css */
+    --dark-green-footer-bg: #157347; 
     --active-card-bg: #146c43; 
-    --font-family: 'Montserrat', sans-serif; /* Font từ home.css */
-}
+    --font-family: 'Montserrat', sans-serif;
+} 
+*/
 
-/* Reset and Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    /* Sử dụng biến từ :root */
-    font-family: var(--font-family); /* Đổi font */
-    line-height: 1.6; /* Giữ lại line-height cũ hoặc chỉnh theo home.css */
-    color: var(--text-color);      /* Đổi màu chữ */
-    background-color: var(--bg-color); /* Đổi màu nền */
-}
-
-/* Container */
-.container {
-    max-width: 1140px; /* Đồng bộ kích thước container với home.css */
-    margin: 0 auto;
-    padding: 0 15px;  /* Đồng bộ padding với home.css */
-}
-
-/* --- Header (Style giống header của home.css) --- */
-.site-header {
-    /* Bỏ style cũ, áp dụng style từ home.css */
-    background-color: var(--bg-color); /* Nền sáng giống home */
-    padding: 20px 0;
-    position: sticky; 
-    top: 0; 
-    z-index: 1000;
-    border-bottom: 1px solid var(--border-color); /* Thêm đường viền mảnh nếu muốn */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Shadow nhẹ */
-}
-/* Thêm đường kẻ mảnh dưới header nếu muốn giống hệt home.html */
-.site-header::after { 
-    content: ""; display: block; width: 100%; height: 1px; 
-    background-color: #ddd; /* Màu kẻ nhạt hơn */ 
-    margin-top: 20px; /* Điều chỉnh nếu cần */
-}
-
-.site-header .container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.logo {
-    font-family: var(--font-family); /* Đồng bộ font */
-    font-size: 1.6em;  /* Đồng bộ cỡ chữ logo */
-    font-weight: 700;
-    color: var(--heading-color); /* Màu chữ logo giống home */
-    text-decoration: none; /* Đảm bảo logo là link thì không gạch chân */
-}
-
-.logo-alt {
-    color: var(--primary-color); /* Màu nhấn logo giống home */
-    font-weight: 700;
-}
-
-/* --- Main Nav (Style giống home.css) --- */
-.main-nav ul {
-    display: flex;
-    list-style: none;
-    gap: 40px; /* Đồng bộ khoảng cách nav item */
-}
-
-.main-nav ul li a {
-    color: var(--text-color); /* Màu chữ nav giống home */
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.95em; /* Đồng bộ cỡ chữ nav */
-    text-transform: none; /* Bỏ uppercase nếu home không dùng */
-    letter-spacing: normal; /* Bỏ letter-spacing nếu home không dùng */
-    position: relative;
-    transition: color 0.3s ease;
-}
-/* Bỏ gạch chân effect cũ */
-.main-nav ul li a::after { display: none; } 
-
-.main-nav ul li a:hover,
-.main-nav ul li a.active {
-    color: var(--primary-color); /* Màu hover/active giống home */
-}
-
-/* --- Header Actions (Style giống home.css) --- */
-.header-actions {
-    display: flex; /* Đảm bảo có display flex */
-    align-items: center; /* Đảm bảo có align items */
-    gap: 20px; /* Đồng bộ khoảng cách icon */
-}
-.header-actions .header-icon {
-    color: var(--text-color); /* Màu icon giống home */
-    margin-left: 0; /* Reset margin cũ nếu cần */
-    text-decoration: none;
-    font-size: 1.3em; /* Đồng bộ cỡ icon */
-    opacity: 1; /* Bỏ opacity cũ */
-    transition: color 0.3s ease;
-}
-
-.header-actions .header-icon:hover {
-    opacity: 1;
-    color: var(--primary-color); /* Màu hover icon giống home */
-}
-
-/* Ẩn mobile toggle trên desktop */
-.mobile-menu-toggle { display: none; }
+/* Các style Reset and Base Styles, body, .container, .site-header, .main-nav, .header-actions, .site-footer
+   được GIẢ ĐỊNH là đã có trong base.css hoặc file CSS global được base.html sử dụng.
+   Do đó, chúng sẽ được lược bỏ khỏi item_detail.css để tránh trùng lặp và dư thừa.
+*/
 
 /* --- Item Detail Section (Phần nội dung chi tiết) --- */
 /* Giữ lại bố cục grid nhưng tinh chỉnh màu sắc và khoảng cách */
+.item-detail-container { /* Thêm class này cho main để có thể thêm padding/margin nếu muốn tách biệt với header/footer */
+    padding-top: 20px; /* Ví dụ: thêm khoảng cách với header */
+    padding-bottom: 20px; /* Ví dụ: thêm khoảng cách với footer */
+}
+
 .item-detail {
-    padding: 40px 0; /* Giảm padding trên dưới */
+    padding: 40px; /* Giảm padding trên dưới, tăng trái phải cho cân đối hơn */
     background-color: var(--white); /* Nền trắng cho phần chi tiết */
     border-radius: 10px; /* Giảm bo góc */
-    margin: 40px 0;
+    margin: 20px 0; /* Giảm margin top/bottom nếu item-detail-container đã có padding */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Shadow tương tự card */
     border: 1px solid var(--border-color);
 }
@@ -136,24 +41,25 @@ body {
     display: grid;
     grid-template-columns: 1fr 1.2fr; /* Cho phần text rộng hơn ảnh chút */
     gap: 30px; /* Giảm khoảng cách */
-    align-items: start; /* Chỉnh thành center nếu muốn căn giữa dọc */
+    align-items: start; 
 }
 
 .item-image-section {
-    /* position: relative; */ /* Bỏ relative nếu không cần */
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 15px; /* Thêm padding quanh ảnh */
+    /* background-color: var(--bg-color); /* Có thể thêm nền nhẹ nếu muốn */
+    /* border-radius: 8px; */
 }
 
 .item-main-image {
     width: 100%;
-    max-width: 100%; /* Cho ảnh chiếm hết khu vực */
+    max-width: 100%; 
     height: auto;
     border-radius: 8px; /* Giảm bo góc ảnh */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Giảm thời gian transition */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .item-main-image:hover {
@@ -164,233 +70,137 @@ body {
 .item-info-section {
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */ /* Bỏ nếu không muốn căn giữa dọc */
-    padding: 15px 15px 15px 0; /* Điều chỉnh padding */
+    padding: 15px 15px 15px 0; 
 }
 
 .item-title {
-    font-family: var(--font-family); /* Đồng bộ font */
-    font-size: 2em; /* Giảm cỡ chữ title */
+    font-family: var(--font-family); 
+    font-size: 2em; 
     font-weight: 700;
-    color: var(--heading-color); /* Dùng màu heading */
-    margin-bottom: 15px; /* Giảm margin */
+    color: var(--heading-color); 
+    margin-bottom: 15px; 
     line-height: 1.3;
-    letter-spacing: normal; /* Bỏ spacing */
 }
 
-.item-price { /* Đổi tên class này thành .item-price-block để tránh xung đột */
+/* Đổi tên class */
+.item-price-block { 
     display: flex;
-    /* align-items: center; */
-    align-items: baseline; /* Căn theo baseline đẹp hơn */
-    gap: 15px; /* Giảm gap */
-    margin-bottom: 25px; /* Giảm margin */
-    flex-wrap: wrap; /* Cho phép xuống dòng nếu cần */
+    align-items: baseline; 
+    gap: 15px; 
+    margin-bottom: 25px; 
+    flex-wrap: wrap; 
 }
 
-/* Đổi tên class */
 .item-price-block .current-price { 
-    font-size: 2.2em; /* Giảm cỡ chữ giá hiện tại */
+    font-size: 2.2em; 
     font-weight: 700;
-    color: var(--primary-color); /* ĐỔI MÀU GIÁ HIỆN TẠI sang màu chính */
-    letter-spacing: normal;
+    color: var(--primary-color); 
 }
 
-/* Đổi tên class */
 .item-price-block .original-price { 
-    font-size: 1.1em; /* Giảm cỡ chữ */
-    color: var(--muted-color); /* Dùng màu muted */
+    font-size: 1.1em; 
+    color: var(--muted-color); 
     text-decoration: line-through;
     font-weight: 500;
-    opacity: 1; /* Bỏ opacity */
 }
 
 .item-description {
-    margin-bottom: 30px; /* Giảm margin */
-    padding: 20px; /* Giảm padding */
-    background: var(--bg-color); /* Nền giống body */
-    border-radius: 8px; /* Giảm bo góc */
-    border: 1px solid var(--border-color); /* Thêm viền nhẹ */
-    box-shadow: none; /* Bỏ shadow trong */
-    transition: none; /* Bỏ transition */
-}
-
-.item-description:hover { /* Bỏ hover effect */
-    transform: none;
-    box-shadow: none;
+    margin-bottom: 30px; 
+    padding: 20px; 
+    background: var(--bg-color); 
+    border-radius: 8px; 
+    border: 1px solid var(--border-color); 
 }
 
 .item-description h3 {
     font-family: var(--font-family);
-    font-size: 1.2em; /* Giảm cỡ chữ */
-    font-weight: 600; /* Tăng weight */
+    font-size: 1.2em; 
+    font-weight: 600; 
     color: var(--heading-color); 
-    margin-bottom: 10px; /* Giảm margin */
-    letter-spacing: normal;
-    border-bottom: 1px solid var(--border-color); /* Thêm đường kẻ dưới */
+    margin-bottom: 10px; 
+    border-bottom: 1px solid var(--border-color); 
     padding-bottom: 5px;
 }
 
 .item-description p {
-    font-size: 1em; /* Đồng bộ cỡ chữ */
-    color: var(--text-color); /* Dùng màu text chính */
-    line-height: 1.7; /* Tăng line-height */
+    font-size: 1em; 
+    color: var(--text-color); 
+    line-height: 1.7; 
     font-weight: 400;
 }
 
 .item-actions {
-    margin-bottom: 25px; /* Giảm margin */
+    margin-bottom: 25px; 
 }
 
 .bid-now-btn {
-    /* Style lại nút giống nút trên home */
-    padding: 12px 30px; /* Đồng bộ padding */
+    padding: 12px 30px; 
     border: none;
-    border-radius: 5px; /* Giảm bo góc */
-    font-size: 1em; /* Đồng bộ font size */
-    font-weight: 600; /* Giảm weight */
+    border-radius: 5px; 
+    font-size: 1em; 
+    font-weight: 600; 
     cursor: pointer;
-    background-color: var(--primary-color); /* Dùng màu chính */
-    color: var(--white); /* Chữ trắng */
-    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Sửa transition */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Shadow nhẹ */
-    letter-spacing: normal; /* Bỏ spacing */
-    position: static; /* Bỏ position */
-    overflow: visible; /* Bỏ overflow */
+    background-color: var(--primary-color); 
+    color: var(--white); 
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    text-decoration: none; /* Đảm bảo link không bị gạch chân */
+    display: inline-block; /* Để padding và các thuộc tính khác hoạt động đúng */
 }
-/* Bỏ hiệu ứng giả */
-.bid-now-btn::before { display: none; }
+
+.bid-now-btn i { /* Style cho icon trong nút nếu cần */
+    margin-right: 8px;
+}
 
 .bid-now-btn:hover {
-    background-color: var(--accent-color); /* Dùng màu accent khi hover */
+    background-color: var(--accent-color); 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    transform: none; /* Bỏ transform */
 }
 
 .bid-now-btn:active {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transform: none;
 }
 
 /* Item Meta Section */
 .item-meta {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive hơn */
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
     gap: 15px; 
-    background: var(--bg-color); /* Nền giống body */
+    background: var(--bg-color); 
     padding: 15px; 
     border-radius: 8px; 
     border: 1px solid var(--border-color);
-    box-shadow: none; /* Bỏ shadow */
 }
 
 .meta-item {
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */ /* Bỏ căn giữa */
 }
 
 .meta-label {
-    font-size: 0.9em; /* Giảm cỡ chữ */
-    font-weight: 600; /* Tăng weight */
-    color: var(--muted-color); /* Dùng màu muted */
+    font-size: 0.9em; 
+    font-weight: 600; 
+    color: var(--muted-color); 
     margin-bottom: 4px; 
 }
 
 .meta-value {
-    font-size: 0.95em; /* Tăng nhẹ */
+    font-size: 0.95em; 
     font-weight: 500;
-    color: var(--text-color); /* Dùng màu text */
+    color: var(--text-color); 
 }
 
-/* --- Footer (Style giống footer home.css) --- */
-.site-footer {
-    /* Bỏ style cũ, dùng style từ home */
-    background-color: var(--dark-green-footer-bg); /* Nền tối giống home */
-    color: var(--white);
-    padding: 50px 0 0 0; /* Padding giống home */
-    margin-top: 60px; /* Margin giống home */
-    font-family: var(--font-family);
-    border-top: none;
-}
-
-.footer-content-wrapper {
-    display: flex;
-    flex-wrap: wrap; /* Thêm wrap */
-    justify-content: space-between;
-    gap: 40px; /* Đồng bộ gap */
-    margin-bottom: 50px; /* Đồng bộ margin */
-}
-
-.contact-info, .newsletter-signup { /* Style chung cho 2 cột footer */
-     flex-basis: 45%; /* Điều chỉnh nếu cần */
-     min-width: 280px;
-}
-/* Giữ lại style các phần tử con của footer như h5, .contact-item, form,... từ home.css nếu muốn giống hệt */
-/* Ví dụ: */
-.contact-info h5,
-.newsletter-signup h5 {
-    color: var(--white); 
-    font-size: 0.9em; 
-    font-weight: 700;
-    margin-bottom: 20px; 
-    text-transform: uppercase; 
-    letter-spacing: 0.5px;
-}
-.contact-item { /* Copy từ home.css */
-    display: flex; align-items: flex-start; margin-bottom: 15px;
-    font-size: 0.9em; color: var(--white);
-}
-.contact-icon { /* Copy từ home.css */
-    font-size: 1em; color: rgba(255, 255, 255, 0.7); margin-right: 10px;
-    width: 1.2em; text-align: center; margin-top: 0.15em;
-}
-.contact-details { flex: 1; line-height: 1.7; }
-.contact-details strong { color: var(--white); font-weight: 700; margin-right: 5px; }
-.contact-details a { color: var(--white); text-decoration: underline; transition: opacity 0.3s ease; }
-.contact-details a:hover { opacity: 0.8; }
-.social-icons { margin-top: 20px; }
-.social-icons a { color: var(--white); font-size: 1.2em; margin-right: 18px; transition: opacity 0.3s ease; }
-.social-icons a:hover { opacity: 0.8; }
-.newsletter-form { display: flex; margin-top: 10px; height: 42px; }
-.newsletter-form input[type="email"] {
-    flex-grow: 1; padding: 10px 15px; border: none; background-color: var(--white);
-    color: var(--text-color); border-radius: 3px 0 0 3px; outline: none;
-    font-family: var(--font-family); font-size: 0.9em; height: 100%;
-}
-.newsletter-form input[type="email"]::placeholder { color: #999; font-style: italic; }
-.newsletter-form button {
-    padding: 10px 25px; background-color: #444; color: var(--white); border: none;
-    cursor: pointer; border-radius: 0 3px 3px 0; font-family: var(--font-family);
-    font-size: 0.9em; font-weight: 500; text-transform: none; white-space: nowrap;
-    transition: background-color 0.3s ease; height: 100%; line-height: normal;
-}
-.newsletter-form button:hover { background-color: #555; }
-
-.footer-bottom { /* Copy từ home.css */
-    border-top: 1px solid rgba(255, 255, 255, 0.1); 
-    padding: 15px 0;
-    text-align: center; 
-    font-size: 0.85em; 
-    color: rgba(255, 255, 255, 0.7);
-    letter-spacing: normal; /* Bỏ letter spacing */
-}
-.footer-bottom p { margin: 0; }
-
-
-/* Responsive Design - Giữ lại hoặc chỉnh sửa nếu cần */
-@media (max-width: 992px) { /* Thêm breakpoint này nếu home.css có */
-     .contact-info { flex-basis: 45%; } .newsletter-signup { flex-basis: 50%; }
-}
-
+/* --- Responsive Design --- */
+/* Giữ lại hoặc chỉnh sửa nếu cần, chỉ áp dụng cho phần content của item_detail */
 @media (max-width: 768px) {
     .item-detail-wrapper {
         grid-template-columns: 1fr; /* Chuyển thành 1 cột */
     }
     .item-image-section {
-         padding: 0; /* Reset padding ảnh */
-         margin-bottom: 20px; /* Thêm khoảng cách dưới ảnh */
+        padding: 0; /* Reset padding ảnh */
+        margin-bottom: 20px; /* Thêm khoảng cách dưới ảnh */
     }
-     .item-info-section {
+    .item-info-section {
         padding: 0; /* Reset padding */
     }
     .item-title { font-size: 1.8em; }
@@ -398,20 +208,10 @@ body {
     .item-price-block .original-price { font-size: 1em; }
 
     .item-meta {
-        grid-template-columns: 1fr; /* Đã có */
+        /* grid-template-columns: 1fr;  Responsive hơn với repeat(auto-fit) ở trên */
         gap: 10px; 
         padding: 10px 15px; 
     }
-
-    .footer-content-wrapper {
-        flex-direction: column;
-        gap: 30px; /* Giảm gap */
-    }
-     .contact-info, .newsletter-signup {
-         flex-basis: auto; /* Reset flex-basis */
-         width: 100%;
-     }
-
-    .mobile-menu-toggle { display: block; }
-    .main-nav { display: none; } 
 }
+
+/* Bỏ style cho .mobile-menu-toggle và .main-nav vì đã có trong base.css */
