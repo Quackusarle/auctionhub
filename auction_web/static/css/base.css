@@ -61,6 +61,7 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Bóng đổ nhẹ nhàng hơn */
     /* border-bottom: 1px solid var(--border-color); /* Có thể dùng border thay shadow */
 }
+
 .site-header.plant-theme-header .container {
     display: flex;
     justify-content: space-between;
@@ -121,7 +122,7 @@ body {
 }
 .header-icon { /* Dùng cho cả icon search và icon user mặc định */
     color: var(--text-color);
-    font-size: 1.3em;
+    font-size: 1.9em;
     transition: color 0.3s ease;
 }
 .header-icon:hover { color: var(--primary-color); }
