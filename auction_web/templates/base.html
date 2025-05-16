@@ -10,6 +10,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <link rel="stylesheet" href="/static/css/base.css" /> {% block page_specific_css %}{% endblock %}
+
+    <!-- Chatbot Script -->
+    <script type="text/javascript">
+        (function(d, m){
+            var kommunicateSettings = 
+                {"appId":"2a9bf6443a0ce9b75d9d2fdf642b0b7f8","popupWidget":true,"automaticChatOpenOnNavigation":true};
+            var s = document.createElement("script"); s.type = "text/javascript"; s.async = true;
+            s.src = "https://widget.kommunicate.io/v2/kommunicate.app";
+            var h = document.getElementsByTagName("head")[0]; h.appendChild(s);
+            window.kommunicate = m; m._globals = kommunicateSettings;
+        })(document, window.kommunicate || {});
+    </script>
 </head>
 <body>
     <header class="site-header plant-theme-header">
@@ -44,7 +56,7 @@
 
     <div class="search-modal-simple" id="searchModal" aria-hidden="true" role="dialog" aria-labelledby="searchModalTitle">
         <div class="modal-content-simple">
-            <button type="button" class="close-button-simple" id="closeSearchModalBtn" aria-label="Đóng tìm kiếm">&times;</button>
+            <button type="button" class="close-button-simple" id="closeSearchModalBtn" aria-label="Đóng tìm kiếm">×</button>
             <h3 id="searchModalTitle">Tìm kiếm sản phẩm</h3>
             <form class="search-form-simple" id="siteSearchForm" action="/search/" method="get">
                 <input type="text" name="q" id="searchInputModal" placeholder="Nhập từ khóa tìm kiếm..." required aria-label="Từ khóa tìm kiếm"/>
@@ -91,7 +103,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p>
+                <p>© <span id="copyright-year">2025</span> AuctionHub. Bảo lưu mọi quyền.</p>
             </div>
         </div>
     </footer>
