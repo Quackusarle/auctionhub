@@ -1,10 +1,9 @@
 {% extends "base.html" %}
-{% load static %} {# Hoặc cách bạn load static file trong project #}
+{% load static %}
 
 {% block title %}{{ item.name }} - AuctionHub{% endblock title %}
 
 {% block page_specific_css %}
-    {# <link rel="stylesheet" href="{% static 'css/home.css' %}"> #}
     <link rel="stylesheet" href="{% static 'css/item_detail.css' %}">
 {% endblock page_specific_css %}
 
@@ -16,14 +15,13 @@
                 {% if item.image_url %}
                     <img src="{{ item.image_url }}" alt="{{ item.name }}" class="item-main-image">
                 {% else %}
-                    <img src="{% static 'images/placeholder.png' %}" alt="Placeholder" class="item-main-image"> {# Sửa lại đường dẫn static nếu cần #}
+                    <img src="{% static 'images/placeholder.png' %}" alt="Placeholder" class="item-main-image">
                 {% endif %}
             </div>
 
             <div class="item-info-section">
                 <h1 class="item-title">{{ item.name }}</h1>
                 
-                {# Đổi class item-price thành item-price-block như trong CSS yêu cầu #}
                 <div class="item-price-block"> 
                     <span class="current-price">đ{{ item.current_price }}</span>
                     <span class="original-price">đ{{ item.starting_price }}</span>
@@ -53,5 +51,241 @@
             </div>
         </div>
     </section>
+
+    <!-- Reviews Section -->
+    <section class="reviews-section">
+        <h2 class="reviews-title">Đánh giá người bán</h2>
+        <div class="reviews-summary">
+            <span class="average-rating">Chưa có đánh giá</span>
+            <span class="review-count">(0 đánh giá)</span>
+        </div>
+        
+        <!-- Hidden inputs for user ID and seller ID -->
+        <input type="hidden" id="current-user-id" value="{% if user.is_authenticated %}{{ user.id }}{% else %}null{% endif %}">
+        <input type="hidden" id="seller-id" value="{{ item.seller.id }}">
+
+        <!-- Review Form (Visible to Authenticated Users) -->
+        {% if user.is_authenticated %}
+        <div class="review-form">
+            <h3>Viết đánh giá của bạn</h3>
+            <div class="rating-input">
+                <label for="rating">Điểm số:</label>
+                <select id="rating" name="rating">
+                    <option value="5">5 sao</option>
+                    <option value="4">4 sao</option>
+                    <option value="3">3 sao</option>
+                    <option value="2">2 sao</option>
+                    <option value="1">1 sao</option>
+                </select>
+            </div>
+            <div class="review-text-input">
+                <label for="review_text">Nội dung đánh giá:</label>
+                <textarea id="review_text" name="review_text" rows="4" placeholder="Nhập đánh giá của bạn..."></textarea>
+            </div>
+            <button class="submit-review-btn" onclick="submitReview()">Gửi đánh giá</button>
+        </div>
+        {% else %}
+        <p class="login-prompt">Vui lòng <a href="{% url 'login-signup' %}">đăng nhập</a> để viết đánh giá.</p>
+        {% endif %}
+
+        <!-- Reviews List -->
+        <div class="reviews-list" id="reviews-list">
+            <!-- Reviews will be populated by JavaScript -->
+        </div>
+    </section>
 </main>
 {% endblock content %}
+
+{% block page_specific_js %}
+<script>
+    // CSRF Token for POST requests
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // Get user and seller IDs from hidden inputs
+    const currentUserId = document.getElementById('current-user-id').value === 'null' ? null : parseInt(document.getElementById('current-user-id').value);
+    const sellerId = parseInt(document.getElementById('seller-id').value);
+
+    // Fetch reviews for the seller
+    async function fetchReviews() {
+        try {
+            const response = await fetch('/api/reviews/get_user_review/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ user_id: sellerId })
+            });
+            const reviews = await response.json();
+            if (response.ok) {
+                if (reviews.length === 0) {
+                    document.getElementById('reviews-list').innerHTML = '<p class="no-reviews">Chưa có đánh giá nào cho người bán này.</p>';
+                } else {
+                    renderReviews(reviews);
+                }
+                updateSummary(reviews);
+            } else {
+                console.error('Error fetching reviews:', reviews.message);
+                document.getElementById('reviews-list').innerHTML = '<p class="error-message">Lỗi khi tải đánh giá. Vui lòng thử lại sau.</p>';
+            }
+        } catch (error) {
+            console.error('Network error:', error);
+            document.getElementById('reviews-list').innerHTML = '<p class="error-message">Lỗi kết nối. Vui lòng kiểm tra mạng và thử lại.</p>';
+        }
+    }
+
+    // Render reviews to the DOM
+    function renderReviews(reviews) {
+        const reviewsList = document.getElementById('reviews-list');
+        reviewsList.innerHTML = '';
+        reviews.forEach(review => {
+            const reviewElement = document.createElement('div');
+            reviewElement.className = 'review-item';
+            reviewElement.innerHTML = `
+                <div class="review-header">
+                    <span class="review-rating">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</span>
+                    <span class="review-id" style="display:none;">${review.review_id}</span>
+                </div>
+                <p class="review-text">${review.review_text}</p>
+                ${currentUserId && review.reviewer_id === currentUserId ? `
+                <div class="review-actions">
+                    <button class="edit-review-btn" onclick="editReview(${review.review_id}, ${review.rating}, '${review.review_text.replace(/'/g, "\\'")}')">Chỉnh sửa</button>
+                    <button class="delete-review-btn" onclick="deleteReview(${review.review_id})">Xóa</button>
+                </div>` : ''}
+            `;
+            reviewsList.appendChild(reviewElement);
+        });
+    }
+
+    // Update average rating and review count
+    function updateSummary(reviews) {
+        const summary = document.querySelector('.reviews-summary');
+        const average = reviews.length ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : 0;
+        summary.innerHTML = `
+            <span class="average-rating">${average} ★</span>
+            <span class="review-count">(${reviews.length} đánh giá)</span>
+        `;
+    }
+
+    // Submit a new review
+    async function submitReview() {
+        const rating = document.getElementById('rating').value;
+        const reviewText = document.getElementById('review_text').value.trim();
+        if (!reviewText) {
+            alert('Vui lòng nhập nội dung đánh giá.');
+            return;
+        }
+        try {
+            const response = await fetch('/api/reviews/create_review/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({
+                    reviewer_id: currentUserId,
+                    reviewee_id: sellerId,
+                    rating: parseInt(rating),
+                    review_text: reviewText
+                })
+            });
+            const result = await response.json();
+            if (response.ok) {
+                alert('Đánh giá đã được gửi.');
+                document.getElementById('review_text').value = '';
+                fetchReviews();
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('Error submitting review:', error);
+            alert('Đã xảy ra lỗi khi gửi đánh giá.');
+        }
+    }
+
+    // Edit a review
+    function editReview(reviewId, rating, reviewText) {
+        document.getElementById('rating').value = rating;
+        document.getElementById('review_text').value = reviewText;
+        const submitBtn = document.querySelector('.submit-review-btn');
+        submitBtn.textContent = 'Cập nhật đánh giá';
+        submitBtn.onclick = async () => {
+            const newRating = document.getElementById('rating').value;
+            const newReviewText = document.getElementById('review_text').value.trim();
+            if (!newReviewText) {
+                alert('Vui lòng nhập nội dung đánh giá.');
+                return;
+            }
+            try {
+                const response = await fetch('/api/reviews/update_review/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({
+                        review_id: reviewId,
+                        rating: parseInt(newRating),
+                        review_text: newReviewText
+                    })
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Đánh giá đã được cập nhật.');
+                    document.getElementById('review_text').value = '';
+                    submitBtn.textContent = 'Gửi đánh giá';
+                    submitBtn.onclick = submitReview;
+                    fetchReviews();
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error updating review:', error);
+                alert('Đã xảy ra lỗi khi cập nhật đánh giá.');
+            }
+        };
+    }
+
+    // Delete a review
+    async function deleteReview(reviewId) {
+        if (!confirm('Bạn có chắc muốn xóa đánh giá này?')) return;
+        try {
+            const response = await fetch('/api/reviews/delete_review/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ review_id: reviewId })
+            });
+            const result = await response.json();
+            if (response.ok) {
+                alert('Đánh giá đã được xóa.');
+                fetchReviews();
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('Error deleting review:', error);
+            alert('Đã xảy ra lỗi khi xóa đánh giá.');
+        }
+    }
+
+    // Fetch reviews on page load
+    window.onload = fetchReviews;
+</script>
+{% endblock page_specific_js %}
