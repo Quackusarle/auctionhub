@@ -17,3 +17,6 @@ def register_view(request):
 def profile_view(request):
     context = {}
     return render(request, 'account/profile.html', context)
+
+def about(request):
+    return render(request, 'about/about.html')

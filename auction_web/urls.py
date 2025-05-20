@@ -25,6 +25,7 @@ from apps.bidding.views import bidding_detail_view
 
 urlpatterns = [
     path('', views.home_view, name='home-template'),  # Trang chủ
+    path('about/', views.about, name='about'), # About page
     path('admin/', admin.site.urls),
     path('api/', include('apps.items.urls')),
     path('api/', include('apps.auth_users.urls')),
