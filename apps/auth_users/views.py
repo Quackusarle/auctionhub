@@ -53,39 +53,13 @@ class UserDetail(APIView):
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# ----- CÁC VIEW MỚI CHO PROFILE -----
-
 class UserProfileView(APIView):
-    """
-    View để user đang đăng nhập xem thông tin profile của chính mình.
-    Endpoint: /api/profile/me/ (Ví dụ)
-    """
-    permission_classes = [permissions.IsAuthenticated] # Yêu cầu user phải đăng nhập
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        """Trả về thông tin của user đang đăng nhập."""
-        user = request.user # Lấy thẳng user từ request
-        serializer = UserSerializer(user)
+        user = request.user
+        serializer = UserSerializer(user, context={'request': request}) 
         return Response(serializer.data)
-
-    # Có thể thêm method PATCH ở đây để cho phép user cập nhật một số trường 
-    # (ví dụ: first_name, last_name nếu có trong model và serializer)
-    # def patch(self, request):
-    #     user = request.user
-    #     serializer = UserSerializer(user, data=request.data, partial=True) # partial=True cho phép update từng phần
-    #     if serializer.is_valid():
-    #          # Chỉ cho phép update các trường cụ thể, không cho update email, balance ở đây
-    #          allowed_updates = {'profile_picture'} # Chỉ ví dụ, ảnh nên có view riêng
-    #          update_data = {k: v for k, v in serializer.validated_data.items() if k in allowed_updates}
-             
-    #          # Nên kiểm tra xem có dữ liệu update không trước khi save
-    #          if update_data:
-    #               serializer.save(**update_data) # Chỉ save các trường được phép
-
-    #          # Trả về dữ liệu đã cập nhật (hoặc dữ liệu gốc nếu không có gì thay đổi)
-    #          updated_serializer = UserSerializer(user) # Lấy lại dữ liệu mới nhất
-    #          return Response(updated_serializer.data)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 DEFAULT_AVATAR_STATIC_PATH = '/images/default_avatar.jpg' # Đảm bảo ảnh này tồn tại trong static/images/
 
@@ -161,28 +135,3 @@ class DeleteCurrentUserView(APIView):
         # Có thể thêm bước xác nhận mật khẩu ở đây nếu muốn an toàn hơn
         user.delete()
         return Response({'detail': 'Tài khoản đã được xóa thành công.'}, status=status.HTTP_204_NO_CONTENT) # Hoặc 200 OK nếu muốn trả về message
-    
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        # Có thể thêm thông tin vào payload của token nếu muốn (nhưng cẩn thận bảo mật)
-        # token['email'] = user.email 
-        return token
-
-    def validate(self, attrs):
-        # data chứa access và refresh token sau khi validate thành công
-        data = super().validate(attrs) 
-        
-        # Thêm thông tin của user vào response trả về cho frontend
-        data['user'] = {
-            'id': self.user.id,
-            'email': self.user.email,
-            'balance': str(self.user.balance), # Chuyển Decimal thành string cho JSON
-            'profile_picture_url': self.user.profile_picture.url if self.user.profile_picture else None,
-            # Thêm các trường khác của user nếu cần
-        }
-        return data
-
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer # Sử dụng serializer custom

@@ -11,7 +11,9 @@ def home_view(request):
     return render(request, 'home/home.html', context)
 
 def register_view(request):
-    return render(request, 'account/login-signup.html')
+    context = {}
+    return render(request, 'account/signup.html', context)
 
 def profile_view(request):
-    return render(request, 'account/profile.html')
+    context = {}
+    return render(request, 'account/profile.html', context)

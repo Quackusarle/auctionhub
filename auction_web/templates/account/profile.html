@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ page_title|default:_("Hồ sơ cá nhân") }}{% endblock title %}
+
+{% block extra_css %}
+{{ block.super }} {# Để giữ CSS từ base.html nếu có #}
+{# Giả sử cậu đặt file profile.css trong static/css/ #}
+{# Nếu cậu đặt trong static của app, ví dụ app tên 'users_app', thì sẽ là 'users_app/css/profile.css' #}
+<link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+<main class="profile-page-container">
+    <header class="profile-header">
+        <h1>{% trans "Hồ sơ cá nhân của bạn" %}</h1>
+    </header>
+
+    <section class="profile-content">
+        <aside class="profile-sidebar">
+            <div class="profile-avatar-wrapper">
+                {% if profile.profile_picture and profile.profile_picture.url %}
+                    <img src="{{ profile.profile_picture.url }}" alt="{% trans 'Ảnh đại diện' %}">
+                {% else %}
+                    <div class="profile-avatar-placeholder">
+                        {{ profile.email|slice:":1"|upper }}
+                    </div>
+                {% endif %}
+            </div>
+            <p class="user-email">{{ profile.email }}</p>
+            {% if profile.is_active %}
+                <span class="user-status active">{% trans "Đang hoạt động" %}</span>
+            {% else %}
+                <span class="user-status inactive">{% trans "Tạm khóa" %}</span>
+            {% endif %}
+        </aside>
+
+        <article class="profile-main-info">
+            <h2>{% trans "Thông tin chi tiết" %}</h2>
+            <div class="info-item">
+                <span class="label">{% trans "Mã người dùng:" %}</span>
+                <span class="value">{{ profile.id }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">{% trans "Địa chỉ Email:" %}</span>
+                <span class="value">{{ profile.email }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">{% trans "Số dư tài khoản:" %}</span>
+                {# Dùng floatformat:"0" để bỏ phần thập phân nếu không cần thiết #}
+                <span class="value balance">{{ profile.balance|floatformat:"0" }} {% trans "VND" %}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">{% trans "Ngày tham gia:" %}</span>
+                {# Định dạng ngày tháng cho dễ nhìn, ví dụ: 16/05/2025 20:28 #}
+                <span class="value">{{ profile.created_at_display|date:"d/m/Y H:i"|default_if_none:"Chưa có thông tin" }}</span>
+            </div>
+        </article>
+    </section>
+</main>
+{% endblock content %}
+
+{% block extra_js %}
+{{ block.super }} {# Để giữ JS từ base.html nếu có #}
+{ <script src="{% static 'js/profile.js' %}"></script> }
+{% endblock extra_js %}
