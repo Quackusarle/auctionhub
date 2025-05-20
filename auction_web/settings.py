@@ -35,7 +35,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -115,12 +114,12 @@ WSGI_APPLICATION = 'auction_web.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',  # Sử dụng PostgreSQL
         'NAME': 'auctiondb',
-        'USER': 'root',
+        'USER': 'postgres',
         'PASSWORD': '18112005',
         'HOST': 'localhost',
-        'PORT': '3306',
+        'PORT': '5432',
     }
 }
 

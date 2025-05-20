@@ -10,13 +10,6 @@ from .views import (
     GetProfilePictureView,
     DeleteCurrentUserView 
 )
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView, # View có sẵn của simplejwt để lấy token
-    TokenRefreshView,  # View có sẵn để làm mới token
-)
-from .views import (
-    MyTokenObtainPairView, # View tùy chỉnh để lấy token với thông tin user
-)
 
 # Đặt tên app để dùng trong reverse URL nếu cần
 app_name = 'users' # Hoặc tên app của anh
@@ -26,14 +19,6 @@ urlpatterns = [
     # Frontend sẽ gửi POST request với 'email' và 'password' tới URL này
     # Nếu thành công, nó trả về JSON chứa 'access' và 'refresh' token
     # path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    
-    # (Tùy chọn) Nếu muốn trả về thêm thông tin user khi login thành công:
-    path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'), 
-
-    # API endpoint để làm mới access token:
-    # Frontend gửi POST request với 'refresh' token tới URL này
-    # Nếu refresh token còn hạn, nó trả về 'access' token mới
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     # Các API cho Admin quản lý users
     path('users/', UserList.as_view(), name='user-list'), # api/users/

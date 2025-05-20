@@ -40,7 +40,7 @@
 </div>
 {% endblock content %}
 
-{% block extra_js %}
+{% block page_specific_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const queryFromUrl = "{{ query_from_url|escapejs }}"; // Lấy query từ context Django

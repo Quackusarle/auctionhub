@@ -30,7 +30,7 @@
             <nav class="main-nav plant-theme-nav">
                 <ul>
                     <li><a href="/" data-nav-path="/">Trang chủ</a></li>
-                    <li><a href="/items/" data-nav-path="/items/">Sản phẩm</a></li>
+                    <li><a href="/items/" data-nav-path="/items/" >Sản phẩm</a></li>
                     <li><a href="/about/" data-nav-path="/about/">Về chúng tôi</a></li>
                     <li><a href="/blog/" data-nav-path="/blog/">Blog</a></li>
                     <li><a href="#contact-section" class="nav-contact-link">Liên hệ</a></li>
@@ -109,6 +109,8 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="/static/js/base.js"></script> {% block page_specific_js %}{% endblock %}
+    <script src="/static/js/base.js"></script> 
+    {% block page_specific_js %}{% endblock %}
+    {% block extra_css %}{% endblock %}
 </body>
 </html>
