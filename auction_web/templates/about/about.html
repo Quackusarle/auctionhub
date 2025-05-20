@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Về Chúng Tôi - AuctionHub{% endblock %}
+
+{% block page_specific_css %}
+    <link rel="stylesheet" href="/static/css/about.css" />
+{% endblock %}
+
+{% block content %}
+    <section class="about-page-section">
+        <div class="container">
+
+            <!-- PHẦN 1: VỀ CHÚNG TÔI (Hình trái, Chữ phải) -->
+            <div class="about-intro-block content-block">
+                <!-- 1. IMAGE FIRST -->
+                <div class="content-image-wrapper image-left">
+                    <img src="/static/images/haha.jpg" alt="Giới thiệu AuctionHub" />
+                </div>
+                <!-- 2. TEXT SECOND -->
+                <div class="content-text-wrapper text-right">
+                    <h2>Về Chúng Tôi</h2>
+                    <p>AuctionHub là sàn đấu giá trực tuyến hàng đầu, mang đến cơ hội sở hữu những sản phẩm độc đáo với giá cạnh tranh. Chúng tôi cam kết cung cấp trải nghiệm mua sắm an toàn và tiện lợi cho mọi người dùng.</p>
+                    <p>Đội ngũ của chúng tôi luôn nỗ lực không ngừng để cải thiện dịch vụ, đảm bảo sự hài lòng của khách hàng. Hãy tham gia cùng chúng tôi để khám phá thế giới đấu giá!</p>
+                </div>
+            </div>
+
+            <!-- PHẦN 2: ĐỘI NGŨ AUCTIONHUB (Chữ trái, Hình phải THEO YÊU CẦU) -->
+            <!-- Class layout-reverse sẽ xử lý việc đảo vị trí trên desktop -->
+            <div class="team-info-block content-block layout-reverse">
+                <!-- 1. IMAGE FIRST (trong HTML) -->
+                <div class="content-image-wrapper image-right"> <!- Class image-right vẫn giữ để có thể target nếu cần -->
+                    <img src="/static/images/team.jpg" alt="Đội ngũ AuctionHub" />
+                </div>
+                <!-- 2. TEXT SECOND (trong HTML) -->
+                <div class="content-text-wrapper text-left"> <!- Class text-left vẫn giữ -->
+                    <h2>Đội Ngũ AuctionHub</h2>
+                    <p>Một tập hợp những chuyên gia đam mê, luôn sẵn sàng hỗ trợ bạn trong mọi phiên đấu giá. Chúng tôi tin rằng con người là yếu tố cốt lõi, và đội ngũ AuctionHub chính là tài sản quý giá nhất của chúng tôi.</p>
+                </div>
+            </div>
+
+        </div> <!-- end .container -->
+    </section>
+{% endblock %}
+
+{% block page_specific_js %}
+    {# <script src="/static/js/about.js"></script> #}
+{% endblock %}

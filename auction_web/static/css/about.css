@@ -1,0 +1,156 @@
+/* :root variables - Đảm bảo bạn đã định nghĩa các biến này */
+:root {
+    --bg-color: #ffffff;
+    --bg-gradient-end: #f8f9fa;
+    --border-color: #e9ecef;
+    --primary-color: #1e7e34;
+    --primary-rgb: 30, 126, 52;
+    --heading-color: var(--primary-color); /* Màu cho H2 */
+    --text-color: #343a40;
+    --muted-color: #5a6268; /* Có thể không cần nếu không có team-highlight kiểu cũ */
+    --section-padding-y: 80px; /* Padding dọc cho section */
+    --block-spacing-y: 70px;  /* Khoảng cách giữa các content-block */
+}
+
+.about-page-section {
+    padding: var(--section-padding-y) 0;
+    background: linear-gradient(135deg, var(--bg-color) 0%, var(--bg-gradient-end) 100%);
+    overflow-x: hidden;
+}
+
+.about-page-section .container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* --- Styling cho các khối nội dung --- */
+.content-block {
+    display: flex;
+    flex-direction: column; /* Mặc định trên mobile: ảnh trên, text dưới */
+    align-items: center;    /* Căn giữa trên mobile */
+    gap: 30px;
+    margin-bottom: var(--block-spacing-y); /* Khoảng cách giữa các content-block */
+    opacity: 0; /* Cho animation */
+    animation: fadeInUpBlock 1s ease-out forwards;
+}
+.content-block:last-child {
+    margin-bottom: 0;
+}
+.content-block:nth-child(2) { /* Delay cho block thứ 2 */
+    animation-delay: 0.3s;
+}
+
+
+.content-image-wrapper {
+    width: 100%;
+    max-width: 500px; /* Kích thước tối đa cho ảnh */
+    border-radius: 12px;
+    overflow: hidden; /* Để bo góc cho ảnh */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    line-height: 0; /* Loại bỏ khoảng trắng thừa dưới ảnh nếu có */
+}
+
+.content-image-wrapper img {
+    width: 100%;
+    height: auto; /* Hoặc height: 100% nếu muốn ảnh luôn fill wrapper và object-fit */
+    display: block;
+    object-fit: cover; /* Đảm bảo ảnh fill mà không bị méo */
+}
+
+.content-text-wrapper {
+    width: 100%;
+    text-align: center; /* Căn giữa text trên mobile */
+}
+
+.content-text-wrapper h2 {
+    font-size: clamp(1.8em, 4vw, 2.5em); /* Kích thước tiêu đề h2 */
+    color: var(--heading-color);
+    font-weight: 700;
+    margin-bottom: 25px;
+    letter-spacing: 0.3px;
+}
+
+.content-text-wrapper p {
+    font-size: clamp(1em, 2.5vw, 1.15em); /* Kích thước chữ to hơn */
+    color: var(--text-color);
+    line-height: 1.8; /* Tăng line-height cho dễ đọc */
+    margin-bottom: 20px;
+    text-align: left; /* Sẽ căn trái trên desktop */
+}
+.content-text-wrapper p:last-child {
+    margin-bottom: 0;
+}
+
+/* --- Responsive adjustments cho layout 2 cột --- */
+@media (min-width: 768px) {
+    .content-block {
+        flex-direction: row; /* Chuyển sang layout hàng ngang */
+        align-items: center; /* Căn giữa các item theo chiều dọc */
+        gap: 40px; /* Khoảng cách giữa ảnh và text */
+        text-align: left; /* Căn trái cho cả khối */
+    }
+
+    .content-image-wrapper {
+        flex: 0 0 45%; /* Ảnh chiếm 45% chiều rộng */
+        max-width: none; /* Bỏ max-width khi đã dùng flex-basis */
+        /* align-self: stretch; /* Để wrapper chiếm full height của flex-item nếu cần */
+    }
+
+    .content-text-wrapper {
+        flex: 1; /* Text chiếm phần còn lại */
+        text-align: left; /* Căn trái text */
+    }
+    .content-text-wrapper h2 {
+        text-align: left;
+    }
+
+    /* Đảo ngược layout cho khối có class .layout-reverse */
+    .content-block.layout-reverse {
+        flex-direction: row-reverse; /* Đảo thứ tự các flex items */
+    }
+    /* Nếu cần cụ thể hơn cho text/image bên trong layout-reverse */
+    /*
+    .content-block.layout-reverse .content-image-wrapper {
+        order: 2;
+    }
+    .content-block.layout-reverse .content-text-wrapper {
+        order: 1;
+    }
+    */
+}
+
+@media (min-width: 992px) {
+    .about-page-section {
+        padding: calc(var(--section-padding-y) + 20px) 0;
+    }
+    .content-block {
+        gap: 60px; /* Tăng khoảng cách */
+    }
+    .content-image-wrapper {
+        flex-basis: 48%; /* Tăng kích thước ảnh một chút */
+    }
+    .content-text-wrapper h2 {
+        font-size: clamp(2em, 4.5vw, 2.8em);
+    }
+    .content-text-wrapper p {
+        font-size: clamp(1.05em, 2.5vw, 1.2em);
+    }
+}
+
+/* --- Keyframes Animations --- */
+@keyframes fadeInUpBlock {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Bỏ các keyframes không dùng nữa nếu có */
+/* @keyframes fadeInDown { ... } */
+/* @keyframes fadeInScaleUp { ... } */
+/* @keyframes fadeInUpText { ... } */
