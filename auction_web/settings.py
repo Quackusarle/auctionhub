@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'apps.bidding.apps.BiddingConfig',
     'apps.payments.apps.PaymentsConfig',
     'apps.reviews.apps.ReviewsConfig',
+    'apps.wallet.apps.WalletConfig'
 ]
 
 MIDDLEWARE = [
@@ -118,7 +119,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'auctiondb',
         'USER': 'root',
-        'PASSWORD': '18112005',
+        'PASSWORD': '1447928479',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -203,6 +204,15 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
+# VietQR API Configuration
+VIETQR_CLIENT_ID = "99fb5419-7a77-4cb1-9ca4-81e92b979853"
+VIETQR_API_KEY = "cf6ddc52-67c5-4bf4-9210-a2f3ab5183dd"
+VIETQR_GENERATE_API_URL = "https://api.vietqr.io/v2/generate"
+
+WEBSITE_BANK_ACCOUNT_NO = "0606062005"       
+WEBSITE_BANK_ACCOUNT_NAME = "TRAN QUANG HUY" 
+WEBSITE_BANK_ACQ_ID = "970443"     
 
 SITE_ID = 1
 

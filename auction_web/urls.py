@@ -31,6 +31,7 @@ urlpatterns = [
     path('api/bidding/', include('apps.bidding.urls')),
     path('api/payments/', include('apps.payments.urls')),
     path('api/reviews/', include('apps.reviews.urls')),
+    path('api/wallet/', include('apps.wallet.urls', namespace='wallet')),
     path('accounts/', include('allauth.urls')),
     path('items/<int:pk>/', item_detail_view, name='item-detail-template'),  # New route for item detail page
     path('items/<int:pk>/bidding/', bidding_detail_view, name='bidding-detail-page'),

@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title|default:"Ví điện tử của tôi" }} - AuctionHub{% endblock %}
+
+{% block page_specific_css %}
+    {{ block.super }}
+    {# Link đến file CSS riêng cho trang này #}
+    <link rel="stylesheet" href="{% static 'css/wallet_dashboard.css' %}">
+    {# Font Awesome đã có trong base.html, nếu chưa có thì thêm link ở đây #}
+    {# <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> #}
+{% endblock %}
+
+{% block content %}
+<div class="wallet-page-container">
+    <div class="wallet-card">
+        <div class="wallet-header">
+            <p class="greeting">Xin chào,</p>
+            <h1 class="user-name">{{ request.user.email|default:"Thành viên AuctionHub" }}</h1>
+            <div class="wallet-balance-info">
+                <p class="balance-label">SỐ DƯ KHẢ DỤNG</p>
+                <p class="wallet-balance-amount">
+                    {{ current_balance|default:0|floatformat:0|intcomma }} <span class="currency">VNĐ</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="wallet-main-actions">
+            <a href="javascript:void(0);" class="wallet-action-button" id="nutHienThiFormNapTien">
+                <span class="icon-circle"><i class="fas fa-download"></i></span>
+                Nạp tiền
+            </a>
+            <a href="javascript:void(0);" class="wallet-action-button" id="nutHienThiFormRutTien">
+                <span class="icon-circle"><i class="fas fa-upload"></i></span>
+                Rút tiền
+            </a>
+        </div>
+
+        <div class="form-section" id="khuVucNapTien" style="display:none;">
+            <h3>Nạp tiền vào tài khoản</h3>
+            <form id="formNapTien">
+                <div class="form-group">
+                    <label for="soTienNap">Số tiền muốn nạp (VNĐ)</label>
+                    <input type="number" id="soTienNap" name="amount" min="10000" step="1000" required placeholder="Tối thiểu 10,000 VNĐ">
+                </div>
+                <button type="submit" class="btn-submit-action">Xác nhận & Lấy mã QR</button>
+            </form>
+            <div id="khuVucMaQR" class="qr-code-area">
+                </div>
+            <p id="huongDanNapTien" class="qr-instructions">
+                Quét mã QR bằng ứng dụng ngân hàng của bạn. <br>
+                Nội dung chuyển khoản: <strong id="thongTinDonHangQR"></strong> (Vui lòng giữ nguyên)
+            </p>
+            <p id="trangThaiNapTien" class="status-message"></p>
+        </div>
+
+        <div class="form-section" id="khuVucRutTien" style="display:none;">
+            <h3>Rút tiền về tài khoản</h3>
+            <p class="coming-soon-text">Tính năng rút tiền hiện đang được phát triển. Vui lòng quay lại sau!</p>
+            
+            <form id="formRutTien">
+                <div class="form-group">
+                    <label for="soTienRut">Số tiền muốn rút (VNĐ)</label>
+                    <input type="number" id="soTienRut" name="withdraw_amount" min="50000" step="1000" required>
+                </div>
+                <div class="form-group">
+                    <label for="thongTinNganHangRut">Thông tin tài khoản nhận tiền:</label>
+                    <input type="text" id="thongTinNganHangRut" name="recipient_bank_info" required placeholder="Số TK - Tên Ngân Hàng - Tên Chủ TK">
+                </div>
+                <button type="submit" class="btn-submit-action">Gửi yêu cầu rút tiền</button>
+            </form>
+            <p id="trangThaiRutTien" class="status-message"></p>
+            
+        </div>
+
+        <div class="transaction-history-section">
+            <h3>Lịch sử giao dịch</h3>
+            {% if transaction_history %}
+                <div class="table-responsive-wallet">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Thời gian</th>
+                                <th>Loại GD</th>
+                                <th>Số tiền</th>
+                                <th class="d-none d-md-table-cell">Mô tả/Ghi chú</th> {# Ẩn trên mobile, hiện trên desktop #}
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for gd in transaction_history %}
+                            <tr>
+                                <td data-label="Thời gian">{{ gd.created_at|date:"H:i d/m/Y" }}</td>
+                                <td data-label="Loại GD">{{ gd.get_transaction_type_display }}</td>
+                                <td data-label="Số tiền" class="{% if gd.transaction_type == 'DEPOSIT' or gd.transaction_type == 'SALE_RECEIVED' or gd.transaction_type == 'REFUND_RECEIVED' or gd.transaction_type == 'SYSTEM_ADJUSTMENT_ADD' %}amount-deposit{% else %}amount-withdrawal{% endif %}">
+                                    {% if gd.transaction_type == 'DEPOSIT' or gd.transaction_type == 'SALE_RECEIVED' or gd.transaction_type == 'REFUND_RECEIVED' or gd.transaction_type == 'SYSTEM_ADJUSTMENT_ADD' %}+{% else %}-{% endif %}
+                                    {{ gd.amount|floatformat:0|intcomma }} VNĐ
+                                </td>
+                                <td data-label="Mô tả" class="d-none d-md-table-cell">{{ gd.description|truncatechars:40|default:"-" }}</td>
+                                <td data-label="Trạng thái" class="status-{{ gd.status|lower }}">{{ gd.get_status_display }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="no-transactions">Chưa có giao dịch nào trong ví của bạn.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block page_specific_js %}
+    {# Link đến file JS riêng cho trang này #}
+    <script src="{% static 'js/wallet_dashboard.js' %}"></script>
+
+    {# Đoạn script xử lý gọi API nạp tiền và hiển thị QR vẫn có thể để ở đây hoặc chuyển vào wallet_dashboard.js #}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const formNapTien = document.getElementById('formNapTien');
+            const khuVucMaQR = document.getElementById('khuVucMaQR');
+            const huongDanNapTien = document.getElementById('huongDanNapTien');
+            const thongTinDonHangQR = document.getElementById('thongTinDonHangQR');
+            const trangThaiNapTien = document.getElementById('trangThaiNapTien');
+
+            // Hàm getCookie nên được định nghĩa trong base.js và có sẵn ở global scope
+            // Nếu chưa có, bạn có thể định nghĩa lại ở đây:
+            if (typeof getCookie !== 'function') {
+                window.getCookie = function(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        const cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+            }
+
+
+            if (formNapTien) {
+                formNapTien.addEventListener('submit', async function(event) {
+                    event.preventDefault();
+                    const inputSoTienNap = document.getElementById('soTienNap');
+                    const soTien = inputSoTienNap.value;
+
+                    trangThaiNapTien.style.display = 'block';
+                    trangThaiNapTien.className = 'status-message info';
+                    trangThaiNapTien.textContent = 'Đang xử lý, vui lòng chờ...';
+                    khuVucMaQR.innerHTML = ''; // Xóa QR cũ
+                    huongDanNapTien.style.display = 'none';
+
+
+                    if (!soTien || parseFloat(soTien) < 10000) {
+                        trangThaiNapTien.textContent = 'Số tiền nạp phải từ 10,000 VNĐ.';
+                        trangThaiNapTien.className = 'status-message error';
+                        inputSoTienNap.focus();
+                        return;
+                    }
+
+                    try {
+                        // Sử dụng URL name đã định nghĩa trong apps/wallet/urls.py với namespace 'viDienTu'
+                        const urlApiKhoiTaoNapTien = "{% url 'wallet:api_khoi_tao_nap_tien' %}";
+                        const phanHoi = await fetch(urlApiKhoiTaoNapTien, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCookie('csrftoken')
+                            },
+                            body: JSON.stringify({ amount: soTien })
+                        });
+
+                        const duLieu = await phanHoi.json();
+
+                        if (!phanHoi.ok) {
+                            // Sử dụng duLieu.loi nếu có, nếu không thì dùng thông báo chung
+                            throw new Error(duLieu.loi || duLieu.error || `Lỗi ${phanHoi.status}: Không thể tạo yêu cầu nạp tiền.`);
+                        }
+
+                        // Kiểm tra key trả về từ API của bạn (đã đổi thành du_lieu_anh_qr và thong_tin_don_hang_cho_qr trong view tiếng Việt)
+                        if (duLieu.du_lieu_anh_qr) {
+                            khuVucMaQR.innerHTML = `<img src="${duLieu.du_lieu_anh_qr}" alt="Quét mã QR để nạp tiền">`;
+                            if (duLieu.thong_tin_don_hang_cho_qr) {
+                               thongTinDonHangQR.textContent = duLieu.thong_tin_don_hang_cho_qr;
+                               huongDanNapTien.style.display = 'block';
+                            }
+                            trangThaiNapTien.textContent = 'Vui lòng quét mã QR bằng ứng dụng ngân hàng của bạn.';
+                            trangThaiNapTien.className = 'status-message success';
+                            setTimeout(() => {
+                                if (trangThaiNapTien.classList.contains('success')) {
+                                   trangThaiNapTien.textContent += ' Sau khi thanh toán, số dư sẽ được cập nhật. Bạn có thể cần tải lại trang sau vài phút.';
+                                }
+                            }, 3000);
+                        } else {
+                            throw new Error(duLieu.loi || duLieu.error || 'Không nhận được dữ liệu mã QR từ server.');
+                        }
+
+                    } catch (error) {
+                        console.error('Lỗi khi yêu cầu nạp tiền:', error);
+                        trangThaiNapTien.textContent = error.message || 'Đã xảy ra lỗi. Vui lòng thử lại.';
+                        trangThaiNapTien.className = 'status-message error';
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock page_specific_js %}
