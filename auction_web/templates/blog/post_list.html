@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Blog - Tin tức & Cập nhật{% endblock %}
+
+{% block page_specific_css %}
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="blog-page-container">
+    <div class="container">
+        <header class="page-header blog-header">
+            <h1>Tin tức & Bài viết nổi bật</h1>
+            <p>Khám phá những chia sẻ, kiến thức và cập nhật mới nhất từ AuctionHub.</p>
+        </header>
+
+        <div class="blog-posts-grid">
+            {# BỎ VÒNG LẶP {% for post in posts %} VÀ {% empty %} #}
+
+            {# --- BÀI VIẾT 1 --- #}
+            <article class="blog-post-card">
+                <a href="{% url 'blog_post_detail' post_slug='5-meo-dau-gia-thong-minh' %}" class="blog-post-card-image-link">
+                    <img src="https://i.pinimg.com/736x/c1/23/8f/c1238f4d96e22f2c95ad7987dcc03b0e.jpg" alt="5 Mẹo Đấu Giá Thông Minh" class="blog-post-image">
+                </a>
+                <div class="blog-post-card-content">
+                    <h2 class="blog-post-title">
+                        <a href="{% url 'blog_post_detail' post_slug='5-meo-dau-gia-thong-minh' %}">5 Mẹo Đấu Giá Thông Minh Cho Người Mới Bắt Đầu</a>
+                    </h2>
+                    <p class="blog-post-meta">
+                        Đăng bởi <span class="author-name">Chuyên Gia AuctionHub</span>
+                        vào <time datetime="2023-10-25">25/10/2023</time>
+                    </p>
+                    <div class="blog-post-excerpt">
+                        <p>Bạn mới tham gia vào thế giới đấu giá trực tuyến? Đừng lo lắng! Bài viết này sẽ cung cấp cho bạn những mẹo hữu ích để bắt đầu một cách tự tin và hiệu quả...</p>
+                    </div>
+                    <a href="{% url 'blog_post_detail' post_slug='5-meo-dau-gia-thong-minh' %}" class="read-more-link btn btn-primary">Đọc thêm →</a>
+                </div>
+            </article>
+
+            {# --- BÀI VIẾT 2 --- #}
+            <article class="blog-post-card">
+                <a href="{% url 'blog_post_detail' post_slug='xu-huong-suu-tam-co-vat-2024' %}" class="blog-post-card-image-link">
+                    <img src="https://i.pinimg.com/736x/52/ae/0a/52ae0a5db345a20a66e3b658ec8ca927.jpg" alt="Xu Hướng Sưu Tầm Cổ Vật 2024" class="blog-post-image">
+                </a>
+                <div class="blog-post-card-content">
+                    <h2 class="blog-post-title">
+                        <a href="{% url 'blog_post_detail' post_slug='xu-huong-suu-tam-co-vat-2024' %}">Xu Hướng Sưu Tầm Cổ Vật Năm 2024: Những Gì Bạn Cần Biết</a>
+                    </h2>
+                    <p class="blog-post-meta">
+                        Đăng bởi <span class="author-name">Nhà Sưu Tầm</span>
+                        vào <time datetime="2023-10-20">20/10/2023</time>
+                    </p>
+                    <div class="blog-post-excerpt">
+                        <p>Thị trường cổ vật luôn biến động. Cùng tìm hiểu những xu hướng nổi bật trong năm tới để có những quyết định đầu tư thông thái và sở hữu những món đồ giá trị...</p>
+                    </div>
+                    <a href="{% url 'blog_post_detail' post_slug='xu-huong-suu-tam-co-vat-2024' %}" class="read-more-link btn btn-primary">Đọc thêm →</a>
+                </div>
+            </article>
+
+            {# --- BÀI VIẾT 3 --- #}
+            <article class="blog-post-card">
+                <a href="{% url 'blog_post_detail' post_slug='bao-mat-tai-khoan-dau-gia' %}" class="blog-post-card-image-link">
+                     <img src="https://i.pinimg.com/736x/44/c9/7d/44c97d804f2d3d36e0835c0aad80e122.jpg" alt="Bảo Mật Tài Khoản" class="blog-post-image">
+                </a>
+                <div class="blog-post-card-content">
+                    <h2 class="blog-post-title">
+                        <a href="{% url 'blog_post_detail' post_slug='bao-mat-tai-khoan-dau-gia' %}">Hướng Dẫn Bảo Mật Tài Khoản Đấu Giá Trực Tuyến</a>
+                    </h2>
+                    <p class="blog-post-meta">
+                        Đăng bởi <span class="author-name">AuctionHub Security</span>
+                        vào <time datetime="2023-10-15">15/10/2023</time>
+                    </p>
+                    <div class="blog-post-excerpt">
+                        <p>An toàn tài khoản là ưu tiên hàng đầu. Hãy cùng xem qua các bước đơn giản để bảo vệ tài khoản của bạn khỏi những rủi ro không đáng có.</p>
+                    </div>
+                    <a href="{% url 'blog_post_detail' post_slug='bao-mat-tai-khoan-dau-gia' %}" class="read-more-link btn btn-primary">Đọc thêm →</a>
+                </div>
+            </article>
+
+        </div>
+        {% if is_paginated %}
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {# Cố gắng đặt title động dựa trên slug #}
+    {% if requested_slug == '5-meo-dau-gia-thong-minh' %}5 Mẹo Đấu Giá Thông Minh Cho Người Mới Bắt Đầu
+    {% elif requested_slug == 'xu-huong-suu-tam-co-vat-2024' %}Xu Hướng Sưu Tầm Cổ Vật Năm 2024
+    {% elif requested_slug == 'bao-mat-tai-khoan-dau-gia' %}Hướng Dẫn Bảo Mật Tài Khoản Đấu Giá
+    {% else %}Chi tiết bài viết{% endif %}
+    - Blog AuctionHub
+{% endblock %}
+
+{% block page_specific_css %}
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="blog-page-container">
+    <div class="container">
+        <article class="blog-post-full">
+
+            {% if requested_slug == '5-meo-dau-gia-thong-minh' %}
+            {# --- NỘI DUNG CHI TIẾT CHO BÀI VIẾT 1 (slug: 5-meo-dau-gia-thong-minh) --- #}
+            <header class="page-header blog-post-full-header">
+                <h1>5 Mẹo Đấu Giá Thông Minh Cho Người Mới Bắt Đầu</h1>
+                <p class="blog-post-meta">
+                    Đăng bởi <span class="author-name">Chuyên Gia AuctionHub</span>
+                    vào <time datetime="2023-10-25">25/10/2023 10:00</time>
+                </p>
+            </header>
+            <figure class="blog-post-full-image">
+                <img src="https://i.pinimg.com/736x/c1/23/8f/c1238f4d96e22f2c95ad7987dcc03b0e.jpg" alt="5 Mẹo Đấu Giá Thông Minh">
+            </figure>
+            <section class="blog-post-full-body">
+                <p>Bạn mới tham gia vào thế giới đấu giá trực tuyến? Đừng lo lắng! Bài viết này sẽ cung cấp cho bạn những mẹo hữu ích để bắt đầu một cách tự tin và hiệu quả.</p>
+                <h2>1. Nghiên cứu kỹ sản phẩm</h2>
+                <p>Trước khi đặt giá, hãy tìm hiểu kỹ về sản phẩm bạn quan tâm. Giá trị thị trường, tình trạng, xuất xứ là những yếu tố quan trọng.</p>
+                <h2>2. Đặt ngân sách tối đa</h2>
+                <p>Xác định số tiền tối đa bạn sẵn sàng chi trả và tuân thủ nó. Đừng để cảm xúc cuốn bạn đi quá xa.</p>
+                <h2>3. Hiểu rõ quy định của sàn</h2>
+                <p>Mỗi sàn đấu giá có thể có những quy định riêng về phí, thời gian, cách thức đấu giá. Nắm rõ chúng sẽ giúp bạn tránh những rắc rối không đáng có.</p>
+                <h2>4. Thời điểm vàng để "ra tay"</h2>
+                <p>Đôi khi, việc chờ đợi đến những giây phút cuối cùng của phiên đấu giá mới đặt giá có thể mang lại lợi thế. Tuy nhiên, hãy cẩn thận với kết nối mạng và tốc độ phản ứng của bạn.</p>
+                <h2>5. Giữ bình tĩnh và kiên nhẫn</h2>
+                <p>Đấu giá là một cuộc chơi cần sự tỉnh táo. Nếu thua một món đồ, đừng nản lòng, sẽ có nhiều cơ hội khác chờ bạn.</p>
+                <p>Chúc bạn có những trải nghiệm đấu giá thành công và thú vị!</p>
+            </section>
+
+            {% elif requested_slug == 'xu-huong-suu-tam-co-vat-2024' %}
+            {# --- NỘI DUNG CHI TIẾT CHO BÀI VIẾT 2 (slug: xu-huong-suu-tam-co-vat-2024) --- #}
+            <header class="page-header blog-post-full-header">
+                <h1>Xu Hướng Sưu Tầm Cổ Vật Năm 2024: Những Gì Bạn Cần Biết</h1>
+                <p class="blog-post-meta">
+                    Đăng bởi <span class="author-name">Nhà Sưu Tầm</span>
+                    vào <time datetime="2023-10-20">20/10/2023 10:00</time>
+                </p>
+            </header>
+            <figure class="blog-post-full-image">
+                <img src="https://i.pinimg.com/736x/52/ae/0a/52ae0a5db345a20a66e3b658ec8ca927.jpg" alt="Xu Hướng Sưu Tầm Cổ Vật 2024">
+            </figure>
+            <section class="blog-post-full-body">
+                <p>Thị trường cổ vật luôn biến động. Cùng tìm hiểu những xu hướng nổi bật trong năm tới để có những quyết định đầu tư thông thái và sở hữu những món đồ giá trị.</p>
+                <h3>Nghệ thuật đương đại Châu Á</h3>
+                <p>Các tác phẩm từ những nghệ sĩ mới nổi của Châu Á đang ngày càng được săn đón. Đây có thể là một lĩnh vực đầu tư tiềm năng.</p>
+                <h3>Đồ gốm sứ cổ Việt Nam</h3>
+                <p>Những món đồ gốm sứ từ các triều đại Lý, Trần, Lê... vẫn luôn có giá trị lịch sử và nghệ thuật cao, thu hút sự quan tâm của giới sưu tầm trong và ngoài nước.</p>
+                <h3>Đồng hồ vintage</h3>
+                <p>Sự hoài cổ và kỹ thuật chế tác tinh xảo khiến đồng hồ vintage không bao giờ lỗi mốt. Các thương hiệu Thụy Sĩ danh tiếng vẫn là mục tiêu hàng đầu.</p>
+                <p>Hãy luôn cập nhật thông tin và tham khảo ý kiến từ các chuyên gia trước khi đưa ra quyết định sưu tầm hoặc đầu tư nhé!</p>
+            </section>
+
+            {% elif requested_slug == 'bao-mat-tai-khoan-dau-gia' %}
+            {# --- NỘI DUNG CHI TIẾT CHO BÀI VIẾT 3 (slug: bao-mat-tai-khoan-dau-gia) --- #}
+            <header class="page-header blog-post-full-header">
+                <h1>Hướng Dẫn Bảo Mật Tài Khoản Đấu Giá Trực Tuyến</h1>
+                <p class="blog-post-meta">
+                    Đăng bởi <span class="author-name">AuctionHub Security</span>
+                    vào <time datetime="2023-10-15">15/10/2023 10:00</time>
+                </p>
+            </header>
+            <figure class="blog-post-full-image">
+                 <img src="https://i.pinimg.com/736x/44/c9/7d/44c97d804f2d3d36e0835c0aad80e122.jpg" alt="Bảo Mật Tài Khoản">
+            </figure>
+            <section class="blog-post-full-body">
+                <p>An toàn tài khoản là ưu tiên hàng đầu khi tham gia các hoạt động trực tuyến, đặc biệt là đấu giá. Hãy cùng xem qua các bước đơn giản để bảo vệ tài khoản của bạn khỏi những rủi ro không đáng có.</p>
+                <ul>
+                    <li><strong>Sử dụng mật khẩu mạnh:</strong> Kết hợp chữ hoa, chữ thường, số và ký tự đặc biệt.</li>
+                    <li><strong>Không chia sẻ thông tin đăng nhập:</strong> Giữ bí mật tuyệt đối tài khoản và mật khẩu.</li>
+                    <li><strong>Cập nhật thông tin cá nhân thường xuyên:</strong> Đảm bảo email và số điện thoại của bạn là chính xác để nhận thông báo.</li>
+                    <li><strong>Cẩn thận với các email lừa đảo (phishing):</strong> Không click vào các đường dẫn đáng ngờ hoặc cung cấp thông tin qua email không rõ nguồn gốc.</li>
+                    <li><strong>Kích hoạt xác thực hai yếu tố (2FA) nếu có:</strong> Đây là lớp bảo vệ cực kỳ hiệu quả.</li>
+                </ul>
+                <p>Bằng việc thực hiện các biện pháp trên, bạn đã góp phần quan trọng vào việc giữ an toàn cho tài khoản và trải nghiệm đấu giá của mình.</p>
+            </section>
+
+            {% else %}
+            {# --- NỘI DUNG MẶC ĐỊNH NẾU SLUG KHÔNG KHỚP HOẶC KHÔNG CÓ --- #}
+            <header class="page-header blog-post-full-header">
+                <h1>Bài viết không tìm thấy</h1>
+                <p class="blog-post-meta">
+                    Vui lòng kiểm tra lại đường dẫn hoặc quay lại trang chủ.
+                </p>
+            </header>
+            <section class="blog-post-full-body">
+                <p>Nội dung cho bài viết bạn yêu cầu (slug: <strong>{{ requested_slug|default:"không xác định" }}</strong>) hiện không có sẵn hoặc chưa được định nghĩa tĩnh trong template này.</p>
+                <p>Đây là trang chi tiết bài viết mẫu. Để hiển thị nội dung cụ thể, bạn cần thêm một khối ví dụ như: <code>{% if requested_slug == 'your-specific-slug' %} ... {% endif %}</code> với nội dung tương ứng trong file template này.</p>
+            </section>
+            {% endif %}
+
+            <footer class="blog-post-full-footer">
+                <a href="{% url 'blog_post_list' %}" class="back-to-blog-link btn btn-secondary">← Quay lại danh sách Blog</a>
+            </footer>
+        </article>
+    </div>
+</main>
+{% endblock %}
