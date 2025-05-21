@@ -4,108 +4,146 @@
 {% load socialaccount %}
 {% load static %}
 
-{% block title %}{% trans "Create Account" %} - AuctionHub{% endblock title %}
+{% block title %}{% trans "Đăng Ký" %} - AuctionHub{% endblock %}
 
-{% block extra_css %}
-    <!-- Sử dụng file CSS tương tự hoặc một file riêng cho signup nếu cần tùy chỉnh nhiều -->
-    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
-{% endblock extra_css %}
+{% block page_specific_css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="auth-page-wrapper signup-page-wrapper">
-    <div class="auth-form-container signup-form-container">
-        <div class="auth-header">
-            <a href="{% url 'home-template' %}" class="auth-logo-link">
-               <span class="logo">Auction<span class="logo-alt">Hub</span></span>
-            </a>
-            <h2>{% trans "Create Your Account" %}</h2>
-        </div>
-
-        {% if form.non_field_errors %}
-            <div class="form-alert form-alert-danger">
-                {% for error in form.non_field_errors %}
-                    {{ error }}{% if not forloop.last %}<br>{% endif %}
-                {% endfor %}
+<div class="login-page-content-wrapper">
+    <div class="modern-auth-wrapper">
+        <div class="modern-auth-container">
+            <div class="modern-auth-header">
+                <a href="{% url 'home-template' %}" class="auth-logo-link">
+                    <span class="logo">Auction<span class="logo-alt">Hub</span></span>
+                </a>
+                <h2>{% trans "Tạo Tài Khoản" %}</h2>
+                <p>{% trans "Tham gia cùng AuctionHub ngay hôm nay." %}</p>
             </div>
-        {% endif %}
 
-        <form class="auth-form signup-form" id="signup_form" method="post" action="{% url 'account_signup' %}">
-            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="auth-alert auth-alert-danger">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}{% if not forloop.last %}<br>{% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
 
-            {% for field in form %}
-                <div class="form-group-auth">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }} {# JS sẽ thêm class 'form-input-custom' #}
-                    {% if field.help_text %}
-                        <small class="form-help-text">{{ field.help_text|safe }}</small>
-                    {% endif %}
-                    {% if field.errors %}
-                        <div class="form-field-error">
-                            {% for error in field.errors %}
-                                {{ error }}{% if not forloop.last %}<br>{% endif %}
-                            {% endfor %}
+            <form class="modern-auth-form signup" method="POST" action="{% url 'account_signup' %}">
+                {% csrf_token %}
+
+                <div class="form-field-group">
+                    <label for="{{ form.email.id_for_label }}">{% trans "Email" %}</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="field-error-message">
+                            {% for error in form.email.errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
                         </div>
                     {% endif %}
                 </div>
-            {% endfor %}
-            
-            {% if redirect_field_value %}
-                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-            {% endif %}
-            
-            <button class="btn btn-submit-auth" type="submit">{% trans "Create Account" %}</button>
-        </form>
 
-        {% get_providers as socialaccount_providers %}
-        {% if socialaccount_providers %}
-        <div class="social-auth-section">
-            <div class="divider-auth">
-                <span>{% trans "Or sign up with" %}</span>
-            </div>
-            <div class="social-buttons-auth">
-                {% for provider in socialaccount_providers %}
-                    {% if provider.id == 'google' %}
-                    <a href="{% provider_login_url provider.id process="login" %}" class="btn-social btn-social-{{ provider.id }}">
-                        <i class="fab fa-{{ provider.id }}"></i> {{ provider.name }}
-                    </a>
+                <div class="form-field-group">
+                    <label for="{{ form.username.id_for_label }}">{% trans "Tên đăng nhập" %}</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="field-error-message">
+                            {% for error in form.username.errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+                        </div>
                     {% endif %}
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
+                    <small class="form-help-text">{% trans "Tên đăng nhập sẽ được hiển thị công khai trên trang web." %}</small>
+                </div>
 
-        <div class="auth-footer-nav">
-            <p>{% trans "Already have an account?" %} <a href="{% url 'account_login' %}">{% trans "Sign In" %}</a></p>
+                <div class="form-field-group">
+                    <label for="{{ form.password1.id_for_label }}">{% trans "Mật khẩu" %}</label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}
+                        <div class="field-error-message">
+                            {% for error in form.password1.errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-field-group">
+                    <label for="{{ form.password2.id_for_label }}">{% trans "Xác nhận mật khẩu" %}</label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}
+                        <div class="field-error-message">
+                            {% for error in form.password2.errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+
+                <div class="form-options">
+                    <div class="form-check-custom">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">{% trans "Tôi đồng ý với" %} <a href="/terms/">{% trans "Điều khoản sử dụng" %}</a></label>
+                    </div>
+                </div>
+
+                <button class="btn-auth-submit" type="submit">{% trans "Đăng Ký" %}</button>
+            </form>
+
+            {% get_providers as socialaccount_providers %}
+            {% if socialaccount_providers %}
+            <div class="social-login-section">
+                <div class="divider-with-text">
+                    <span>{% trans "Hoặc đăng ký với" %}</span>
+                </div>
+                <div class="social-login-buttons">
+                    {% for provider in socialaccount_providers %}
+                    <a title="Đăng ký bằng {{ provider.name }}" href="{% provider_login_url provider.id process="login" %}" class="social-btn social-btn-{{ provider.id|lower }}">
+                        <i class="fab fa-{{ provider.id|lower }}"></i> {{ provider.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="auth-footer-link">
+                <p>{% trans "Đã có tài khoản?" %} <a href="{% url 'account_login' %}">{% trans "Đăng nhập" %}</a></p>
+            </div>
         </div>
     </div>
 </div>
-{% endblock content %}
+{% endblock %}
 
-{% block extra_js %}
+{% block page_specific_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const signupForm = document.getElementById('signup_form');
+    const signupForm = document.querySelector('form.signup');
     if (signupForm) {
-        const inputs = signupForm.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], select');
-        inputs.forEach(function(input) {
-            input.classList.add('form-input-custom');
-            // Thêm placeholder nếu muốn (Allauth có thể đã có label)
-            // const label = signupForm.querySelector(`label[for="${input.id}"]`);
-            // if (label && !input.placeholder) {
-            //    input.placeholder = `Enter your ${label.textContent.toLowerCase().replace(':', '')}`;
-            // }
-            // Ví dụ cụ thể hơn:
-            if (input.name === 'username' && !input.placeholder) {
-                input.placeholder = "{% trans 'Choose a username' %}";
-            } else if (input.name === 'email' && !input.placeholder) {
-                input.placeholder = "{% trans 'Enter your email address' %}";
-            } else if (input.name === 'password1' && !input.placeholder) { // Tên field mặc định của Allauth
-                input.placeholder = "{% trans 'Create a password' %}";
-            } else if (input.name === 'password2' && !input.placeholder) { // Tên field mặc định của Allauth
-                input.placeholder = "{% trans 'Confirm your password' %}";
-            }
-        });
+        const emailInput = signupForm.querySelector('#id_email');
+        const usernameInput = signupForm.querySelector('#id_username');
+        const password1Input = signupForm.querySelector('#id_password1');
+        const password2Input = signupForm.querySelector('#id_password2');
+
+        if (emailInput) {
+            emailInput.classList.add('form-input-modern');
+            emailInput.placeholder = "{% trans 'Nhập địa chỉ email của bạn'|escapejs %}";
+        }
+        if (usernameInput) {
+            usernameInput.classList.add('form-input-modern');
+            usernameInput.placeholder = "{% trans 'Chọn tên đăng nhập của bạn'|escapejs %}";
+        }
+        if (password1Input) {
+            password1Input.classList.add('form-input-modern');
+            password1Input.placeholder = "{% trans 'Tạo mật khẩu của bạn'|escapejs %}";
+        }
+        if (password2Input) {
+            password2Input.classList.add('form-input-modern');
+            password2Input.placeholder = "{% trans 'Nhập lại mật khẩu của bạn'|escapejs %}";
+        }
+
+        const termsCheckbox = signupForm.querySelector('#terms');
+        if (termsCheckbox) {
+            termsCheckbox.classList.add('form-check-input-modern');
+        }
     }
 });
 </script>
-{% endblock extra_js %}
+{% endblock %}

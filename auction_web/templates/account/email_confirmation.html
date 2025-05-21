@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load account %}
+{% load static %}
+
+{% block title %}{% trans "Xác Nhận Email" %} - AuctionHub{% endblock %}
+
+{% block page_specific_css %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock page_specific_css %}
+
+{% block content %}
+<div class="login-page-content-wrapper">
+    <div class="modern-auth-wrapper">
+        <div class="modern-auth-container">
+            <div class="modern-auth-header">
+                <a href="{% url 'home-template' %}" class="auth-logo-link">
+                    <span class="logo">Auction<span class="logo-alt">Hub</span></span>
+                </a>
+                <h2>{% trans "Xác Nhận Email" %}</h2>
+                <p>{% trans "Vui lòng xác nhận địa chỉ email của bạn." %}</p>
+            </div>
+
+            {% if confirmation %}
+                <form class="modern-auth-form" method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+                    {% csrf_token %}
+                    <button class="btn-auth-submit" type="submit">{% trans "Xác Nhận" %}</button>
+                </form>
+            {% else %}
+                <div class="auth-alert auth-alert-danger">
+                    {% url 'account_email' as email_url %}
+                    <p>{% blocktrans %}Liên kết xác nhận email này không hợp lệ hoặc đã hết hạn. Vui lòng <a href="{{ email_url }}">yêu cầu gửi lại email xác nhận</a>.{% endblocktrans %}</p>
+                </div>
+            {% endif %}
+
+            <div class="auth-footer-link">
+                <p><a href="{% url 'home-template' %}">{% trans "Trở về Trang chủ" %}</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %} 
