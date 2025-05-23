@@ -19,7 +19,6 @@
         <section class="bidding-column bidding-item-info">
             <h2 class="section-title">Thông tin sản phẩm</h2>
             <div class="item-card-display">
-                <!-- Ảnh sản phẩm sẽ được JS cập nhật -->
                 <div class="item-image-container">
                     <img id="item-image" src="{% static 'images/placeholder_item_large.png' %}" alt="Hình ảnh sản phẩm">
                 </div>
@@ -59,29 +58,40 @@
             <div class="action-details-box">
                 <p>Giá khởi điểm: <strong id="starting-price">Đang tải...</strong> VNĐ</p>
                 <p>Thời gian còn lại: <strong id="time-remaining" class="time-critical">Đang tải...</strong></p>
+
+                <hr class="action-details-divider"> {# Đường kẻ ngang #}
+
+                
+                <div class="bid-range-info">
+                    <p>Giá tối thiểu: <span id="min-bid-display">Đang tải...</span></p>
+                    <p>Giá tối đa: <span id="max-bid-display">Đang tải...</span></p>
+                </div>
             </div>
+            
+            <hr class="action-details-divider">
 
             <form id="place-bid-form" class="bid-form-box">
                 {% csrf_token %}
-                <!-- Input ẩn chứa ID item (sẽ được JS điền vào hoặc server render nếu có context item) -->
                 <input type="hidden" name="item_id" id="form-item-id" value="{{ item.pk | default:'' }}">
-                {# user_id không nên lấy từ client, backend nên tự lấy request.user.id khi xử lý bid #}
 
                 <div class="form-group">
-                    <label for="bid-amount-input" id="min-bid-label">Giá đặt (Tối thiểu: <span id="min-bid-value">Đang tải...</span> VNĐ):</label>
-                    <div class="price-input-wrapper">
-                        <input type="number" id="bid-amount-input" name="bid_amount" min="0" placeholder="Nhập số tiền" required>
-                        <span class="currency-symbol">VNĐ</span>
+                    <label for="bid-amount-input" class="bid-input-label">Giá đặt của bạn:</label>
+                    <div class="price-input-wrapper" id="bid-input-container">
+                        <input type="text" id="bid-amount-input" name="bid_amount" min="0" placeholder="Nhập số tiền" required inputmode="numeric" pattern="[0-9,.]*">
+                        {# <span class="currency-symbol">VNĐ</span> Bỏ biểu tượng VNĐ ở đây để nó không che giá trị #}
+                        <span class="b-indicator" id="b-indicator"></span> {# Chỉ báo "B" #}
                     </div>
                 </div>
 
-                <div class="bid-summary">
-                    Tổng cộng: <strong id="total-bid-value">0</strong> VNĐ
+                
+
+                <div class="bid-summary-total"> {# Đổi class #}
+                    Tổng giá trị <strong id="total-bid-value">0 VNĐ</strong> {# Thêm VNĐ trực tiếp #}
                 </div>
 
                 <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary btn-submit-bid">Đặt giá</button> {# Nút màu xanh #}
                     <button type="button" class="btn btn-secondary btn-cancel-bid">Hủy</button>
-                    <button type="submit" class="btn btn-primary btn-submit-bid">Đặt giá</button>
                 </div>
                 <p id="bid-form-message" class="form-message"></p>
             </form>

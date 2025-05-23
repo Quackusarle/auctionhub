@@ -127,154 +127,232 @@
 
 /* Phần hiển thị giá hiện tại */
 .current-price-display { /* Bọc giá hiện tại vào div này */
-    text-align: right;
-    font-size: 1.1em;
+    display: flex; /* Biến thành flex container */
+    flex-direction: column; /* Xếp các mục theo cột (trên dưới) */
+    align-items: flex-end; /* Căn các mục con sang phải */
+    text-align: right; /* Giữ để phòng trường hợp không dùng flex, hoặc cho text node */
+    font-size: 1.1em; /* Kích thước chữ cho "Giá hiện tại:" */
     margin-top: 10px;
     padding: 15px;
     background-color: var(--white);
     border-radius: 6px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    color: var(--text-color); /* Màu chữ mặc định cho "Giá hiện tại:" */
 }
 .current-price-display strong {
-    color: var(--primary-color);
-    font-size: 1.9em; /* To hơn */
-    margin-left: 10px;
+    color: #198754; /* Màu xanh lá cây đậm theo ảnh */
+    font-size: 2.2em; /* Tăng kích thước số tiền để khớp với ảnh */
+    margin-left: 0; /* Đặt lại margin-left */
     font-weight: 700;
+    line-height: 1.2; /* Điều chỉnh khoảng cách dòng */
 }
+
 
 /* Cột 3: Hành động đặt giá */
-.action-details {
-    margin-bottom: 25px;
-    background-color: var(--white);
-    padding: 20px; /* Tăng padding */
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    font-size: 1em;
-}
-.action-details p {
-    margin-bottom: 12px;
-    color: var(--text-color);
-}
-.action-details p:last-child { margin-bottom: 0; }
-.action-details strong {
-    font-weight: 600;
-}
-#starting-price { color: var(--primary-color); }
-#end-time { color: #dc3545; font-weight: 700; } /* Màu đỏ cho thời gian */
-
-/* Form đặt giá */
-#place-bid-form {
+.bidding-actions {
     background-color: var(--white);
     padding: 25px; /* Tăng padding */
     border-radius: 6px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
-/* Sử dụng lại form-group nếu có hoặc định nghĩa riêng */
-.form-group {
-    margin-bottom: 20px; /* Tăng khoảng cách */
+.action-details-box {
+    margin-bottom: 20px;
+    font-size: 1em;
+    color: var(--text-color);
+}
+.action-details-box p {
+    margin-bottom: 8px;
+}
+.action-details-box p:last-child { margin-bottom: 0; }
+.action-details-box strong {
+    font-weight: 600;
+}
+#starting-price { color: var(--primary-color); }
+#end-time { color: #dc3545; font-weight: 700; } /* Màu đỏ cho thời gian */
+
+.action-details-divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 15px 0;
 }
 
-.form-group label {
+/* Style cho Giá tối thiểu / Giá tối đa */
+.bid-range-info p {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    font-size: 1.05em;
+}
+.bid-range-info p span {
+    font-weight: 700;
+    color: var(--text-color); /* Màu đậm hơn cho giá trị */
+}
+#min-bid-display { color: var(--primary-color); }
+#max-bid-display { color: #dc3545; } /* Có thể chọn màu khác cho giá tối đa nếu muốn */
+
+
+/* Form đặt giá */
+#place-bid-form {
+    /* Đã được bọc trong .bidding-actions, không cần thêm padding hay shadow ở đây */
+}
+
+.bidding-column-titles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 cột bằng nhau */
+    gap: 30px; /* Khoảng cách giữa các tiêu đề, khớp với gap của các cột */
+    margin-bottom: 20px; /* Khoảng cách giữa tiêu đề và các cột */
+    /* Padding ngang để khớp với .container (nếu .container có padding 15px) */
+    /* Điều chỉnh này để các tiêu đề nằm thẳng hàng với các cột bên dưới */
+    padding: 0 15px;
+}
+
+.bidding-column-titles.section-title {
+    font-size: 1.4em; /* Kích thước tiêu đề */
+    color: var(--heading-color);
+    border-bottom: 2px solid var(--primary-color); /* Đường kẻ dưới */
+    padding-bottom: 8px;
+    font-weight: 600;
+    text-align: center; /* Căn giữa tiêu đề */
+    /* Để tiêu đề không bị lệch, chúng ta cần đảm bảo nó có chiều rộng vừa với nội dung */
+    width: fit-content;
+    white-space: nowrap; /* Ngăn không cho tiêu đề xuống dòng */
+    /* Căn giữa trong grid cell */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* Style cho label của input */
+.bid-input-label {
     display: block;
-    margin-bottom: 8px; /* Khoảng cách label và input */
-    font-weight: 500; /* Đậm hơn */
+    margin-bottom: 5px;
+    font-weight: 500;
     font-size: 0.95em;
     color: var(--heading-color);
 }
 
-/* Style cho input và đơn vị tiền tệ */
+/* Input giá thầu */
 .price-input-wrapper {
-    display: flex;
+    position: relative;
+    display: flex; /* Đảm bảo flex để chứa input và indicator */
     align-items: center;
+    background-color: #f0f0f0; /* Màu nền xám nhạt như ảnh mẫu */
+    border-radius: 4px;
+    height: 60px; /* Chiều cao cố định */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.08); /* Bóng đổ nhẹ bên trong */
+    overflow: hidden; /* Quan trọng để nội dung không tràn ra ngoài border-radius */
 }
 
 #bid-amount-input {
-    flex-grow: 1;
-    padding: 10px 15px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px 0 0 4px; /* Bo góc */
+    flex-grow: 1; /* Cho phép input chiếm hết không gian còn lại */
+    /* Tăng padding-right để đảm bảo đủ không gian cho các số lớn */
+    padding: 10px 20px; /* Padding top/bottom/left - Tăng padding left */
+    padding-right: 35px; /* Tăng padding-right để số không bị cắt */
+    border: none; /* Bỏ border */
+    background-color: transparent; /* Nền trong suốt để thấy nền của wrapper */
     outline: none;
     font-family: var(--font-family);
-    font-size: 1.1em; /* To hơn một chút */
-    height: 44px; /* Cao hơn */
-    transition: border-color 0.2s ease;
+    font-size: 1.8em; /* To hơn để giống ảnh mẫu */
+    font-weight: 700; /* Đậm hơn */
+    color: var(--heading-color); /* Màu chữ đậm */
+    /* Thay đổi text-align sang center */
+    text-align: center;
+    height: 100%; /* Chiếm toàn bộ chiều cao của wrapper */
+    box-sizing: border-box; /* Quan trọng để padding không làm tăng kích thước */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 #bid-amount-input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.2); /* Hiệu ứng focus */
+    /* Focus styling trên wrapper thay vì input trực tiếp */
+}
+/* Thêm focus style cho wrapper khi input bên trong được focus */
+.price-input-wrapper:focus-within {
+    box-shadow: inset 0 0 0 2px rgba(var(--primary-rgb), 0.2);
+    background-color: #e8e8e8;
 }
 
-.currency-symbol {
-    padding: 0 15px;
-    background-color: #e9ecef;
-    border: 1px solid var(--border-color);
-    border-left: none;
-    height: 44px; /* Đồng bộ chiều cao */
-    line-height: 42px; /* Căn giữa text */
-    border-radius: 0 4px 4px 0; /* Bo góc */
-    color: var(--muted-color);
-    font-size: 0.9em;
+/* Biểu tượng tiền tệ VNĐ trên input */
+/* Đã di chuyển ra ngoài input, nên cần điều chỉnh vị trí nếu muốn */
+/* .currency-symbol { ... } */
+
+
+/* Các styles liên quan đến "Số lượng mua" - XÓA BỎ HOÀN TOÀN */
+.form-group.quantity-section { /* Nếu có class này, ẩn nó đi */
+    display: none !important;
 }
+
 
 /* Tổng giá trị bid */
-.bid-summary {
-    margin-bottom: 25px;
-    font-size: 1.1em;
+.bid-summary-total { /* Đổi tên class */
+    font-size: 1.0em; /* Kích thước chữ "Tổng cộng" (nhỏ lại một chút) */
     text-align: right;
-    border-top: 1px dashed var(--border-color); /* Đường kẻ phân cách */
-    padding-top: 15px;
-    margin-top: 15px;
+    margin-top: 30px; /* Tăng khoảng cách trên */
+    margin-bottom: 25px; /* Tăng khoảng cách dưới */
+    color: var(--text-color); /* Màu chữ "Tổng cộng" */
+    display: flex; /* Sử dụng flexbox để căn chỉnh "Tổng cộng" và số tiền */
+    flex-direction: column; /* Xếp "Tổng cộng" lên trên, số tiền xuống dưới */
+    align-items: flex-end; /* Căn phải toàn bộ nội dung */
 }
-.bid-summary strong {
-    color: var(--primary-color);
-    font-size: 1.4em; /* To hơn */
+.bid-summary-total strong {
+    color: var(--primary-color); /* Màu xanh chính */
+    font-size: 1.6em; /* To hơn nữa */
     font-weight: 700;
 }
 
-/* Các nút bấm */
+/* Nút bấm */
 .action-buttons {
     display: flex;
-    justify-content: flex-end; /* Đẩy nút về bên phải */
-    gap: 12px; /* Khoảng cách giữa các nút */
+    justify-content: space-between; /* Giãn cách đều hai nút */
+    gap: 15px;
 }
 
-/* Style nút Hủy (dùng màu muted) */
-.btn.btn-cancel {
-    padding: 10px 25px;
-    border-radius: 50px; /* Bo tròn */
-    border: 1px solid var(--muted-color);
-    background-color: transparent; /* Nền trong suốt */
-    color: var(--muted-color);
-    font-weight: 500;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-.btn.btn-cancel:hover {
-    background-color: var(--muted-color);
-    color: var(--white);
+.btn.btn-submit-bid,
+.btn.btn.btn-cancel-bid {
+    flex: 1; /* Cho phép các nút co giãn đều */
+    padding: 15px 30px; /* Tăng padding để nút lớn hơn và rõ ràng hơn */
+    border-radius: 999px; /* Bo tròn mạnh để tạo hình capsule */
+    font-size: 1.1em; /* Kích thước chữ */
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+    border: none; /* Bỏ border mặc định */
+    box-shadow: none; /* Bỏ đổ bóng để giống ảnh */
 }
 
-/* Nút Đặt giá (tái sử dụng hoặc tùy chỉnh) */
+/* Nút Đặt giá (màu xanh lá) */
 .btn.btn-submit-bid {
-    /* Kế thừa style từ .hero-btn hoặc định nghĩa lại */
-    padding: 10px 35px; /* Rộng hơn chút */
-    font-size: 1em;
-    font-weight: 700;
-    border-radius: 50px;
-    background-color: var(--primary-color); /* Đổi về màu primary */
+    background-color: var(--primary-color); /* Màu xanh chính */
     color: var(--white);
-    border: none;
+    box-shadow: 0 2px 5px rgba(var(--primary-rgb), 0.2);
 }
 .btn.btn-submit-bid:hover {
-    background-color: var(--accent-color); /* Màu xanh đậm hơn khi hover */
+    background-color: #218838; /* Xanh đậm hơn khi hover */
 }
-/* Thêm style khi nút bị disable */
 .btn.btn-submit-bid:disabled {
     background-color: #cccccc;
+    color: #888888;
     cursor: not-allowed;
     opacity: 0.7;
+    
 }
 
+/* Nút Hủy (màu xám) */
+.btn.btn-cancel-bid {
+    background-color: #6c757d; /* Màu xám theo yêu cầu */
+    color: var(--white);
+}
+.btn.btn-cancel-bid:hover {
+    background-color: #5a6268; /* Xám đậm hơn khi hover */
+}
+.btn.btn-cancel-bid:disabled { /* Hiếm khi disabled nhưng vẫn định nghĩa */
+    background-color: #cccccc;
+    color: #888888;
+    cursor: not-allowed;
+    opacity: 0.7;
+    box-shadow: none;
+}
 
 /* Thông báo lỗi/thành công */
 #bid-form-message {
@@ -289,7 +367,7 @@
     color: var(--primary-color); /* Màu xanh thành công */
 }
 
-/* Responsive adjustments (Ví dụ) */
+/* Responsive adjustments */
 @media (max-width: 768px) {
     .bidding-detail-layout {
         grid-template-columns: 1fr; /* Xếp thành 1 cột */
@@ -303,7 +381,20 @@
     .current-price-display strong {
         font-size: 1.6em;
     }
-    .bid-summary strong {
+    .bid-summary-total strong {
         font-size: 1.3em;
+    }
+    .btn.btn-submit-bid,
+    .btn.btn-cancel {
+        padding: 10px 15px;
+        font-size: 1em;
+    }
+    #bid-amount-input {
+        font-size: 1.5em; /* Nhỏ hơn trên mobile */
+        height: 50px;
+    }
+    /* Đảm bảo ẩn chỉ báo B trên mobile nếu nó không được sử dụng */
+    .b-indicator {
+        display: none !important;
     }
 }
