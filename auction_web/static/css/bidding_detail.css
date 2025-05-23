@@ -173,7 +173,7 @@
 
 .action-details-divider {
     border: none;
-    border-top: 1px solid var(--border-color);
+    border-top: 3px solid var(--border-color);
     margin: 15px 0;
 }
 
