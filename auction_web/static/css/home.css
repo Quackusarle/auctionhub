@@ -10,7 +10,7 @@
     --bg-color: #f8f9fa;
     --muted-color: #6c757d;
     --dark-green-footer-bg: #157347;
-    --active-card-bg: #146c43; /* Màu nền khi hover thẻ sản phẩm */
+    --active-card-bg: #146c43; /* Used by old hover effects, can be removed if not used by base.css */
     --font-family: 'Montserrat', sans-serif;
 }
 
@@ -47,104 +47,81 @@ body {
 }
 .hero-btn.btn-primary:hover { background-color: #000; }
 
-/* --- Product Section --- */
+/* --- Product Section (Homepage Specific) --- */
 .listings { padding-top: 40px; }
 .section-title-wrapper { text-align: center; margin-bottom: 40px; }
-.listings h2 {
+.listings h2 { /* Title like "Phiên Đấu Giá Nổi Bật" */
     color: var(--heading-color); border-bottom: 2px solid var(--primary-color);
     display: inline-block; padding-bottom: 8px; font-size: 1.8em;
 }
 
-/* --- CSS CHO GRID SẢN PHẨM (Thay thế Carousel) --- */
+/* Grid container for featured items on the homepage */
 #item-grid-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 cột bằng nhau */
-    gap: 25px; /* Khoảng cách giữa các thẻ, có thể điều chỉnh */
-    padding-top: 10px; /* Khoảng cách với tiêu đề */
-    padding-bottom: 20px; /* Thêm khoảng trống dưới cùng */
+    /* Default to 1 column, then 2 for sm, 3 for md and up */
+    /* This can be adjusted based on how many items are typically shown (e.g., 6 or 9) */
+    grid-template-columns: 1fr; /* Mobile first: 1 column */
+    gap: 1.5rem; /* Consistent gap with base.css product card usage if any */
+    padding-top: 10px;
+    padding-bottom: 20px;
 }
 
-/* Căn giữa cho thông báo lỗi/loading/empty bên trong grid */
-#item-grid-container > p {
-    grid-column: 1 / -1; /* QUAN TRỌNG: Cho thẻ p chiếm từ cột 1 đến cột cuối cùng */
-    text-align: center;  /* Cái này đã có trong inline style của JS rồi, nhưng để đây cũng được */
-    padding: 20px;       /* Cái này cũng có trong inline style */
+/* Responsive columns for the homepage grid */
+@media (min-width: 576px) { /* Small devices (sm) */
+    #item-grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (min-width: 768px) { /* Medium devices (md) */
+    #item-grid-container {
+        /* Show 3 items per row for 9 items total (if page_size=9) */
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media (min-width: 992px) { /* Large devices (lg) */
+    #item-grid-container {
+        /* Could go to 3 or 4 columns if more items or wider layout desired */
+        grid-template-columns: repeat(3, 1fr); 
+    }
 }
 
-/* Style cho Item Card (trong Grid) */
-.item-card {
-    background-color: var(--white);
-    border: none;
-    border-radius: 1rem; /* Giữ bo tròn */
-    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075); /* Giữ bóng đổ nhẹ */
-    padding: 0; /* KHÔNG padding ở thẻ article */
-    width: 100%; /* Chiếm toàn bộ chiều rộng của grid cell */
-    display: flex;
-    flex-direction: column;
+
+/* Styling for messages (loading, error, empty) within the grid container */
+/* home.js adds a wrapper div with style="grid-column: 1 / -1;" */
+/* and then a <p class="grid-message ..."> inside it. */
+#item-grid-container .grid-message { /* Targets the <p> tag with this class */
     text-align: center;
-    overflow: hidden;
-    cursor: pointer;
-    /* Transition cho hiệu ứng hover mượt mà */
-    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-    position: relative; /* Cần cho z-index */
-    z-index: 1;
+    padding: 20px; /* Add some padding to the message itself */
+    margin: 0; /* Reset margin if any */
+    /* Additional styling for different message types can be added here or in base.css */
 }
-.item-card img {
-    width: 100%;
-    height: 360px; /* ** TĂNG CHIỀU CAO ẢNH CHO PHÙ HỢP VỚI THẺ RỘNG HƠN ** */
-    object-fit: cover;
-    margin-bottom: 0;
-    background-color: #eee; /* Màu nền cho ảnh đang tải hoặc lỗi */
-    display: block;
-    border-top-left-radius: 1rem; /* Bo góc trên của ảnh */
-    border-top-right-radius: 1rem;
-}
-.item-card .card-content {
-    padding: 15px 18px; /* Tăng nhẹ padding cho nội dung text khi thẻ rộng hơn */
-    flex-grow: 1; /* Đẩy nội dung xuống nếu thẻ có chiều cao khác nhau */
-}
-.item-card h3 {
-    margin-top: 0; margin-bottom: 6px; /* Tăng nhẹ margin bottom */
-    font-size: 1em; /* Có thể tăng nhẹ font size */
-    font-weight: 600; color: var(--heading-color);
-    /* Ngăn tên quá dài làm vỡ layout (tùy chọn) */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.item-card .price {
-    font-weight: 600; color: var(--text-color); margin-bottom: 0;
-    font-size: 0.9em; /* Có thể tăng nhẹ font size */
-    display: block;
-}
-/* Ẩn các phần tử không cần thiết trong card (nếu có) */
-.item-card .time, .item-card .btn { display: none; }
 
-/* Hiệu ứng khi rê chuột vào Item Card (phiên bản Grid) */
-.item-card:hover {
-    background-color: var(--active-card-bg); /* Đổi nền xanh đậm */
-    color: var(--white); /* Chữ trắng */
-    /* transform: scale(1.05); */ /* ** ĐÃ XÓA BỎ HIỆU ỨNG PHÓNG TO ** */
-    z-index: 5; /* Để shadow nổi lên trên */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Tăng nhẹ bóng đổ khi hover */
+#item-grid-container .loading-message i, /* If using <i> for spinner */
+#item-grid-container .spinner-border { /* For Bootstrap spinner */
+    color: var(--primary-color); /* Ensure spinner uses theme color */
 }
-/* Đổi màu chữ cho các thành phần con khi hover */
-.item-card:hover h3 { color: var(--white); }
-.item-card:hover .price { color: var(--white); font-weight: 700; }
+.view-all-items-btn {
+    /* Ví dụ: thay đổi font-weight hoặc thêm hiệu ứng */
+    font-weight: 500;
+    padding: 0.75rem 2rem; /* Điều chỉnh padding nếu cần */
+    border-width: 2px; /* Làm viền dày hơn một chút nếu muốn */
+    transition: all 0.3s ease; /* Thêm transition cho mượt mà */
+}
 
-/* --- KẾT THÚC CSS GRID SẢN PHẨM --- */
+.view-all-items-btn:hover {
+    background-color: var(--primary-color); /* Màu nền khi hover */
+    color: var(--white); /* Màu chữ khi hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.3);
+}
 
-/* Style cho thẻ link bao quanh item card */
-a.item-card-link {
-    text-decoration: none; /* Bỏ gạch chân */
-    color: inherit; /* Kế thừa màu chữ từ cha */
-    display: block; /* Đảm bảo link bao trọn thẻ article */
-    transition: box-shadow 0.3s ease; /* Thêm hiệu ứng cho link nếu muốn */
+.view-all-items-btn i {
+    transition: transform 0.3s ease;
 }
-/* Có thể thêm hiệu ứng khi focus vào link (cho bàn phím) */
-a.item-card-link:focus-visible {
-     outline: 2px solid var(--primary-color);
-     outline-offset: 2px;
-     border-radius: 1rem; /* Hợp với bo tròn của thẻ */
+
+.view-all-items-btn:hover i {
+    transform: translateX(3px); /* Di chuyển nhẹ icon khi hover */
 }
+
+
 /* --- KẾT THÚC CSS --- */
