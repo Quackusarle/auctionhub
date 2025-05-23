@@ -1,9 +1,11 @@
 {% extends "base.html" %}
+{% load static %} {# Thêm load static nếu chưa có ở đầu file, mặc dù bạn đã dùng /static/ #}
 
 {% block title %}Trang Chủ - AuctionHub Đấu Giá Độc Quyền{% endblock %}
 
 {% block page_specific_css %}
-    <link rel="stylesheet" href="/static/css/home.css" /> {% endblock %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" /> {# Nên dùng template tag static #}
+{% endblock %}
 
 {% block content %}
     <section class="hero-section plant-theme-hero">
@@ -19,7 +21,7 @@
                 <a href="#listings-section" class="btn btn-primary btn-lg hero-btn">Khám Phá Ngay <i class="fas fa-arrow-right"></i></a>
             </div>
             <div class="hero-image-content">
-                <img src="/static/images/logo.png" alt="Sản phẩm đấu giá độc quyền nổi bật" />
+                <img src="{% static 'images/logo.png' %}" alt="Sản phẩm đấu giá độc quyền nổi bật" /> {# Nên dùng template tag static #}
             </div>
         </div>
     </section>
@@ -35,11 +37,20 @@
                     <p id="loading-items-message" class="loading-message" style="grid-column: 1 / -1;">
                         <i class="fas fa-spinner fa-spin"></i> Đang tải danh sách sản phẩm...
                     </p>
+                    <!-- Các item card sẽ được JS chèn vào đây -->
                 </div>
+
+                <div class="text-center mt-5 mb-4">
+                    <a href="{% url 'item_list' %}" class="btn btn-outline-primary btn-lg view-all-items-btn">
+                        Xem Tất Cả Sản Phẩm <i class="fas fa-th-large ms-2"></i>
+                    </a>
+                </div>
+
             </section>
         </main>
     </div>
 {% endblock %}
 
 {% block page_specific_js %}
-    <script src="/static/js/home.js"></script> {% endblock %}
+    <script src="{% static 'js/home.js' %}"></script> {# Nên dùng template tag static #}
+{% endblock %}

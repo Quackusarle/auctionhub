@@ -431,3 +431,169 @@ body.modal-open { overflow: hidden; }
     color: rgba(255, 255, 255, 0.75);
 }
 .footer-bottom p { margin: 0; }
+
+#item-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Hoặc số cột cố định */
+    gap: 1.5rem; /* Khoảng cách giữa các card */
+}
+
+/* ========= Standard Product Card Styles ========= */
+.product-card-column {
+    /* Provides consistent spacing if cards are direct children of a Bootstrap .row */
+    /* If using CSS grid for the container, this outer column div might be adjusted or removed */
+    margin-bottom: 1.5rem; /* Default spacing, can be overridden by g- utilities on .row */
+}
+
+.product-card-link-wrapper {
+    display: block; /* Make the <a> tag take up the column space */
+    text-decoration: none;
+    color: inherit;
+    height: 100%; /* Ensure the link wrapper takes full height of the column if align-items-stretch is used */
+}
+
+.product-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0; /* Softer border */
+    border-radius: 0.5rem; /* Consistent border radius */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Subtle shadow */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    overflow: hidden; /* Ensures content respects border-radius */
+    display: flex; /* Added to make it a flex container itself if needed */
+    flex-direction: column; /* Children stack vertically */
+    height: 100%; /* Make card take full height of its container (.product-card-link-wrapper) */
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.product-card .product-image-link {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    /* Aspect ratio for image container - can adjust as needed */
+    /* E.g., 4:3 aspect ratio */
+    /* padding-top: 75%; */ 
+    height: 200px; /* Or fixed height */
+    background-color: #f8f9fa; /* Placeholder bg for image area */
+}
+
+.product-card .card-img-top {
+    /* If using padding-top for aspect ratio: */
+    /* position: absolute; */
+    /* top: 0; left: 0; */ 
+    width: 100%;
+    height: 100%; /* Ensure image fills the fixed height or aspect ratio container */
+    object-fit: cover; /* Cover crops, contain shows all but might leave space */
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.product-card .card-body {
+    padding: 1rem; /* Consistent padding */
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allows card body to take remaining space */
+}
+
+.product-card .card-title {
+    font-size: 1.1rem;
+    font-weight: 600; /* Medium weight */
+    color: #333;
+    margin-bottom: 0.5rem;
+    /* Truncate title to 2 lines with ellipsis if too long */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 2.6em; /* Approximate height for 2 lines */
+}
+
+
+.product-card .item-description {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 1rem;
+    flex-grow: 1; /* Allow description to take available space before price info */
+    /* Truncate description to 3 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 3.9em; /* Approximate height for 3 lines */
+}
+
+.product-card .item-price-info {
+    margin-top: auto; /* Pushes this block to the bottom of the card-body */
+    padding-top: 0.75rem; /* Space above price info */
+    border-top: 1px solid #f0f0f0; /* Subtle separator */
+}
+
+.product-card .price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-color, #007bff); /* Use CSS variable if available, else fallback */
+    margin-bottom: 0.25rem;
+}
+
+.product-card .time-remaining {
+    font-size: 0.8rem;
+    color: #dc3545; /* Bootstrap danger color */
+    margin-bottom: 0.75rem;
+}
+.product-card .time-remaining i {
+    margin-right: 0.25rem;
+}
+
+.product-card .btn-view-details {
+    display: block; /* Make it full width */
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    text-align: center;
+    background-color: var(--primary-color, #007bff);
+    color: #fff;
+    border: none;
+    border-radius: 0.25rem;
+    text-decoration: none; /* If it was an actual <a> */
+    transition: background-color 0.2s ease;
+    /* Appear as a button even if it's a span */
+    cursor: pointer; 
+}
+
+.product-card .btn-view-details:hover {
+    background-color: var(--primary-dark-color, #0056b3); /* Darker shade of primary */
+}
+
+
+.btn-outline-primary {
+    color: var(--primary-color); /* Màu chữ khi chưa hover */
+    border-color: var(--primary-color); /* Màu viền */
+}
+
+
+
+.btn-outline-plant-theme:hover,
+.btn-outline-plant-theme:focus,
+.btn-outline-plant-theme:active {
+    color: var(--white);
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    /* box-shadow: 0 0 0 0.25rem rgba(var(--primary-rgb), 0.5); */ /* Tùy chọn */
+    transform: translateY(-2px); /* Hiệu ứng nhấc nhẹ */
+}
+.btn-outline-plant-theme i {
+    transition: transform 0.3s ease;
+}
+.btn-outline-plant-theme:hover i {
+    transform: translateX(3px);
+}
