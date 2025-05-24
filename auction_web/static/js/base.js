@@ -186,9 +186,11 @@ function updateUserAuthUI(isLoggedIn, userData = {}) {
         register: "/accounts/register/",
         profile: "/user/profile/",
         myAuctions: "/my-auctions/",
+        myPurchasingItems: "/my-purchasing-items/",
         createAuction: "/api/items/create-auction/", // Sửa lại từ code cậu gửi, có thể là create-auction
         settings: "/accounts/settings/",
         logout: "/accounts/logout/",
+        wallet: "/api/wallet/",
         howItWorks: "/how-it-works/", // Thêm link này cho trạng thái chưa đăng nhập
         defaultAvatar: '/static/images/default_avatar.png'
     };
@@ -201,9 +203,12 @@ function updateUserAuthUI(isLoggedIn, userData = {}) {
         dropdownMenuUl.innerHTML = `
             <li><a href="${URLS.profile}">Trang cá nhân</a></li>
             <li class="separator"></li>
+            <li><a href="${URLS.myPurchasingItems}">Giỏ hàng của tôi</a></li>
             <li><a href="${URLS.myAuctions}">Phiên đấu giá của tôi</a></li>
             <li><a href="${URLS.createAuction}">Tạo phiên đấu giá</a></li>
             <li><a href="${URLS.settings}">Cài đặt tài khoản</a></li>
+            <li><a href="${URLS.wallet}">Ví của tôi</a></li>
+
             <li class="separator"></li>
             <li><a href="${URLS.logout}">Đăng xuất</a></li>`;
     } else {
