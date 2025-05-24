@@ -183,7 +183,7 @@ function updateUserAuthUI(isLoggedIn, userData = {}) {
 
     const URLS = {
         login: "/accounts/login/",
-        register: "/accounts/register/",
+        register: "/accounts/signup/",
         profile: "/user/profile/",
         myAuctions: "/my-auctions/",
         createAuction: "/api/items/create-auction/", // Sửa lại từ code cậu gửi, có thể là create-auction
