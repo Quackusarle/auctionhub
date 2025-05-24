@@ -35,6 +35,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -115,12 +116,12 @@ WSGI_APPLICATION = 'auction_web.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',  # Sử dụng PostgreSQL
+        'ENGINE': 'django.db.backends.postgresql',  # Sử dụng PostgreSQL
         'NAME': 'auctiondb',
-        'USER': 'root',
-        'PASSWORD': '1447928479',
+        'USER': 'auction',
+        'PASSWORD': 'thosanbatcay111',
         'HOST': 'localhost',
-        'PORT': '3306',
+        'PORT': '5432',
     }
 }
 
@@ -204,27 +205,21 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-# VietQR API Configuration
-VIETQR_CLIENT_ID = "99fb5419-7a77-4cb1-9ca4-81e92b979853"
-VIETQR_API_KEY = "cf6ddc52-67c5-4bf4-9210-a2f3ab5183dd"
-VIETQR_GENERATE_API_URL = "https://api.vietqr.io/v2/generate"
-
-WEBSITE_BANK_ACCOUNT_NO = "0606062005"       
-WEBSITE_BANK_ACCOUNT_NAME = "TRAN QUANG HUY" 
-WEBSITE_BANK_ACQ_ID = "970443"     
-
 SITE_ID = 1
 
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_LOGIN_METHODS = {"email"}  # Chỉ cho phép đăng nhập bằng email
 ACCOUNT_UNIQUE_EMAIL = True  # Email duy nhất
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Bắt buộc xác thực email
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True  # Chuyển hướng sau khi đăng nhập thành công
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None  # Không sử dụng trường username
+
 
 
 # Các trường trong form đăng ký
 ACCOUNT_SIGNUP_FIELDS = [
     "email*",
+    
     "password1*",
     "password2*"
 ]
@@ -237,11 +232,18 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': ['profile', 'email'],  # Quyền truy cập
         'AUTH_PARAMS': {'access_type': 'online'},  # Loại xác thực
         'APP': {
-            # Đọc Client ID từ biến môi trường GOOGLE_CLIENT_ID trong file .env
-            'client_id': os.environ.get('GOOGLE_CLIENT_ID'),
-            # Đọc Secret từ biến môi trường GOOGLE_CLIENT_SECRET trong file .env
-            'secret': os.environ.get('GOOGLE_CLIENT_SECRET'),
-            'key': '' # Cái này thường để trống cho Google
+            'client_id': '', 
+            'secret': '',
+            'key': ''
         }
     }
 }
+
+# VietQR API Configuration
+VIETQR_CLIENT_ID = "99fb5419-7a77-4cb1-9ca4-81e92b979853"
+VIETQR_API_KEY = "cf6ddc52-67c5-4bf4-9210-a2f3ab5183dd"
+VIETQR_GENERATE_API_URL = "https://api.vietqr.io/v2/generate"
+
+WEBSITE_BANK_ACCOUNT_NO = "0606062005"       
+WEBSITE_BANK_ACCOUNT_NAME = "TRAN QUANG HUY" 
+WEBSITE_BANK_ACQ_ID = "970443"     

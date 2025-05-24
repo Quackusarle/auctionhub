@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Social Login Failed" %}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h1 class="h4 mb-0">{% trans "Social Login Failed" %}</h1>
+                </div>
+                <div class="card-body">
+                    <p>{% trans "An error occurred while attempting to login via your social network account." %}</p>
+                    
+                    {% if error %}
+                    <div class="alert alert-danger">
+                        <strong>{% trans "Error:" %}</strong> {{ error }}
+                    </div>
+                    {% endif %}
+
+                    <hr>
+                    <div class="mt-3">
+                        <a href="{% url 'account_login' %}" class="btn btn-primary">
+                            {% trans "Try Again" %}
+                        </a>
+                        <a href="{% url 'home' %}" class="btn btn-secondary">
+                            {% trans "Return to Home" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
