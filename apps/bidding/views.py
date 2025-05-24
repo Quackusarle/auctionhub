@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from decimal import Decimal, InvalidOperation
 from decimal import Decimal
 from django.db import transaction as db_transaction
+from apps.payments.models import Transaction # Đường dẫn đúng đến model Transaction của bạn
 from django.db.models import Max, Q, Case, When, Value, CharField, OuterRef, Subquery, BooleanField
 from django.urls import reverse
 from django.http import JsonResponse 
@@ -291,7 +292,7 @@ def my_active_bids_view(request):
                         url_nut_hanh_dong_chinh = "#"
 
         elif san_pham.status == 'completed' or san_pham.end_time <= thoi_gian_hien_tai:
-            giao_dich_thang_cuoc = db_transaction.objects.filter(item_id=san_pham, buyer_id=nguoi_dung_hien_tai).first()
+            giao_dich_thang_cuoc = Transaction.objects.filter(item_id=san_pham, buyer_id=nguoi_dung_hien_tai).first()
             if giao_dich_thang_cuoc:
                 if giao_dich_thang_cuoc.status == 'completed':
                     trang_thai_san_pham_cho_nguoi_dung = "Đã thanh toán"
