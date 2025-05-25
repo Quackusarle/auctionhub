@@ -4,6 +4,7 @@ from django.urls import path, include
 from . import views # views của project auction_web
 from apps.items.views import item_detail_view
 from apps.items.views import item_search_view
+from apps.items.views import item_list_view
 from apps.bidding.views import bidding_detail_view
 from apps.bidding.views import my_active_bids_view
 
@@ -33,6 +34,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('items/<int:pk>/', item_detail_view, name='item-detail-template'),
     path('items/<int:pk>/bidding/', bidding_detail_view, name='bidding-detail-page'),
+    path('items/',item_list_view, name='item-list'),
     path('login-signup/', views.register_view, name='login-signup'),
     path('search/', item_search_view, name='search_results'),
     path('my-purchasing-items/', my_active_bids_view, name='my_purchasing_items_page'),

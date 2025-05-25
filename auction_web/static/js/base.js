@@ -183,7 +183,7 @@ function updateUserAuthUI(isLoggedIn, userData = {}) {
 
     const URLS = {
         login: "/accounts/login/",
-        register: "/accounts/register/",
+        register: "/accounts/signup/",
         profile: "/user/profile/",
         myAuctions: "/my-auctions/",
         myPurchasingItems: "/my-purchasing-items/",

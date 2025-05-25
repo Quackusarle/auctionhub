@@ -1,156 +1,419 @@
 {% extends "base.html" %}
 {% load static %}
+{% load i18n %}
 {% load humanize %}
 
 {% block title %}
     {% if query_from_url %}
-        Kết quả tìm kiếm cho "{{ query_from_url }}"
+        {% blocktrans with query=query_from_url %}Search results for "{{ query }}"{% endblocktrans %}
     {% else %}
-        Tìm kiếm sản phẩm
+        {% trans "Search Products" %}
     {% endif %}
+     - AuctionHub
 {% endblock title %}
+
+{% block page_specific_css %}
+    {{ block.super }}
+    {# Sử dụng chung item_list.css cho style card sản phẩm #}
+    <link rel="stylesheet" href="{% static 'css/item_list.css' %}">
+    <style>
+        .search-page-header h1 {
+            color: var(--heading-color);
+            font-weight: 700;
+            font-size: 2rem; /* Tăng kích thước tiêu đề */
+        }
+        .search-page-header .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .sort-bar-wrapper { /* Bọc thanh sort */
+            background-color: var(--white);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            margin-bottom: 2rem;
+        }
+        .sort-bar-wrapper .form-select {
+            border-color: var(--border-color);
+            font-size: 0.95rem;
+            min-width: 220px; /* Độ rộng tối thiểu cho select */
+        }
+        .sort-bar-wrapper .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.25);
+        }
+        .sort-bar-wrapper label {
+            font-weight: 500;
+            color: var(--heading-color);
+        }
+
+        /* Spinner và Messages (giống item_list.html) */
+        #search-page-spinner,
+        #search-page-error-message, /* Đổi ID để rõ ràng hơn */
+        #search-page-no-results-message { /* Đổi ID */
+            min-height: 250px; /* Tăng chiều cao tối thiểu */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        #search-page-spinner .spinner-border {
+            color: var(--primary-color) !important;
+            width: 3.5rem; height: 3.5rem; /* Tăng kích thước spinner */
+        }
+        #search-page-spinner p { color: var(--muted-color); margin-top: 1rem; font-size: 1.1rem; }
+
+        #search-page-error-message {
+            border: 1px solid #e74c3c;
+            background-color: #fdedec;
+            color: #c0392b;
+            padding: 1.5rem;
+        }
+        #search-page-no-results-message {
+            border: 1px solid #aed6f1;
+            background-color: #eaf2f8;
+            color: #2980b9;
+            padding: 1.5rem;
+        }
+        #search-page-error-message .alert-heading,
+        #search-page-no-results-message .alert-heading {
+            color: inherit; /* Để màu chữ của alert được áp dụng */
+            font-weight: 600;
+        }
+
+        /* Đảm bảo product-card-column hoạt động tốt với row-cols */
+        #search-results-container.row { /* Đổi ID */
+            display: flex;
+            flex-wrap: wrap;
+        }
+    </style>
+{% endblock %}
 
 {% block content %}
 <div class="container mt-4 mb-5">
     <div class="search-page-header mb-4">
         {% if query_from_url %}
-            <h1>Kết quả tìm kiếm cho: <span class="text-primary">"{{ query_from_url|escape }}"</span></h1>
+            <h1>{% blocktrans with query=query_from_url|escape %}Search results for: <span class="text-primary">"{{ query }}"</span>{% endblocktrans %}</h1>
         {% else %}
-            <h1>Tìm kiếm sản phẩm</h1>
-            <p class="text-muted">Vui lòng sử dụng ô tìm kiếm ở đầu trang.</p>
+            <h1>{% trans "Search Products" %}</h1>
+            <p class="text-muted">{% trans "Please use the search bar at the top of the page." %}</p>
         {% endif %}
     </div>
 
-    <hr>
+    <!-- Thanh Sort -->
+    <div class="sort-bar-wrapper" id="search-sort-bar" {% if not query_from_url %}style="display:none;"{% endif %}>
+        <div class="row">
+            <div class="col-md-4 ms-md-auto"> {# Đẩy sang phải #}
+                <div class="d-flex align-items-center">
+                    <label for="searchSortSelect" class="form-label me-2 mb-0 text-nowrap">{% trans "Sort by" %}:</label>
+                    <select class="form-select" id="searchSortSelect">
+                        <option value="relevance" {% if not query_from_url %}disabled{% endif %}>{% trans "Relevance" %}</option>
+                        <option value="newest">{% trans "Newest" %}</option>
+                        <option value="ending-soon">{% trans "Ending Soon" %}</option>
+                        <option value="price-low">{% trans "Price: Low to High" %}</option>
+                        <option value="price-high">{% trans "Price: High to Low" %}</option>
+                        <option value="most-bids">{% trans "Most Bids" %}</option>
+                        <option value="hottest">{% trans "Hottest" %}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Kết thúc thanh Sort -->
 
-    <div id="search-page-loading" style="display: none; margin-top: 20px; text-align:center;">
-        <p class="text-muted">Đang tải kết quả...</p>
-        <!-- Bạn có thể thêm spinner ở đây -->
+    {# Không cần <hr> nếu sort bar đã có box-shadow và margin #}
+
+    <div id="search-page-spinner" class="my-5" style="display: none;">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">{% trans "Loading..." %}</span>
+        </div>
+        <p>{% trans "Loading search results..." %}</p>
     </div>
 
-    <div id="search-page-results" class="row">
+    <div id="search-page-error-message" class="my-5" style="display: none;" role="alert">
+        <h5 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>{% trans "Error!" %}</h5>
+        <p>{% trans "Oops! Something went wrong while performing the search. Please try again later." %}</p>
+    </div>
+
+    <div id="search-page-no-results-message" class="my-5" style="display: none;" role="alert">
+        <h5 class="alert-heading"><i class="fas fa-info-circle me-2"></i>{% trans "No Products Found" %}</h5>
+        <p>{% trans "No products found matching your criteria. Try a different search term." %}</p>
+    </div>
+
+    {# Container cho kết quả tìm kiếm #}
+    <div id="search-results-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-3">
         <!-- Kết quả tìm kiếm từ API sẽ được JavaScript chèn vào đây -->
     </div>
-    <div id="search-page-no-results" class="text-center" style="display:none; margin-top:20px;">
-        <p>Không tìm thấy sản phẩm nào phù hợp.</p>
-    </div>
-     <div id="search-page-error" class="text-center text-danger" style="display:none; margin-top:20px;">
-        <p>Có lỗi xảy ra khi tìm kiếm. Vui lòng thử lại.</p>
-    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Search results page navigation" class="mt-5">
+        <ul class="pagination justify-content-center" id="searchPaginationContainer">
+            <!-- Pagination links sẽ được JS chèn vào đây -->
+        </ul>
+    </nav>
 </div>
 {% endblock content %}
 
 {% block page_specific_js %}
 <script>
+    // Định nghĩa các biến text đã dịch cho JS sử dụng
+    window.viewDetailsText = "{% trans 'View Details' %}";
+    window.previousText = "{% trans 'Previous' %}";
+    window.nextText = "{% trans 'Next' %}";
+    // Các text cho thông báo lỗi/trống nếu muốn tùy chỉnh qua JS
+    window.searchErrorText = "{% trans 'Oops! Something went wrong while performing the search. Please try again later.' %}";
+    window.searchNoResultsText = "{% trans 'No products found matching your criteria. Try a different search term.' %}";
+</script>
+
+<script>
+// Hàm formatPrice (copy từ item_list.js hoặc file utils chung)
+function formatPrice(priceInput, options = {}) {
+    const defaultOptions = { currencySymbol: 'VNĐ', minimumFractionDigits: 0, maximumFractionDigits: 0, symbolPosition: 'after' };
+    const effectiveOptions = { ...defaultOptions, ...options };
+    try {
+        if (priceInput === null || priceInput === undefined || String(priceInput).trim() === '') {
+            const zeroFormatted = (0).toLocaleString('vi-VN', { minimumFractionDigits: effectiveOptions.minimumFractionDigits, maximumFractionDigits: effectiveOptions.maximumFractionDigits });
+            return effectiveOptions.symbolPosition === 'after' ? `${zeroFormatted} ${effectiveOptions.currencySymbol}` : `${effectiveOptions.currencySymbol} ${zeroFormatted}`;
+        }
+        const cleanedString = String(priceInput).replace(/[^0-9.-]+/g, '').replace(/,/g, '');
+        const price = parseFloat(cleanedString);
+        if (isNaN(price)) {
+            const seemsNumeric = String(priceInput).match(/\d/);
+            return seemsNumeric ? (effectiveOptions.symbolPosition === 'after' ? `${priceInput} ${effectiveOptions.currencySymbol}` : `${effectiveOptions.currencySymbol} ${priceInput}`) : `0 ${effectiveOptions.currencySymbol}`;
+        }
+        const formattedPrice = price.toLocaleString('vi-VN', {
+            minimumFractionDigits: effectiveOptions.minimumFractionDigits,
+            maximumFractionDigits: effectiveOptions.maximumFractionDigits
+        });
+        return effectiveOptions.symbolPosition === 'after' ? `${formattedPrice} ${effectiveOptions.currencySymbol}` : `${effectiveOptions.currencySymbol} ${formattedPrice}`;
+    } catch (e) {
+        console.warn("formatPrice error:", e);
+        return String(priceInput || `0`) + (effectiveOptions.symbolPosition === 'after' ? ` ${effectiveOptions.currencySymbol}` : '');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    const queryFromUrl = "{{ query_from_url|escapejs }}"; // Lấy query từ context Django
-    const resultsContainer = document.getElementById('search-page-results');
-    const loadingIndicator = document.getElementById('search-page-loading');
-    const noResultsMessage = document.getElementById('search-page-no-results');
-    const errorMessage = document.getElementById('search-page-error');
+    const initialQueryFromUrl = "{{ query_from_url|escapejs|default:'' }}";
+    const resultsContainer = document.getElementById('search-results-container'); // Đổi ID
+    const paginationContainer = document.getElementById('searchPaginationContainer');
+    const sortSelect = document.getElementById('searchSortSelect');
+    const spinnerElement = document.getElementById('search-page-spinner'); // Đổi ID
+    const errorElement = document.getElementById('search-page-error-message'); // Đổi ID
+    const noResultsElement = document.getElementById('search-page-no-results-message'); // Đổi ID
+    const sortBar = document.getElementById('search-sort-bar');
 
-    function displayResults(data) {
-        resultsContainer.innerHTML = ''; // Xóa kết quả cũ
-        noResultsMessage.style.display = 'none';
-        errorMessage.style.display = 'none';
+    const API_SEARCH_URL = '/api/items/search/';
+    const DEFAULT_PAGE_SIZE = 12; // Nên đồng bộ với API
+    let currentPage = 1;
 
-        if (data && data.length > 0) {
-            data.forEach(item => {
-                const placeholderImg = "{% static 'images/placeholder.png' %}";
-                const imageUrl = item.image_url || placeholderImg;
-                const detailUrl = item.detail_page_url || '#'; // detail_page_url từ ItemSerializer
+    function showSpinner() {
+        if (spinnerElement) spinnerElement.style.display = 'flex';
+        if (resultsContainer) resultsContainer.innerHTML = '';
+        if (paginationContainer) paginationContainer.innerHTML = '';
+        if (errorElement) errorElement.style.display = 'none';
+        if (noResultsElement) noResultsElement.style.display = 'none';
+    }
 
-                // Tạo HTML cho mỗi item (ví dụ dùng card của Bootstrap)
-                const itemHtml = `
-                    <div class="col-md-4 col-sm-6 mb-4">
-                        <div class="card h-100 item-card-result">
-                            <a href="${detailUrl}" class="item-card-link">
-                                <img src="${imageUrl}" class="card-img-top" alt="${item.name || 'Sản phẩm'}">
-                                <div class="card-body">
-                                    <h5 class="card-title">${item.name || 'Không có tên'}</h5>
-                                    ${item.current_price ? `<p class="card-text text-success font-weight-bold">${parseFloat(item.current_price).toLocaleString('vi-VN')} VNĐ</p>` : ''}
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                `;
-                resultsContainer.innerHTML += itemHtml;
-            });
-        } else {
-            noResultsMessage.style.display = 'block';
+    function hideSpinner() {
+        if (spinnerElement) spinnerElement.style.display = 'none';
+    }
+
+    function displayError(message) {
+        hideSpinner();
+        if (resultsContainer) resultsContainer.style.display = 'none'; // Ẩn container kết quả
+        if (errorElement) {
+            const pElement = errorElement.querySelector('p');
+            if (pElement) pElement.textContent = message || window.searchErrorText;
+            errorElement.style.display = 'flex';
         }
     }
 
-    if (queryFromUrl && resultsContainer && loadingIndicator && noResultsMessage && errorMessage) {
-        loadingIndicator.style.display = 'block';
-        noResultsMessage.style.display = 'none';
-        errorMessage.style.display = 'none';
+    function displayNoResults() {
+        hideSpinner();
+        if (resultsContainer) resultsContainer.style.display = 'none'; // Ẩn container kết quả
+        if (noResultsElement) {
+            const pElement = noResultsElement.querySelector('p');
+            if(pElement) pElement.textContent = window.searchNoResultsText;
+            noResultsElement.style.display = 'flex';
+        }
+    }
+
+    function createItemCardHTML(item) {
+        // ... (Giữ nguyên hàm createItemCardHTML từ câu trả lời trước, sử dụng class product-card)
+        // ... (Đảm bảo các text tĩnh được lấy từ window.viewDetailsText nếu cần dịch)
+        const detailUrl = item.absolute_url || `/items/${item.id || item.item_id}/`;
+        const placeholderImg = "{% static 'images/placeholder_item_400x300.png' %}";
+        const imageUrl = item.image_url || placeholderImg;
+        const viewDetailsText = window.viewDetailsText || '{% trans "View Details" %}';
+        let descriptionSnippet = ' ';
+        if (item.description && item.description.trim() !== "") {
+            descriptionSnippet = item.description.length > 80 ? item.description.substring(0, 77) + "..." : item.description;
+        } else if (item.short_description) { descriptionSnippet = item.short_description; }
+        let timeRemainingHTML = '';
+        if (item.end_time_formatted) { timeRemainingHTML = `<p class="time-remaining"><i class="fas fa-clock"></i> ${item.end_time_formatted}</p>`; }
+        else if (item.end_time) { try { timeRemainingHTML = `<p class="time-remaining"><i class="fas fa-clock"></i> {% trans "Ends:" %} ${new Date(item.end_time).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>`; } catch (e) {} }
+        return `
+            <div class="col d-flex align-items-stretch product-card-column">
+                <a href="${detailUrl}" class="product-card-link-wrapper text-decoration-none w-100">
+                    <article class="product-card h-100">
+                        <div class="product-image-link"><img src="${imageUrl}" class="card-img-top" alt="${item.name || '{% trans "Unnamed Item" %}'}" loading="lazy"></div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">${item.name || '{% trans "Unnamed Item" %}'}</h5>
+                            <p class="item-description mb-2">${descriptionSnippet}</p>
+                            <div class="item-price-info mt-auto">
+                                <p class="price">${formatPrice(item.current_price)}</p>
+                                ${timeRemainingHTML}
+                                <span class="btn btn-view-details w-100">${viewDetailsText}</span>
+                            </div>
+                        </div>
+                    </article>
+                </a>
+            </div>`;
+    }
+
+    function renderItems(items) {
+        if (!resultsContainer) return;
         resultsContainer.innerHTML = '';
+        resultsContainer.style.display = 'flex'; // Vì resultsContainer là .row
 
-        const searchApiUrl = `/api/items/search/?q=${encodeURIComponent(queryFromUrl)}`;
+        if (!items || items.length === 0) {
+            displayNoResults();
+            return;
+        }
+        items.forEach(item => {
+            resultsContainer.insertAdjacentHTML('beforeend', createItemCardHTML(item));
+        });
+    }
 
+    function renderPagination(totalItems, pageSize) {
+        // ... (Giữ nguyên logic renderPagination từ item_list.js, chỉ đổi ID container)
+        if (!paginationContainer || !totalItems || totalItems <= pageSize) {
+            if(paginationContainer) paginationContainer.innerHTML = ''; return;
+        }
+        const totalPages = Math.ceil(totalItems / pageSize); let paginationHTML = '';
+        const prevText = window.previousText || '{% trans "Previous" %}'; const nextText = window.nextText || '{% trans "Next" %}';
+        paginationHTML += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="${prevText}"><span aria-hidden="true">«</span> <span class="d-none d-sm-inline">${prevText}</span></a></li>`;
+        let startPage, endPage; if (totalPages <= 5) { startPage = 1; endPage = totalPages; } else { if (currentPage <= 3) { startPage = 1; endPage = 5; } else if (currentPage + 2 >= totalPages) { startPage = totalPages - 4; endPage = totalPages; } else { startPage = currentPage - 2; endPage = currentPage + 2; } }
+        if (startPage > 1) { paginationHTML += `<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`; if (startPage > 2) paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`; }
+        for (let i = startPage; i <= endPage; i++) { paginationHTML += `<li class="page-item ${currentPage === i ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`; }
+        if (endPage < totalPages) { if (endPage < totalPages - 1) paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`; paginationHTML += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`; }
+        paginationHTML += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="${nextText}"><span class="d-none d-sm-inline">${nextText}</span> <span aria-hidden="true">»</span></a></li>`;
+        paginationContainer.innerHTML = paginationHTML;
+        document.querySelectorAll('#searchPaginationContainer .page-link[data-page]').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault(); const page = parseInt(this.dataset.page);
+                if (page && page !== currentPage && page > 0 && page <= totalPages) {
+                    currentPage = page; fetchAndDisplaySearchResults();
+                    const targetScrollElement = document.querySelector('.search-page-header') || document.body;
+                    targetScrollElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    }
 
-        fetch(searchApiUrl)
+    function fetchAndDisplaySearchResults() {
+        // Lấy query từ URL hiện tại mỗi lần fetch, vì người dùng có thể search từ header
+        const currentUrlParams = new URLSearchParams(window.location.search);
+        const currentQuery = currentUrlParams.get('q') || initialQueryFromUrl; // Ưu tiên query từ URL
+        const selectedSort = sortSelect ? sortSelect.value : (currentQuery ? 'relevance' : 'newest');
+
+        if (!currentQuery) {
+            hideSpinner();
+            if (sortBar) sortBar.style.display = 'none'; // Ẩn sort bar nếu không có query
+            resultsContainer.innerHTML = `<p class="text-center text-muted col-12 py-5">{% trans "Please enter a search term to find products." %}</p>`;
+            resultsContainer.style.display = 'flex';
+            if (paginationContainer) paginationContainer.innerHTML = '';
+            return;
+        }
+        if (sortBar) sortBar.style.display = 'block'; // Hiển thị sort bar nếu có query
+
+        showSpinner();
+
+        const params = new URLSearchParams({
+            page: currentPage,
+            page_size: DEFAULT_PAGE_SIZE,
+            sort: selectedSort,
+            q: currentQuery
+        });
+
+        // Cập nhật URL trình duyệt
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({path: newUrl}, '', newUrl);
+
+        const fullApiUrl = `${API_SEARCH_URL}?${params.toString()}`;
+        console.log("Fetching search results from:", fullApiUrl);
+
+        fetch(fullApiUrl)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json().then(errData => {
+                        throw new Error(errData.detail || errData.error || `{% trans "HTTP error! Status:" %} ${response.status}`);
+                    }).catch(() => { throw new Error(`{% trans "HTTP error! Status:" %} ${response.status}`); });
                 }
                 return response.json();
             })
             .then(data => {
-                loadingIndicator.style.display = 'none';
-                displayResults(data);
+                hideSpinner();
+                if (data && data.results) {
+                    renderItems(data.results);
+                    renderPagination(data.count, DEFAULT_PAGE_SIZE);
+                } else {
+                    console.error("Search API response format error:", data);
+                    renderItems([]);
+                }
             })
             .catch(error => {
-                loadingIndicator.style.display = 'none';
-                errorMessage.style.display = 'block';
+                displayError(error.message);
                 console.error('Error fetching search results:', error);
             });
-    } else if (!queryFromUrl && !loadingIndicator.style.display !== 'none') { // Nếu không có query, ẩn loading
-        loadingIndicator.style.display = 'none';
     }
+
+    function setupEventListeners() {
+        if (sortSelect) {
+            sortSelect.addEventListener('change', () => {
+                currentPage = 1;
+                fetchAndDisplaySearchResults();
+            });
+        }
+
+        // Lắng nghe sự kiện search từ header (nếu ô search header thay đổi query)
+        // Điều này giả định rằng khi search từ header, trang sẽ được tải lại với ?q=new_query
+        // và `initialQueryFromUrl` sẽ được cập nhật, sau đó `initializeSearchPage` sẽ chạy.
+        // Nếu bạn muốn search động từ header mà không tải lại trang, cần logic phức tạp hơn.
+    }
+
+    function initializeSearchPage() {
+        if (!resultsContainer || !spinnerElement || !noResultsElement || !errorElement || !paginationContainer || !sortSelect || !sortBar) {
+            console.error("Search page: One or more required DOM elements are missing.");
+            if(spinnerElement) spinnerElement.style.display = 'none';
+            return;
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialSortFromUrl = urlParams.get('sort');
+
+        if (initialSortFromUrl && sortSelect.querySelector(`option[value="${initialSortFromUrl}"]`)) {
+            sortSelect.value = initialSortFromUrl;
+        } else if (initialQueryFromUrl) { // Nếu có query, mặc định là relevance
+            sortSelect.value = 'relevance';
+        } else { // Nếu không có query, mặc định là newest (nhưng relevance sẽ bị disabled)
+            sortSelect.value = 'newest';
+        }
+        // Disable/enable relevance option based on query
+        const relevanceOption = sortSelect.querySelector('option[value="relevance"]');
+        if (relevanceOption) {
+            relevanceOption.disabled = !initialQueryFromUrl;
+        }
+
+
+        setupEventListeners();
+        fetchAndDisplaySearchResults(); // Fetch lần đầu khi trang tải
+    }
+
+    initializeSearchPage();
 });
 </script>
-{% endblock %}
-
-{% block page_specific_css %}
-    {{ block.super }}
-    <style>
-        /* CSS cho thẻ sản phẩm kết quả (tương tự như trước) */
-        .item-card-result {
-            border: 1px solid var(--border-color, #dee2e6);
-            border-radius: 0.5rem;
-            transition: box-shadow 0.3s ease;
-            text-decoration: none;
-            color: inherit;
-        }
-        .item-card-result:hover {
-            box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
-        }
-        .item-card-result .card-img-top {
-            width: 100%;
-            height: 200px; /* Hoặc tỷ lệ khung hình mong muốn */
-            object-fit: cover;
-            border-top-left-radius: calc(0.5rem - 1px);
-            border-top-right-radius: calc(0.5rem - 1px);
-            background-color: #f8f9fa; /* Màu nền cho ảnh */
-        }
-        .item-card-result .card-body { padding: 1rem; }
-        .item-card-result .card-title {
-            font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--heading-color);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;
-        }
-        a.item-card-link:hover h5.card-title { color: var(--primary-color); }
-        .mt-4 { margin-top: 1.5rem !important; }
-        .mb-4 { margin-bottom: 1.5rem !important; }
-        .mb-5 { margin-bottom: 3rem !important; }
-        .text-primary { color: var(--primary-color) !important; }
-        .text-danger { color: var(--error-color) !important; }
-        .text-muted { color: var(--muted-color) !important; }
-        .text-success { color: var(--primary-color) !important; }
-        .font-weight-bold { font-weight: 700 !important; }
-        #search-page-loading p, #search-page-no-results p, #search-page-error p {
-            font-size: 1.1rem;
-        }
-    </style>
-{% endblock %}
+{% endblock page_specific_js %}
