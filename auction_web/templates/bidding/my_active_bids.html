@@ -29,7 +29,7 @@
                 </thead>
                 <tbody>
                     {% for thong_tin in active_bids_info %}
-                    <tr id="item-row-{{ thong_tin.item.pk }}"> {# Thêm ID cho hàng để dễ cập nhật/xóa bằng JS #}
+                    <tr id="item-row-{{ thong_tin.item.pk }}">
                         <td data-label="Sản phẩm" class="product-cell">
                             <a href="{% if thong_tin.item.get_absolute_url %}{{ thong_tin.item.get_absolute_url }}{% else %}{% url 'item-detail-template' pk=thong_tin.item.pk %}{% endif %}" class="product-link">
                                 <img src="{% if thong_tin.item.image_url %}{{ thong_tin.item.image_url.url }}{% else %}{% static 'images/placeholder_item_400x300.png' %}{% endif %}"
@@ -63,34 +63,20 @@
                             </span>
                         </td>
                         <td data-label="Hành động" class="action-cell action-cell-{{ thong_tin.item.pk }}">
-                            {% if thong_tin.trang_thai_cho_toi == "Đang đấu giá" %}
-                                <div class="action-buttons-stacked">
-                                    <a href="{% if thong_tin.url_cho_nut_hanh_dong != '#' %}{{ thong_tin.url_cho_nut_hanh_dong }}{% else %}{% url 'bidding-detail-page' pk=thong_tin.item.pk %}{% endif %}" class="btn btn-sm btn-primary btn-bid-again mb-1 w-100">
-                                        Đặt giá lại
-                                    </a>
-                                    {% if thong_tin.hien_thi_nut_huy_dau_gia and thong_tin.bid_id_cao_nhat_cua_toi %}
-                                    <button type="button" class="btn btn-sm btn-outline-secondary btn-cancel-bid w-100"
-                                            data-item-id="{{ thong_tin.item.pk }}"
-                                            data-bid-id="{{ thong_tin.bid_id_cao_nhat_cua_toi }}"
-                                            onclick="handleCancelBid('{{ thong_tin.item.pk }}', '{{ thong_tin.bid_id_cao_nhat_cua_toi }}', this)">
-                                        Hủy 
-                                    </button>
-                                    {% endif %}
-                                </div>
-                            {% elif thong_tin.chu_tren_nut_hanh_dong and thong_tin.url_cho_nut_hanh_dong != "#" %}
-                                {% if thong_tin.trang_thai_cho_toi == "Đấu giá thành công" and thong_tin.transaction_id_for_payment %}
-                                    <a href="{% url 'payments:process_payment' %}?transaction_id={{ thong_tin.transaction_id_for_payment }}" class="btn btn-sm {{ thong_tin.class_css_cho_nut_hanh_dong }} w-100">
-                                        {{ thong_tin.chu_tren_nut_hanh_dong }}
-                                    </a>
-                                {% else %}
-                                     <a href="{{ thong_tin.url_cho_nut_hanh_dong }}" class="btn btn-sm {{ thong_tin.class_css_cho_nut_hanh_dong }} w-100">
-                                        {{ thong_tin.chu_tren_nut_hanh_dong }}
-                                    </a>
-                                {% endif %}
-                            {% elif thong_tin.chu_tren_nut_hanh_dong %}
-                                <button class="btn btn-sm {{ thong_tin.class_css_cho_nut_hanh_dong }} w-100" disabled>
+                            {% if thong_tin.chu_tren_nut_hanh_dong %}
+                                {# URL đã được xây dựng trong view, bao gồm cả URL cho wallet hoặc trang chi tiết #}
+                                <a href="{{ thong_tin.url_cho_nut_hanh_dong }}" class="btn btn-sm {{ thong_tin.class_css_cho_nut_hanh_dong|default:'btn-primary' }} w-100">
                                     {{ thong_tin.chu_tren_nut_hanh_dong }}
+                                </a>
+                                {# Hiển thị nút hủy nếu trạng thái là Đang đấu giá và user có bid #}
+                                {% if thong_tin.trang_thai_cho_toi == "Dang dau gia" and thong_tin.hien_thi_nut_huy_dau_gia and thong_tin.bid_id_cao_nhat_cua_toi %}
+                                <button type="button" class="btn btn-sm btn-outline-secondary btn-cancel-bid w-100 mt-1"
+                                        data-item-id="{{ thong_tin.item.pk }}"
+                                        data-bid-id="{{ thong_tin.bid_id_cao_nhat_cua_toi }}"
+                                        onclick="handleCancelBid('{{ thong_tin.item.pk }}', '{{ thong_tin.bid_id_cao_nhat_cua_toi }}', this)">
+                                    Hủy
                                 </button>
+                                {% endif %}
                             {% else %}
                                 -
                             {% endif %}
@@ -124,14 +110,18 @@ function showGlobalMessage(message, type = 'info') {
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         `;
         messageArea.appendChild(alertDiv);
-        // Auto-dismiss after 7 seconds
+        
         setTimeout(() => {
             const existingAlert = messageArea.querySelector('.alert');
-            if (existingAlert && bootstrap.Alert.getInstance(existingAlert)) {
-                 bootstrap.Alert.getInstance(existingAlert).close();
-            } else if (existingAlert) {
-                existingAlert.classList.remove('show');
-                setTimeout(() => existingAlert.remove(), 150); // Allow fade out
+            if (existingAlert) {
+                // Check if Bootstrap's Alert class is available and try to use its close method
+                if (typeof bootstrap !== 'undefined' && bootstrap.Alert && bootstrap.Alert.getInstance(existingAlert)) {
+                     bootstrap.Alert.getInstance(existingAlert).close();
+                } else {
+                    // Fallback if Bootstrap JS for Alert is not loaded or fails
+                    existingAlert.classList.remove('show');
+                    setTimeout(() => existingAlert.remove(), 150); // Allow fade out animation
+                }
             }
         }, 7000);
     }
@@ -145,7 +135,7 @@ async function handleCancelBid(itemId, bidId, buttonElement) {
     buttonElement.disabled = true;
     buttonElement.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang hủy...';
 
-    const csrfToken = "{{ csrf_token_value }}"; // Lấy CSRF token từ context view
+    const csrfToken = "{{ csrf_token_value }}"; 
 
     try {
         const response = await fetch("{% url 'cancel_my_bid_api' %}", {
@@ -156,7 +146,6 @@ async function handleCancelBid(itemId, bidId, buttonElement) {
             },
             body: JSON.stringify({
                 item_id: itemId
-                
             })
         });
 
@@ -164,44 +153,21 @@ async function handleCancelBid(itemId, bidId, buttonElement) {
 
         if (response.ok && result.success) {
             showGlobalMessage(result.message || 'Đã hủy bid thành công!', 'success');
-
-            // Cập nhật UI sau khi hủy thành công
-            const itemRow = document.getElementById(`item-row-${itemId}`);
-            if (itemRow) {
-                // Cập nhật giá của bạn thành "-"
-                const yourBidCell = itemRow.querySelector(`.your-bid-${itemId}`);
-                if (yourBidCell) {
-                    yourBidCell.textContent = '-';
-                }
-                // Cập nhật giá hiện tại của sản phẩm
-                const currentItemPriceCell = itemRow.querySelector(`.current-item-price-${itemId}`);
-                if (currentItemPriceCell && typeof result.new_current_price !== 'undefined') {
-                    currentItemPriceCell.textContent = `${parseFloat(result.new_current_price).toLocaleString('vi-VN', {minimumFractionDigits: 0, maximumFractionDigits: 0})} VNĐ`;
-                }
-                // Ẩn nút hủy vì bid đã bị xóa
-                buttonElement.style.display = 'none';
-                // Có thể thay đổi trạng thái hoặc ẩn luôn cả hàng nếu không còn bid nào của user
-                // Ví dụ: Nếu người dùng không còn bid nào trên item này, ta có thể thay đổi trạng thái.
-                // Hoặc đơn giản là làm mờ nút "Đặt giá lại" và nút hủy.
-                // Để đơn giản, chỉ ẩn nút hủy.
-            }
-             // Cân nhắc tải lại toàn bộ trang hoặc chỉ phần bảng để cập nhật đúng nhất
-             // window.location.reload(); // Hoặc một hàm cập nhật động tinh vi hơn
+            // Tải lại trang để cập nhật đầy đủ thông tin
+            // Đây là cách đơn giản nhất để đảm bảo UI đồng bộ
+            window.location.reload(); 
 
         } else {
             showGlobalMessage(result.error || 'Lỗi khi hủy bid. Vui lòng thử lại.', 'error');
+             buttonElement.disabled = false;
+             buttonElement.textContent = 'Hủy';
         }
     } catch (error) {
         console.error('Lỗi JavaScript khi hủy bid:', error);
         showGlobalMessage('Lỗi kết nối hoặc lỗi không xác định. Vui lòng thử lại.', 'error');
-    } finally {
-        if(buttonElement){ // Kiểm tra lại vì button có thể đã bị xóa nếu cả hàng bị xóa
-             buttonElement.disabled = false;
-             buttonElement.textContent = 'Hủy';
-        }
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Hủy';
     }
 }
-// Đảm bảo Bootstrap JS được tải để alert dismissible hoạt động
-// Nếu bạn không dùng Bootstrap JS cho alert, bạn cần tự viết logic ẩn thông báo.
 </script>
 {% endblock %}

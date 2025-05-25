@@ -20,13 +20,12 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import json
+from urllib.parse import urlencode # Import them
+
 # import logging # Nếu bạn muốn ghi log chi tiết
 # logger = logging.getLogger(__name__)
 
-# --- HÀM TIỆN ÍCH XỬ LÝ PHIÊN ĐẤU GIÁ KẾT THÚC ---
-# Hàm này nên được gọi bởi một tác vụ nền (Celery) hoặc một cơ chế khác
-# khi một phiên đấu giá thực sự kết thúc.
-# Đặt ở đây để tham khảo, bạn có thể chuyển nó vào tasks.py hoặc utils.py
+# --- HÀM TIỆN ÍCH XỬ LÝ PHIÊN ĐẤU GIÁ KẾT THÚC (Giữ tên gốc tiếng Việt bạn cung cấp) ---
 def xu_ly_phien_dau_gia_ket_thuc(item_id):
     try:
         san_pham_ket_thuc = Item.objects.get(pk=item_id)
@@ -48,31 +47,33 @@ def xu_ly_phien_dau_gia_ket_thuc(item_id):
                     ).exists()
 
                     if not giao_dich_da_ton_tai:
+                        # Lấy seller từ sản phẩm để đảm bảo tính đúng đắn
+                        nguoi_ban = san_pham_ket_thuc.seller
+                        if not nguoi_ban:
+                            print(f"Loi: Khong tim thay nguoi ban cho item {san_pham_ket_thuc.pk} khi tao giao dich.")
+                            # Quyết định xử lý lỗi ở đây, ví dụ raise Exception để rollback
+                            raise ValueError(f"Thieu nguoi ban cho san pham {san_pham_ket_thuc.pk}")
+
                         Transaction.objects.create(
                             item_id=san_pham_ket_thuc,
-                            seller_id=san_pham_ket_thuc.seller,
                             buyer_id=bid_thang_cuoc.user_id,
-                            final_price=bid_thang_cuoc.bid_amount, # Hoặc san_pham_ket_thuc.current_price
-                            status='pending' # Chờ thanh toán
+                            seller_id=nguoi_ban, # Đảm bảo seller_id được cung cấp
+                            final_price=bid_thang_cuoc.bid_amount, 
+                            status='pending' 
                         )
-                        # logger.info(f"Auction for item {san_pham_ket_thuc.name} completed. Winner: {bid_thang_cuoc.user_id.email}. Price: {bid_thang_cuoc.bid_amount}")
                         print(f"Auction for item {san_pham_ket_thuc.name} completed. Winner: {bid_thang_cuoc.user_id.email}. Price: {bid_thang_cuoc.bid_amount}")
-
                 else:
-                    # logger.info(f"Auction for item {san_pham_ket_thuc.name} completed. No bids placed.")
                     print(f"Auction for item {san_pham_ket_thuc.name} completed. No bids placed.")
             return True
     except Item.DoesNotExist:
-        # logger.warning(f"Item with ID {item_id} does not exist for processing ended auction.")
         print(f"Item with ID {item_id} does not exist for processing ended auction.")
     except Exception as e:
-        # logger.error(f"Error processing ended auction for item ID {item_id}: {e}", exc_info=True)
         print(f"Error processing ended auction for item ID {item_id}: {e}")
     return False
 
 
-# Hàm làm tròn tiền (giữ nguyên)
-def Lamtrontien (amount):
+# Hàm làm tròn tiền (giữ tên gốc tiếng Việt bạn cung cấp)
+def Lamtrontien (amount): # Giữ tên hàm này theo file gốc bạn cung cấp
     if not isinstance(amount, Decimal):
         try:
             amount = Decimal(str(amount))
@@ -85,10 +86,10 @@ def Lamtrontien (amount):
     else:
         return nghin * 1000
 
-# API 1: Xử lý đặt giá thầu
+# API 1: Xử lý đặt giá thầu (Giữ tên gốc tiếng Anh)
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def place_bid(request):
+def place_bid(request): # Giữ tên gốc
     user = request.user
     item_id_str = request.data.get('item_id')
     bid_amount_str = request.data.get('bid_amount')
@@ -110,13 +111,7 @@ def place_bid(request):
     except Item.DoesNotExist:
         return Response({"error": f"Sản phẩm với ID {item_id} không tồn tại."}, status=status.HTTP_404_NOT_FOUND)
 
-    # SỬA LỖI NHỎ: if item.seller == user (nếu người bán không được tự bid)
-    # Hiện tại là item.seller != user (nếu chỉ người khác mới được bid)
-    # Giả sử logic hiện tại là đúng: không cho người bán tự bid
-   # if item.seller == user:
-   #     return Response({"error": "Bạn không thể đặt giá cho sản phẩm của chính mình."}, status=status.HTTP_400_BAD_REQUEST)
-
-    if item.end_time is None or timezone.now() > item.end_time: # Sử dụng timezone.now()
+    if item.end_time is None or timezone.now() > item.end_time: 
         return Response({"error": "Phiên đấu giá đã kết thúc hoặc không hợp lệ!"}, status=status.HTTP_400_BAD_REQUEST)
 
     current_effective_price = item.current_price if item.current_price > Decimal('0') else item.starting_price
@@ -125,17 +120,17 @@ def place_bid(request):
     min_absolute_increment = Decimal('1000')
 
     calculated_min_bid = current_effective_price + max(current_effective_price * min_increment_percentage, min_absolute_increment)
-    calculated_min_bid = Lamtrontien(calculated_min_bid)
+    calculated_min_bid = Lamtrontien(calculated_min_bid) # Sử dụng hàm đã Việt hóa tên
     calculated_min_bid = max(calculated_min_bid, item.starting_price + min_absolute_increment)
 
     calculated_max_bid = current_effective_price + max(current_effective_price * max_increment_percentage, min_absolute_increment * 10)
-    calculated_max_bid = Lamtrontien(calculated_max_bid)
+    calculated_max_bid = Lamtrontien(calculated_max_bid) # Sử dụng hàm đã Việt hóa tên
     calculated_max_bid = max(calculated_max_bid, calculated_min_bid)
 
     if bid_amount_decimal < calculated_min_bid:
         min_bid_display = Lamtrontien(calculated_min_bid.quantize(Decimal('1')))
         current_display = Lamtrontien(current_effective_price.quantize(Decimal('1')))
-        actual_increment_value = max(current_effective_price * min_increment_percentage, min_absolute_increment) # Sửa lỗi min_increment_value
+        actual_increment_value = max(current_effective_price * min_increment_percentage, min_absolute_increment) 
         increment_display = Lamtrontien(actual_increment_value.quantize(Decimal('1')))
         error_message = (f"Giá đặt phải ít nhất là {min_bid_display:,.0f} VNĐ "
                          f"(cao hơn giá hiện tại {current_display:,.0f} VNĐ "
@@ -160,12 +155,12 @@ def place_bid(request):
 
     if serializer.is_valid():
         try:
-            with django_db_transaction.atomic(): # Sử dụng alias
+            with django_db_transaction.atomic(): 
                 bid_instance = serializer.save()
                 item.current_price = rounded_bid_amount
                 item.save(update_fields=['current_price'])
 
-            response_data = serializer.data.copy() # Tạo bản sao để tránh thay đổi dữ liệu gốc của serializer
+            response_data = serializer.data.copy() 
             response_data['user_email'] = user.email
             response_data['bid_time'] = bid_instance.bid_time.isoformat()
             response_data['bid_amount'] = str(Lamtrontien(bid_instance.bid_amount))
@@ -183,12 +178,11 @@ def place_bid(request):
         print(f"Serializer Errors: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# API 2: Lấy danh sách giá thầu của một sản phẩm
-@api_view(['POST']) # Nên là GET nếu chỉ lấy dữ liệu và item_id qua URL params
-@permission_classes([IsAuthenticated]) # Nên là AllowAny nếu ai cũng xem được bids
-def get_bids_for_item(request):
-    # Nếu là GET, item_id nên lấy từ request.query_params.get('item_id')
-    item_id_str = request.data.get('item_id') # Giữ nguyên nếu vẫn muốn POST
+# API 2: Lấy danh sách giá thầu của một sản phẩm (Giữ tên gốc tiếng Anh)
+@api_view(['POST']) 
+@permission_classes([IsAuthenticated]) 
+def get_bids_for_item(request): # Giữ tên gốc
+    item_id_str = request.data.get('item_id')
 
     if not item_id_str:
         return Response({"error": "Thiếu item_id!"}, status=status.HTTP_400_BAD_REQUEST)
@@ -197,16 +191,15 @@ def get_bids_for_item(request):
     except ValueError:
         return Response({"error": "Item ID không hợp lệ."}, status=status.HTTP_400_BAD_REQUEST)
 
-
     item = get_object_or_404(Item, pk=item_id)
-    bids = Bid.objects.filter(item_id=item).order_by('-bid_time').select_related('user_id') # Thêm select_related
+    bids = Bid.objects.filter(item_id=item).order_by('-bid_time').select_related('user_id') 
     serializer = Bidserializers(bids, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-# API 3: Lấy giá thầu cao nhất của một sản phẩm
-@api_view(['POST']) # Tương tự, nên là GET
-@permission_classes([IsAuthenticated]) # Tương tự, có thể là AllowAny
-def get_highest_bid(request):
+# API 3: Lấy giá thầu cao nhất của một sản phẩm (Giữ tên gốc tiếng Anh)
+@api_view(['POST']) 
+@permission_classes([IsAuthenticated]) 
+def get_highest_bid(request): # Giữ tên gốc
     item_id_str = request.data.get('item_id')
     if not item_id_str:
         return Response({"error": "Thiếu item_id!"}, status=status.HTTP_400_BAD_REQUEST)
@@ -224,14 +217,12 @@ def get_highest_bid(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response({"message": "Chưa có giá thầu nào cho sản phẩm này."}, status=status.HTTP_200_OK)
 
-# View cho trang chi tiết đấu giá (HTML)
-def bidding_detail_view(request, pk):
-    # permission_classes nên được xử lý bởi @login_required nếu cần
+# View cho trang chi tiết đấu giá (HTML) - Đổi tên sang tiếng Việt (ngắn gọn)
+def bidding_detail_view(request, pk): # Tên đã đổi trước đó
     item = get_object_or_404(Item, pk=pk)
-    # Có thể gọi hàm xử lý kết thúc đấu giá ở đây nếu item đã hết hạn mà chưa xử lý
     if item.status == 'ongoing' and item.end_time <= timezone.now():
-         xu_ly_phien_dau_gia_ket_thuc(item.pk)
-         item.refresh_from_db() # Tải lại item sau khi có thể đã thay đổi status
+         xu_ly_phien_dau_gia_ket_thuc(item.pk) # Gọi hàm tiện ích với tên đã Việt hóa
+         item.refresh_from_db() 
 
     bids = Bid.objects.filter(item_id=item).order_by('-bid_time')[:10]
     context = {
@@ -242,19 +233,18 @@ def bidding_detail_view(request, pk):
 
 @login_required
 @require_POST
-def cancel_my_bid_view(request):
+def cancel_my_bid_view(request): # Giữ tên gốc tiếng Anh
     try:
         data = json.loads(request.body)
-        item_id_str = data.get('item_id') # Nhận item_id dưới dạng string
+        item_id_str = data.get('item_id') 
         nguoi_dung_hien_tai = request.user
 
         if not item_id_str:
             return JsonResponse({'success': False, 'error': 'Thiếu item_id.'}, status=400)
         try:
-            item_id = int(item_id_str) # Chuyển sang int
+            item_id = int(item_id_str) 
         except ValueError:
             return JsonResponse({'success': False, 'error': 'Item ID không hợp lệ.'}, status=400)
-
 
         san_pham = get_object_or_404(Item, pk=item_id)
         thoi_gian_hien_tai_utc = timezone.now()
@@ -270,17 +260,17 @@ def cancel_my_bid_view(request):
         if not bid_cao_nhat_cua_nguoi_dung:
             return JsonResponse({'success': False, 'error': 'Bạn không có bid nào để hủy cho sản phẩm này.'}, status=400)
 
-        bid_id_can_xoa = bid_cao_nhat_cua_nguoi_dung.bid_id
         gia_bid_can_xoa = bid_cao_nhat_cua_nguoi_dung.bid_amount
         
-        with django_db_transaction.atomic(): # Sử dụng alias
+        with django_db_transaction.atomic(): 
             bid_cao_nhat_cua_nguoi_dung.delete()
             bid_cao_nhat_con_lai = Bid.objects.filter(item_id=san_pham).order_by('-bid_amount', '-bid_time').first()
 
             if bid_cao_nhat_con_lai:
                 san_pham.current_price = bid_cao_nhat_con_lai.bid_amount
             else:
-                san_pham.current_price = Decimal('0')
+                # Cân nhắc quay về giá khởi điểm nếu không còn bid nào
+                san_pham.current_price = san_pham.starting_price if san_pham.starting_price > 0 else Decimal('0')
             san_pham.save(update_fields=['current_price'])
 
         return JsonResponse({
@@ -294,30 +284,19 @@ def cancel_my_bid_view(request):
     except Item.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Sản phẩm không tồn tại.'}, status=404)
     except Exception as e:
-        # logger.error(f"Cancel bid API error: {e}", exc_info=True)
         print(f"Cancel bid API error: {e}")
         return JsonResponse({'success': False, 'error': 'Đã xảy ra lỗi không mong muốn khi hủy bid.'}, status=500)
 
 @login_required
-def my_active_bids_view(request):
+def my_active_bids_view(request): # Tên đã đổi trước đó
     nguoi_dung_hien_tai = request.user
     thoi_gian_hien_tai_utc = timezone.now()
-
-    # Tùy chọn: Xử lý các phiên đấu giá hết hạn mà người dùng này tham gia trước khi hiển thị
-    # ended_item_ids_user_bid_on = Bid.objects.filter(
-    #     user_id=nguoi_dung_hien_tai,
-    #     item_id__status='ongoing',
-    #     item_id__end_time__lte=thoi_gian_hien_tai_utc
-    # ).values_list('item_id', flat=True).distinct()
-    # for item_pk in ended_item_ids_user_bid_on:
-    #     xu_ly_phien_dau_gia_ket_thuc(item_pk)
-
 
     id_cac_san_pham_da_dau_gia = Bid.objects.filter(user_id=nguoi_dung_hien_tai).values_list('item_id', flat=True).distinct()
     
     danh_sach_san_pham_da_dau_gia = Item.objects.filter(pk__in=id_cac_san_pham_da_dau_gia)\
                                         .select_related('seller')\
-                                        .order_by(Case(When(status='ongoing', end_time__gt=thoi_gian_hien_tai_utc, then=0), default=1), '-end_time')
+                                        .order_by(Case(When(status='ongoing', end_time__gt=thoi_gian_hien_tai_utc, then=Value(0)), default=Value(1)), '-end_time')
 
     thong_tin_san_pham_kem_trang_thai = []
     
@@ -329,85 +308,87 @@ def my_active_bids_view(request):
 
         gia_thau_cao_nhat_cua_nguoi_dung = bid_cao_nhat_hien_tai_cua_toi.bid_amount if bid_cao_nhat_hien_tai_cua_toi else Decimal('0')
         bid_id_cao_nhat_cua_toi = bid_cao_nhat_hien_tai_cua_toi.bid_id if bid_cao_nhat_hien_tai_cua_toi else None
-        giao_dich_thang_cuoc_cua_toi = None # Reset cho mỗi sản phẩm
-
-        trang_thai_san_pham_cho_nguoi_dung = "Mặc định"
+        
+        trang_thai_san_pham_cho_nguoi_dung = "Mac dinh" 
         ten_nut_hanh_dong_chinh = ""
         url_nut_hanh_dong_chinh = ""
-        class_css_nut_hanh_dong_chinh = ""
+        class_css_nut_hanh_dong_chinh = "btn-secondary" 
         hien_thi_nut_huy = False
         id_giao_dich_cho_thanh_toan = None
+        so_tien_can_thanh_toan = Decimal('0') 
 
-        # Nếu phiên đấu giá thực sự đã kết thúc nhưng status chưa cập nhật, hãy gọi hàm xử lý
-        # Điều này giúp dữ liệu gần với thời gian thực hơn, nhưng lý tưởng nhất là Celery task
         if san_pham.status == 'ongoing' and san_pham.end_time <= thoi_gian_hien_tai_utc:
-            print(f"Item {san_pham.pk} appears to have ended but status is ongoing. Processing now.")
-            xu_ly_phien_dau_gia_ket_thuc(san_pham.pk)
-            san_pham.refresh_from_db() # Tải lại thông tin sản phẩm sau khi xử lý
+            print(f"Item {san_pham.pk} ({san_pham.name}) appears to have ended but status is ongoing. Processing now.")
+            if xu_ly_phien_dau_gia_ket_thuc(san_pham.pk): # Gọi hàm tiện ích với tên đã Việt hóa
+                 san_pham.refresh_from_db()
+                 print(f"Processed item {san_pham.pk}, new status: {san_pham.status}")
+            else:
+                print(f"Failed to process ended auction for item {san_pham.pk}, status might be inaccurate.")
 
         if san_pham.status == 'ongoing' and san_pham.end_time > thoi_gian_hien_tai_utc:
-            trang_thai_san_pham_cho_nguoi_dung = "Đang đấu giá"
+            trang_thai_san_pham_cho_nguoi_dung = "Dang dau gia"
+            ten_nut_hanh_dong_chinh = "Dat gia lai"
             if bid_cao_nhat_hien_tai_cua_toi:
                 hien_thi_nut_huy = True
             try:
                 url_nut_hanh_dong_chinh = reverse('bidding-detail-page', kwargs={'pk': san_pham.pk})
             except Exception:
                 url_nut_hanh_dong_chinh = "#"
+            class_css_nut_hanh_dong_chinh = "btn-primary"
 
-        elif san_pham.status == 'completed': # Chỉ kiểm tra 'completed' sau khi đã cố gắng xử lý ở trên
+        elif san_pham.status == 'completed':
             giao_dich_thang_cuoc_cua_toi = Transaction.objects.filter(item_id=san_pham, buyer_id=nguoi_dung_hien_tai).first()
             
             if giao_dich_thang_cuoc_cua_toi:
-                id_giao_dich_cho_thanh_toan = giao_dich_thang_cuoc_cua_toi.transaction_id if giao_dich_thang_cuoc_cua_toi.status == 'pending' else None
+                id_giao_dich_cho_thanh_toan = giao_dich_thang_cuoc_cua_toi.transaction_id
+                so_tien_can_thanh_toan = giao_dich_thang_cuoc_cua_toi.final_price
+
                 if giao_dich_thang_cuoc_cua_toi.status == 'completed':
-                    trang_thai_san_pham_cho_nguoi_dung = "Đã thanh toán"
-                    ten_nut_hanh_dong_chinh = "Xem chi tiết"
-                    try:
-                        url_nut_hanh_dong_chinh = reverse('item-detail-template', kwargs={'pk': san_pham.pk})
-                    except Exception:
-                        url_nut_hanh_dong_chinh = "#"
+                    trang_thai_san_pham_cho_nguoi_dung = "Da thanh toan"
+                    ten_nut_hanh_dong_chinh = "Xem chi tiet"
+                    try: url_nut_hanh_dong_chinh = reverse('item-detail-template', kwargs={'pk': san_pham.pk})
+                    except Exception: url_nut_hanh_dong_chinh = "#"
                     class_css_nut_hanh_dong_chinh = "btn-info"
                 elif giao_dich_thang_cuoc_cua_toi.status == 'pending':
-                    trang_thai_san_pham_cho_nguoi_dung = "Đấu giá thành công"
-                    ten_nut_hanh_dong_chinh = "Thanh Toán"
+                    trang_thai_san_pham_cho_nguoi_dung = "Dau gia thanh cong"
+                    ten_nut_hanh_dong_chinh = "Thanh Toan"
+                    
+                    query_params_cho_vi = {
+                        'mucDich': 'thanhToanSanPham',
+                        'soTienCanNap': str(so_tien_can_thanh_toan.quantize(Decimal('0'))),
+                        'maGiaoDichGoc': str(id_giao_dich_cho_thanh_toan)
+                    }
                     try:
-                        url_nut_hanh_dong_chinh = reverse('payments:process_payment')
-                    except Exception:
+                        url_vi = reverse('wallet:bang_dieu_khien') 
+                        url_nut_hanh_dong_chinh = f"{url_vi}?{urlencode(query_params_cho_vi)}"
+                    except Exception as e:
+                        print(f"Loi khi tao URL cho vi tu trang_theo_doi_view (pending): {e}")
                         url_nut_hanh_dong_chinh = "#" 
                     class_css_nut_hanh_dong_chinh = "btn-success"
-                else: # Transaction status là 'failed'
-                    trang_thai_san_pham_cho_nguoi_dung = "Đấu giá thất bại (GD lỗi)"
-                    ten_nut_hanh_dong_chinh = "Xem sản phẩm"
-                    try:
-                        url_nut_hanh_dong_chinh = reverse('item-detail-template', kwargs={'pk': san_pham.pk})
-                    except Exception:
-                        url_nut_hanh_dong_chinh = "#"
+                else: 
+                    trang_thai_san_pham_cho_nguoi_dung = "GD thanh toan loi"
+                    ten_nut_hanh_dong_chinh = "Xem san pham"
+                    try: url_nut_hanh_dong_chinh = reverse('item-detail-template', kwargs={'pk': san_pham.pk})
+                    except Exception: url_nut_hanh_dong_chinh = "#"
                     class_css_nut_hanh_dong_chinh = "btn-secondary"
-            else: # Item completed, nhưng không có transaction nào cho user này -> user này đã thua
-                trang_thai_san_pham_cho_nguoi_dung = "Đấu giá thất bại"
-                ten_nut_hanh_dong_chinh = "Xem sản phẩm"
-                try:
-                    url_nut_hanh_dong_chinh = reverse('item-detail-template', kwargs={'pk': san_pham.pk})
-                except Exception:
-                     url_nut_hanh_dong_chinh = "#"
+            else: 
+                trang_thai_san_pham_cho_nguoi_dung = "Dau gia that bai"
+                ten_nut_hanh_dong_chinh = "Xem san pham"
+                try: url_nut_hanh_dong_chinh = reverse('item-detail-template', kwargs={'pk': san_pham.pk})
+                except Exception: url_nut_hanh_dong_chinh = "#"
                 class_css_nut_hanh_dong_chinh = "btn-secondary"
         elif san_pham.status == 'canceled':
-            trang_thai_san_pham_cho_nguoi_dung = "Phiên bị hủy"
-            ten_nut_hanh_dong_chinh = "Xem sản phẩm"
-            try:
-                url_nut_hanh_dong_chinh = reverse('item-detail-template', kwargs={'pk': san_pham.pk})
-            except Exception:
-                 url_nut_hanh_dong_chinh = "#"
+            trang_thai_san_pham_cho_nguoi_dung = "Phien bi huy"
+            ten_nut_hanh_dong_chinh = "Xem san pham"
+            try: url_nut_hanh_dong_chinh = reverse('item-detail-template', kwargs={'pk': san_pham.pk})
+            except Exception: url_nut_hanh_dong_chinh = "#"
             class_css_nut_hanh_dong_chinh = "btn-warning"
-        else: # Trường hợp không xác định (ví dụ: item đã hết hạn nhưng status vẫn là ongoing và hàm xử lý trên không chạy/lỗi)
-            trang_thai_san_pham_cho_nguoi_dung = "Không xác định" # Hoặc "Đã kết thúc"
-            ten_nut_hanh_dong_chinh = "Xem sản phẩm"
-            try:
-                url_nut_hanh_dong_chinh = reverse('item-detail-template', kwargs={'pk': san_pham.pk})
-            except:
-                url_nut_hanh_dong_chinh = "#"
+        else: 
+            trang_thai_san_pham_cho_nguoi_dung = "Khong xac dinh"
+            ten_nut_hanh_dong_chinh = "Xem san pham"
+            try: url_nut_hanh_dong_chinh = reverse('item-detail-template', kwargs={'pk': san_pham.pk})
+            except: url_nut_hanh_dong_chinh = "#"
             class_css_nut_hanh_dong_chinh = "btn-secondary"
-
 
         thong_tin_san_pham_kem_trang_thai.append({
             'item': san_pham,
@@ -418,11 +399,12 @@ def my_active_bids_view(request):
             'url_cho_nut_hanh_dong': url_nut_hanh_dong_chinh,
             'class_css_cho_nut_hanh_dong': class_css_nut_hanh_dong_chinh,
             'hien_thi_nut_huy_dau_gia': hien_thi_nut_huy,
-            'transaction_id_for_payment': id_giao_dich_cho_thanh_toan
+            'transaction_id_for_payment': id_giao_dich_cho_thanh_toan,
+            'final_price_for_payment': so_tien_can_thanh_toan 
         })
 
-    context = {
-        'page_title': 'Sản phẩm đang theo dõi & Kết quả',
+    context = { 
+        'page_title': 'San pham dang theo doi & Ket qua',
         'active_bids_info': thong_tin_san_pham_kem_trang_thai,
         'now': thoi_gian_hien_tai_utc,
         'csrf_token_value': request.COOKIES.get('csrftoken')
