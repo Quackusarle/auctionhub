@@ -1,0 +1,256 @@
+<!doctype html>
+<html
+  lang="en"
+  xmlns:x-on="http://www.w3.org/1999/xhtml"
+  xmlns:x-bind="http://www.w3.org/1999/xhtml"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Upload</title>
+    <script src="//unpkg.com/alpinejs" defer></script>
+  </head>
+
+  <body>
+    <section class="flex h-screen bg-gray-100">
+      <div class="image-uploader m-auto grid rounded-lg bg-white p-4 shadow-lg">
+        <div
+          class=""
+          x-data="{ file: null, message: '', imagePreview: ''}"
+          x-cloak
+        >
+          <div class="preview-container" x-on:click="$refs.fileInput.click()">
+            <img
+              class="preview-image"
+              x-show="imagePreview"
+              :src="imagePreview"
+              alt="Placeholder image"
+            />
+            <div x-show="!imagePreview" class="preview-text text-gray-400">
+              Click to choose an image
+            </div>
+          </div>
+          <input
+            id="file-upload"
+            type="file"
+            style="display: none;"
+            x-on:click="message = ''"
+            x-ref="fileInput"
+            x-on:change="showPreview"
+          />
+          <button class="button" x-on:click="upload" x-bind:disabled="!file">
+            Upload
+          </button>
+          <div x-text="message" class="message"></div>
+        </div>
+        <div class="image-grid-wrapper">
+          <div class="image-grid">
+            {% for image in images %}
+            <div class="image-wrapper">
+              <a class="image-link" href="{{ image.url }}" target="_blank">
+                <img src="{{ image.url }}" alt="{{ image.name }}" />
+              </a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      async function upload() {
+        /*
+            Upload a file to S3 using the presigned URL.
+             */
+        const formData = new FormData()
+        formData.append('signature', '{{ signature }}')
+        formData.append('api_key', '{{ api_key }}')
+        formData.append('timestamp', '{{ timestamp }}')
+        formData.append('file', this.file)
+        const response = await fetch('{{ upload_url }}', {
+          method: 'POST',
+          body: formData,
+        })
+
+        if (response.ok) {
+          this.message = '✅ Upload successful'
+          const data = await response.json()
+          await saveLink(data)
+        } else {
+          this.message = `❌ Upload failed: The error message is ${response.statusText}`
+        }
+      }
+
+      async function saveLink(uploadedData) {
+        console.log('uploadedData = ', uploadedData)
+        const response = await fetch('', {
+          method: 'POST',
+          body: JSON.stringify(uploadedData),
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+          },
+        })
+        if (response.ok) {
+          location.reload()
+        } else {
+          const data = await response.json()
+          console.error('Error:', data.error)
+        }
+      }
+
+      function showPreview() {
+        const file = this.$refs.fileInput.files[0]
+        this.file = file
+        if (file) {
+          this.imagePreview = URL.createObjectURL(file)
+        } else {
+          this.imagePreview = ''
+        }
+      }
+    </script>
+  </body>
+</html>
+<style>
+  :root {
+    --border-radius: 10px;
+  }
+
+  .h-screen {
+    height: 100vh;
+  }
+
+  .flex {
+    display: flex;
+  }
+
+  .bg-gray-100 {
+    background-color: #f7fafc;
+  }
+
+  .m-auto {
+    margin: auto;
+  }
+
+  .p-4 {
+    padding: 1rem;
+  }
+
+  .rounded-lg {
+    border-radius: 0.5rem;
+  }
+
+  .shadow-lg {
+    box-shadow:
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .bg-white {
+    background-color: #ffffff;
+  }
+
+  .text-gray-400 {
+    color: #cbd5e0;
+  }
+
+  .image-uploader {
+    place-content: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    border-radius: 15px;
+  }
+
+  .image-grid-wrapper {
+    height: 240px;
+    overflow-y: scroll;
+  }
+
+  .image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    overflow-y: auto;
+  }
+
+  .image-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .image-wrapper img {
+    width: 100px;
+    object-fit: cover;
+    display: block;
+    border-radius: var(--border-radius);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .image-wrapper:hover img {
+    transform: scale(1.1);
+    cursor: pointer;
+  }
+
+  .image-link {
+    display: flex;
+  }
+
+  .preview-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    width: 100%;
+    border: 1px dashed #ddd;
+    background: #fafafa;
+    border-radius: var(--border-radius);
+  }
+
+  .preview-text {
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: pointer;
+    color: #cbd5e0;
+    /* Tailwind text-gray-400 */
+  }
+
+  .preview-image {
+    max-width: 200px;
+    max-height: 200px;
+    border: 1px dotted #ddd;
+    object-fit: cover;
+    display: block;
+    background: #ddd;
+  }
+
+  .button {
+    padding: 8px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    border-radius: var(--border-radius);
+    transition: 0.3s ease-out;
+    width: 100%;
+  }
+
+  .button:not(:disabled) {
+    border: 1px solid slategray;
+    color: #4f5a65;
+  }
+
+  .button:not(:disabled):hover {
+    cursor: pointer;
+    background-color: slategray;
+    color: white;
+  }
+
+  .message {
+    text-align: center;
+  }
+
+  [x-cloak] {
+    display: none !important;
+  }
+</style>
