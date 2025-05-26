@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Item
 from .serializers import ItemSerializer
+from .forms import ItemCreateForm
 from rest_framework import permissions
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.db.models import Q, Count, F, ExpressionWrapper, Case, FloatField, Value, When
@@ -24,45 +25,51 @@ class ItemCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        # Render template create_auction.html (hoặc tên template anh dùng)
-        return render(request, 'items/create_item.html')
+        # Tạo form trống cho GET request
+        form = ItemCreateForm()
+        return render(request, 'items/create_item.html', {'form': form})
 
     def post(self, request):
-        # Dữ liệu từ form giờ không còn file ảnh nữa
-        print("Request data:", request.data)
+        # Debug: Kiểm tra dữ liệu từ form
+        print("Request POST data:", request.POST)
+        starting_price_value = request.POST.get('starting_price')
+        print(f"Starting price from form: '{starting_price_value}' (type: {type(starting_price_value)})")
 
-        serializer = ItemSerializer(data=request.data, context={'request': request})
-
-        if serializer.is_valid():
+        # Sử dụng Django Form thay vì serializer
+        form = ItemCreateForm(request.POST)
+        
+        if form.is_valid():
             try:
-                # Gán seller là người dùng hiện tại đang đăng nhập
-                serializer.save(seller=request.user)
+                # Tạo item nhưng chưa save để có thể gán seller
+                item = form.save(commit=False)
+                item.seller = request.user
+                
+                # QUAN TRỌNG: Set current_price = starting_price khi tạo item mới
+                item.current_price = item.starting_price
+                
+                item.save()
 
                 context = {
-                    'message': 'Tạo phiên đấu giá thành công (không có ảnh)!',
+                    'message': 'Tạo phiên đấu giá thành công!',
+                    'form': ItemCreateForm()  # Form trống cho lần tạo tiếp theo
                 }
-                # Render lại trang với thông báo thành công
                 return render(request, 'items/create_item.html', context)
-
-                # Hoặc redirect, ví dụ:
-                # from django.urls import reverse
-                # return redirect(reverse('item_detail_url_name', args=[serializer.instance.item_id]))
 
             except Exception as e:
                 print(f"Error during save: {e}")
                 context = {
                     'errors': {'non_field_errors': [f'Có lỗi xảy ra trong quá trình lưu: {e}']},
-                    'form_data': request.data
+                    'form': form
                 }
-                return render(request, 'items/create_item.html', context, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return render(request, 'items/create_item.html', context)
         else:
-            # Nếu serializer không hợp lệ, hiển thị lỗi
-            print("Serializer errors:", serializer.errors) # Rất quan trọng để debug
+            # Form không hợp lệ, hiển thị lỗi
+            print("Form errors:", form.errors)
             context = {
-                'errors': serializer.errors,
-                'form_data': request.data
+                'errors': form.errors,
+                'form': form
             }
-            return render(request, 'items/create_item.html', context, status=status.HTTP_400_BAD_REQUEST)
+            return render(request, 'items/create_item.html', context)
 
 class ItemDetail(APIView):
     permission_classes = [permissions.AllowAny]

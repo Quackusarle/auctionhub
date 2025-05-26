@@ -168,8 +168,12 @@
 
         <div class="form-group">
             <label for="id_name">Tên sản phẩm/phiên đấu giá:</label>
-            <input type="text" name="name" id="id_name" value="{{ form_data.name|default:'' }}"
-                   class="{% if errors.name %}form-field-error{% endif %}" required>
+            {% if form %}
+                {{ form.name }}
+            {% else %}
+                <input type="text" name="name" id="id_name" value="{{ form_data.name|default:'' }}"
+                       class="{% if errors.name %}form-field-error{% endif %}" required>
+            {% endif %}
             {% if errors.name %}
                 <ul class="error-list">
                     {% for error in errors.name %}
@@ -181,8 +185,12 @@
 
         <div class="form-group">
             <label for="id_description">Mô tả chi tiết:</label>
-            <textarea name="description" id="id_description"
-                      class="{% if errors.description %}form-field-error{% endif %}" required>{{ form_data.description|default:'' }}</textarea>
+            {% if form %}
+                {{ form.description }}
+            {% else %}
+                <textarea name="description" id="id_description"
+                          class="{% if errors.description %}form-field-error{% endif %}" required>{{ form_data.description|default:'' }}</textarea>
+            {% endif %}
             {% if errors.description %}
                 <ul class="error-list">
                     {% for error in errors.description %}
@@ -194,9 +202,13 @@
 
         <div class="form-group">
             <label for="id_starting_price">Giá khởi điểm (VNĐ):</label>
-            <input type="number" name="starting_price" id="id_starting_price" step="1000" min="0"
-                   value="{{ form_data.starting_price|default:'' }}"
-                   class="{% if errors.starting_price %}form-field-error{% endif %}" required>
+            {% if form %}
+                {{ form.starting_price }}
+            {% else %}
+                                 <input type="number" name="starting_price" id="id_starting_price" step="1000" min="1000"
+                       value="{{ form_data.starting_price|default:'' }}"
+                       class="{% if errors.starting_price %}form-field-error{% endif %}" required>
+            {% endif %}
             {% if errors.starting_price %}
                 <ul class="error-list">
                     {% for error in errors.starting_price %}
@@ -208,9 +220,13 @@
 
         <div class="form-group">
             <label for="id_end_time">Thời gian kết thúc:</label>
-            <input type="datetime-local" name="end_time" id="id_end_time"
-                   value="{{ form_data.end_time|default:'' }}"
-                   class="{% if errors.end_time %}form-field-error{% endif %}" required>
+            {% if form %}
+                {{ form.end_time }}
+            {% else %}
+                <input type="datetime-local" name="end_time" id="id_end_time"
+                       value="{{ form_data.end_time|default:'' }}"
+                       class="{% if errors.end_time %}form-field-error{% endif %}" required>
+            {% endif %}
             {% if errors.end_time %}
                 <ul class="error-list">
                     {% for error in errors.end_time %}

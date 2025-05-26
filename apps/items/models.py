@@ -22,5 +22,11 @@ class Item(models.Model):
     class Meta:
         db_table = 'items'
 
+    def save(self, *args, **kwargs):
+        # Nếu đây là item mới (chưa có pk) và current_price = 0, set = starting_price
+        if not self.pk and self.current_price == 0:
+            self.current_price = self.starting_price
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.name

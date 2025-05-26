@@ -121,8 +121,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',  # Sử dụng PostgreSQL
         'NAME': 'auctiondb',
-        'USER': 'postgres',
-        'PASSWORD': '18112005',
+        'USER': 'auction',
+        'PASSWORD': 'thosanbatcay111',
         'HOST': 'localhost',
         'PORT': '5432',  # Mặc định PostgreSQL chạy trên port 5432
     }
@@ -217,21 +217,19 @@ AUTHENTICATION_BACKENDS = [
 SITE_ID = 1
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'  # Chỉ cho phép đăng nhập bằng email
+
+# Cấu hình đăng nhập (thay thế ACCOUNT_AUTHENTICATION_METHOD và ACCOUNT_USERNAME_REQUIRED)
+ACCOUNT_LOGIN_METHODS = {'email'}  # Chỉ cho phép đăng nhập bằng email
+
 ACCOUNT_UNIQUE_EMAIL = True  # Email duy nhất
-ACCOUNT_SIGNUP_FIELDS = ['email']
-ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True  # Yêu cầu nhập lại mật khẩu khi đăng ký
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Bắt buộc xác thực email
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True  # Chuyển hướng sau khi đăng nhập thành công
 
-
-
-# Các trường trong form đăng ký
+# Các trường trong form đăng ký (thay thế ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE)
 ACCOUNT_SIGNUP_FIELDS = [
-    "email*",
-    "password1*",
-    "password2*"
+    "email*",      # Email bắt buộc
+    "password1*",  # Mật khẩu bắt buộc
+    "password2*"   # Xác nhận mật khẩu bắt buộc
 ]
 
 LOGIN_REDIRECT_URL = "/"
