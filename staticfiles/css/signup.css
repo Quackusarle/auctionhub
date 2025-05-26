@@ -1,0 +1,271 @@
+/* static/css/modern_auth_style.css */
+
+/* --- Biến Màu Sắc và Font (Lấy từ hình ảnh và theme của bạn) --- */
+:root {
+    --auth-primary-green: #4CAF50;
+    --auth-primary-green-hover: #45a049;
+    --auth-text-dark: #212529;
+    --auth-text-light: #555b61;
+    --auth-label-color: #33373a;
+    --auth-link-blue: #007bff; /* Cho "Forgot Password?" */
+    --auth-link-green-footer: var(--auth-primary-green); /* Cho "Create one now" / "Sign In" ở footer */
+    --auth-border-color: #ced4da;
+    --auth-input-bg: #ffffff;
+    --auth-page-bg: #f4f6f8;
+    --auth-card-bg: #ffffff;
+    --auth-error-color: #dc3545;
+    --auth-google-red: #DB4437;
+    --auth-font-family: 'Montserrat', sans-serif;
+}
+
+body.auth-active { /* Thêm class này vào body trong base.html khi ở trang auth nếu muốn */
+    background-color: var(--auth-page-bg);
+    font-family: var(--auth-font-family);
+    color: var(--auth-text-dark);
+    line-height: 1.6;
+}
+/* Hoặc nếu không muốn thêm class vào body, style trực tiếp cho wrapper */
+.auth-page-wrapper {
+    background-color: var(--auth-page-bg); /* Áp dụng nền cho toàn trang auth */
+    font-family: var(--auth-font-family);
+    color: var(--auth-text-dark);
+    line-height: 1.6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 15px;
+    box-sizing: border-box;
+}
+
+
+.auth-form-container {
+    background-color: var(--auth-card-bg);
+    padding: 40px 45px;
+    border-radius: 12px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.07);
+    width: 100%;
+    max-width: 480px; /* Tăng nhẹ max-width cho form signup nếu có nhiều trường hơn */
+    text-align: center;
+}
+
+/* --- Header của Form --- */
+.auth-header {
+    margin-bottom: 30px;
+}
+.auth-header .auth-logo-link .logo {
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--auth-text-dark);
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+.auth-header .auth-logo-link .logo .logo-alt {
+    color: var(--auth-primary-green);
+}
+.auth-header h2 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--auth-text-dark);
+    margin-bottom: 6px;
+}
+.auth-header p {
+    font-size: 0.9rem;
+    color: var(--auth-text-light);
+    margin-bottom: 0;
+}
+
+/* --- Form --- */
+.auth-form {
+    text-align: left;
+}
+.form-group-auth {
+    margin-bottom: 18px; /* Giảm nhẹ khoảng cách cho form signup có nhiều trường */
+}
+.form-group-auth label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--auth-label-color);
+    margin-bottom: 8px;
+}
+.form-input-custom {
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 0.9rem;
+    border: 1px solid var(--auth-border-color);
+    border-radius: 6px;
+    background-color: var(--auth-input-bg);
+    color: var(--auth-text-dark);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+.form-input-custom::placeholder {
+    color: #9fa6ae;
+}
+.form-input-custom:focus {
+    outline: none;
+    border-color: var(--auth-primary-green);
+    box-shadow: 0 0 0 0.2rem rgba(76,175,80,.25);
+}
+
+/* Help text và Error messages */
+.form-help-text {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--auth-text-light);
+    margin-top: 5px;
+    line-height: 1.3;
+}
+.form-field-error,
+.auth-form ul.errorlist li { /* Style cho lỗi của Allauth nếu nó dùng ul.errorlist */
+    font-size: 0.8rem;
+    color: var(--auth-error-color);
+    margin-top: 5px;
+}
+.auth-form ul.errorlist { /* Reset style cho ul nếu Allauth dùng */
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+}
+
+
+/* --- Form Options (Chỉ cho Login) --- */
+.login-form .form-options-auth { /* Áp dụng class này cho div chứa remember me & forgot pw trong login.html */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    font-size: 0.85rem;
+}
+.login-form .form-check-auth {
+    display: flex;
+    align-items: center;
+}
+.form-check-input-custom {
+    margin-right: 7px;
+    width: 15px;
+    height: 15px;
+    accent-color: var(--auth-primary-green);
+    border: 1px solid var(--auth-border-color);
+    border-radius: 3px;
+}
+.login-form .form-check-auth label {
+    color: var(--auth-text-light);
+    font-weight: 500;
+    margin-bottom: 0;
+}
+.login-form .link-auth-secondary {
+    color: var(--auth-link-blue);
+    text-decoration: none;
+    font-weight: 500;
+}
+.login-form .link-auth-secondary:hover {
+    text-decoration: underline;
+}
+
+/* --- Nút Submit --- */
+.btn-submit-auth {
+    background-color: var(--auth-primary-green);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    width: 100%;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-top: 10px; /* Thêm chút khoảng cách cho nút submit sau trường cuối cùng */
+}
+.btn-submit-auth:hover {
+    background-color: var(--auth-primary-green-hover);
+}
+
+/* --- Social Login/Signup Section --- */
+.social-auth-section {
+    margin: 30px 0;
+}
+.divider-auth {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    font-size: 0.8rem;
+    margin-bottom: 20px;
+}
+.divider-auth::before,
+.divider-auth::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e0e0e0;
+}
+.divider-auth span {
+    white-space: nowrap;
+    padding: 0 12px;
+    color: var(--auth-text-light);
+    font-weight: 500;
+}
+.social-buttons-auth {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    border: 1px solid var(--auth-border-color);
+    background-color: var(--auth-card-bg);
+    color: var(--auth-text-dark);
+}
+.btn-social:hover {
+    border-color: #b0b0b0;
+    background-color: #f7f9fc;
+}
+.btn-social i.fab {
+    font-size: 1.2em;
+    margin-right: 10px;
+}
+.btn-social-google i.fab {
+    color: var(--auth-google-red);
+}
+
+/* --- Footer Link --- */
+.auth-footer-nav {
+    margin-top: 30px;
+    font-size: 0.9rem;
+}
+.auth-footer-nav p {
+    color: var(--auth-text-light);
+    margin-bottom: 0;
+}
+.auth-footer-nav a {
+    color: var(--auth-link-green-footer);
+    font-weight: 600;
+    text-decoration: none;
+}
+.auth-footer-nav a:hover {
+    text-decoration: underline;
+}
+
+/* --- Form Alert (Lỗi chung) --- */
+.form-alert.form-alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    text-align: left;
+}

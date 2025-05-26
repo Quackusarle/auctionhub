@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'channels',
     
     # Ứng dụng của project 
     'apps.auth_users.apps.AuthUsersConfig',
@@ -76,6 +77,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 
@@ -109,22 +111,27 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'auction_web.wsgi.application'
-
+ASGI_APPLICATION = 'auction_web.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',  # Sử dụng PostgreSQL
+        'ENGINE': 'django.db.backends.postgresql',  # Sử dụng PostgreSQL
         'NAME': 'auctiondb',
-        'USER': 'root',
-        'PASSWORD': '1447928479',
+        'USER': 'postgres',
+        'PASSWORD': '18112005',
         'HOST': 'localhost',
-        'PORT': '3306',
+        'PORT': '5432',  # Mặc định PostgreSQL chạy trên port 5432
     }
 }
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
 
 
 # Password validation
@@ -165,7 +172,8 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'auction_web/static',  # Thư mục chứa các file tĩnh chính của project
 ]
-
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Thư mục chứa các file tĩnh khi deploy
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -209,8 +217,10 @@ SITE_ID = 1
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_LOGIN_METHODS = {"email"}  # Chỉ cho phép đăng nhập bằng email
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # Chỉ cho phép đăng nhập bằng email
 ACCOUNT_UNIQUE_EMAIL = True  # Email duy nhất
+ACCOUNT_SIGNUP_FIELDS = ['email']
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True  # Yêu cầu nhập lại mật khẩu khi đăng ký
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Bắt buộc xác thực email
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True  # Chuyển hướng sau khi đăng nhập thành công
 
@@ -219,7 +229,6 @@ ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True  # Chuyển hướng sau khi đăng
 # Các trường trong form đăng ký
 ACCOUNT_SIGNUP_FIELDS = [
     "email*",
-    
     "password1*",
     "password2*"
 ]

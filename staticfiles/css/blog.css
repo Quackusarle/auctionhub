@@ -1,0 +1,300 @@
+/* auction_web/static/css/blog.css */
+
+.blog-page-container {
+    padding: 30px 0;
+    background-color: #f8f9fa; /* Một màu nền nhẹ nhàng */
+}
+
+/* Container chung đã có trong base.css, nếu cần điều chỉnh riêng cho blog thì thêm ở đây */
+/* .container {} */
+
+.page-header.blog-header,
+.page-header.blog-post-full-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.page-header h1 {
+    font-size: 2.8rem; /* To hơn một chút cho tiêu đề trang blog */
+    color: #333; /* Màu tiêu đề chính của blog */
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.page-header p {
+    font-size: 1.1rem;
+    color: #666; /* Màu mô tả */
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Lưới hiển thị các bài viết */
+.blog-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.blog-post-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.blog-post-card-image-link {
+    display: block;
+    height: 220px;
+    overflow: hidden;
+}
+
+.blog-post-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.blog-post-card:hover .blog-post-image {
+    transform: scale(1.05);
+}
+
+.blog-post-card-content {
+    padding: 20px 25px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-post-title {
+    font-size: 1.5rem;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.blog-post-title a {
+    color: #2c3e50; /* Màu plant-theme-header của bạn */
+    text-decoration: none;
+}
+
+.blog-post-title a:hover {
+    color: #4CAF50; /* Màu nav hover */
+}
+
+.blog-post-meta {
+    font-size: 0.875rem;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.blog-post-meta .author-name {
+    font-weight: 500;
+    color: #555;
+}
+
+.blog-post-excerpt {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+.blog-post-excerpt p {
+    margin-bottom: 0;
+}
+
+.read-more-link.btn.btn-primary {
+    display: inline-block;
+    padding: 10px 20px;
+    /* Sử dụng màu sắc từ theme của bạn */
+    background-color: #4CAF50; /* Giống màu logo-alt hoặc nav */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 500;
+    text-align: center;
+    transition: background-color 0.2s ease;
+    margin-top: auto; /* Đẩy nút xuống cuối card */
+    border: none; /* Ghi đè nếu .btn có border */
+}
+
+.read-more-link.btn.btn-primary:hover {
+    background-color: #45a049; /* Màu đậm hơn khi hover */
+}
+
+/* Thông báo khi không có bài viết */
+.no-posts-message {
+    grid-column: 1 / -1; /* Chiếm toàn bộ chiều rộng grid */
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    color: #666;
+}
+
+
+/* --- Trang chi tiết bài viết --- */
+.blog-post-full {
+    background-color: #fff;
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+}
+
+.blog-post-full-header {
+    text-align: left; /* Tiêu đề bài chi tiết căn trái */
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.blog-post-full-header h1 {
+    font-size: 2.6rem; /* Có thể nhỏ hơn tiêu đề trang list */
+}
+
+.blog-post-full-image {
+    margin: 25px 0;
+    text-align: center;
+}
+
+.blog-post-full-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.blog-post-full-body {
+    font-size: 1.05rem; /* Kích thước chữ dễ đọc */
+    line-height: 1.7;
+    color: #333;
+}
+
+.blog-post-full-body p {
+    margin-bottom: 1.4em;
+}
+
+.blog-post-full-body h2,
+.blog-post-full-body h3,
+.blog-post-full-body h4 {
+    color: #2c3e50;
+    margin-top: 1.8em;
+    margin-bottom: 0.8em;
+    font-weight: 600;
+}
+.blog-post-full-body h2 { font-size: 1.8rem; }
+.blog-post-full-body h3 { font-size: 1.5rem; }
+
+.blog-post-full-body a {
+    color: #4CAF50;
+    text-decoration: underline;
+}
+.blog-post-full-body a:hover {
+    text-decoration: none;
+}
+
+.blog-post-full-body ul,
+.blog-post-full-body ol {
+    margin-bottom: 1.4em;
+    padding-left: 25px;
+}
+.blog-post-full-body li {
+    margin-bottom: 0.5em;
+}
+
+.blog-post-full-body blockquote {
+    margin: 1.5em 0;
+    padding: 10px 20px;
+    border-left: 4px solid #4CAF50;
+    background-color: #f9f9f9;
+    font-style: italic;
+    color: #555;
+}
+
+.blog-post-full-footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.back-to-blog-link.btn.btn-secondary {
+    background-color: #6c757d; /* Màu phụ, có thể là màu xám */
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+    border: none;
+}
+
+.back-to-blog-link.btn.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+
+/* --- Phân trang --- */
+.pagination-container {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+}
+.pagination {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+.pagination .page-item {
+    margin: 0 4px;
+}
+.pagination .page-link {
+    display: block;
+    padding: 8px 14px;
+    color: #4CAF50; /* Màu chủ đạo */
+    border: 1px solid #dee2e6;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.pagination .page-item.active .page-link {
+    background-color: #4CAF50;
+    color: white;
+    border-color: #4CAF50;
+    font-weight: 600;
+}
+.pagination .page-item.disabled .page-link {
+    color: #adb5bd;
+    pointer-events: none;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+.pagination .page-link:hover:not(.page-item.active .page-link):not(.page-item.disabled .page-link) {
+    background-color: #e2f0e3; /* Màu hover nhẹ */
+    border-color: #adb5bd;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-header h1 {
+        font-size: 2.2rem;
+    }
+    .blog-post-full-header h1 {
+        font-size: 2rem;
+    }
+    .blog-post-full {
+        padding: 20px;
+    }
+    .blog-posts-grid {
+        grid-template-columns: 1fr; /* 1 cột trên mobile */
+    }
+}
