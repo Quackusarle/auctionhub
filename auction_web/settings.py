@@ -37,22 +37,42 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'fallback_secret_key_if_not_in_env_but_plea
 # Giá trị 'False' (chuỗi) sẽ là False. 'True' (chuỗi) sẽ là True.
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
-# Vercel sẽ tự động cung cấp biến môi trường VERCEL_URL
-# Chúng ta sẽ thêm nó vào ALLOWED_HOSTS khi nó tồn tại
-VERCEL_DEPLOYMENT_URL = os.getenv('VERCEL_URL')
-if VERCEL_DEPLOYMENT_URL:
+# --- ALLOWED_HOSTS ---
+ALLOWED_HOSTS = []
+
+# 1. Luôn cho phép localhost và 127.0.0.1 (an toàn khi DEBUG=True, không ảnh hưởng nhiều khi DEBUG=False)
+ALLOWED_HOSTS.extend(['127.0.0.1', 'localhost'])
+
+# 2. Lấy URL triển khai hiện tại từ Vercel (bao gồm cả preview và production URL do Vercel gán)
+VERCEL_URL = os.getenv('VERCEL_URL')
+if VERCEL_URL:
     # VERCEL_URL có dạng https://<domain>, chúng ta chỉ cần phần domain
-    ALLOWED_HOSTS.append(VERCEL_DEPLOYMENT_URL.replace('https://', ''))
+    # Bỏ 'https://' hoặc 'http://' và phần path nếu có
+    parsed_host = VERCEL_URL.split('//')[-1].split('/')[0]
+    ALLOWED_HOSTS.append(parsed_host)
 
-# Thêm tên miền tùy chỉnh của bạn nếu có (đọc từ .env hoặc hardcode nếu ít thay đổi)
-PRODUCTION_HOST = os.getenv('PRODUCTION_HOST') # Ví dụ: auctionhub.yourcustomdomain.com
-if PRODUCTION_HOST:
-    ALLOWED_HOSTS.append(PRODUCTION_HOST)
+# 3. Tên miền production chính của bạn (bạn sẽ đặt biến này trên Vercel)
+# Ví dụ: 'auctionhub-theta.vercel.app' hoặc 'yourcustomdomain.com'
+MAIN_PRODUCTION_DOMAIN = os.getenv('MAIN_PRODUCTION_DOMAIN')
+if MAIN_PRODUCTION_DOMAIN:
+    ALLOWED_HOSTS.append(MAIN_PRODUCTION_DOMAIN)
+    # Tùy chọn: Nếu tên miền chính của bạn không có 'www' và bạn muốn cho phép 'www.yourcustomdomain.com'
+    if not MAIN_PRODUCTION_DOMAIN.startswith('www.'):
+        ALLOWED_HOSTS.append(f'www.{MAIN_PRODUCTION_DOMAIN}')
 
-# Nếu bạn vẫn muốn hardcode tên miền Vercel cụ thể (nhưng VERCEL_URL ở trên linh hoạt hơn)
-# ALLOWED_HOSTS.append('auctionhub.vercel.app')
+# 4. (TÙY CHỌN nhưng KHUYẾN NGHỊ để bao quát) Cho phép tất cả các subdomain của vercel.app
+# Điều này sẽ bao gồm các URL dạng your-project-*.vercel.app mà Vercel tạo ra.
+# Nó an toàn vì chỉ các dự án của bạn trên Vercel mới có thể sử dụng các subdomain này.
+ALLOWED_HOSTS.append('.vercel.app')
 
+# Loại bỏ các giá trị trùng lặp để giữ danh sách sạch sẽ
+ALLOWED_HOSTS = list(set(ALLOWED_HOSTS))
+
+# Nếu đang ở môi trường không phải DEBUG (ví dụ: Vercel production) và không có host nào được phép
+# (ngoại trừ localhost/127.0.0.1 đã thêm ở trên), đó có thể là dấu hiệu cấu hình sai.
+if not DEBUG and len(ALLOWED_HOSTS) <= 2: # Chỉ còn lại localhost và 127.0.0.1
+    print("WARNING: ALLOWED_HOSTS might be too restrictive for production. "
+          "Ensure VERCEL_URL is available or MAIN_PRODUCTION_DOMAIN is set in Vercel environment variables.")
 
 # Application definition
 
