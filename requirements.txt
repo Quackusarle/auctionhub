@@ -13,14 +13,12 @@ dj-database-url==2.3.0
 Django==5.2
 django-allauth==65.7.0
 django-cors-headers==4.7.0
-django-haystack==3.3.0
 django-otp==1.6.0
 djangorestframework==3.16.0
 djangorestframework_simplejwt==5.5.0
 greenlet==3.2.2
 idna==3.10
 mock==5.2.0
-mysqlclient==2.2.7
 packaging==25.0
 pillow==11.2.1
 pip-autoremove==0.10.0
@@ -51,4 +49,3 @@ urwid==3.0.2
 wcwidth==0.2.13
 wheel==0.45.1
 whitenoise==6.9.0
-Whoosh==2.7.4
