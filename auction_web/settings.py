@@ -88,26 +88,6 @@ MIDDLEWARE = [
     # 'whitenoise.middleware.WhiteNoiseMiddleware', # Đã có ở trên, xóa dòng này
 ]
 
-
-# Cấu hình CORS
-# Nếu DEBUG là True, cho phép tất cả. Ngược lại, sử dụng danh sách cụ thể.
-if DEBUG:
-    CORS_ALLOW_ALL_ORIGINS = True
-else:
-    CORS_ALLOW_ALL_ORIGINS = False
-    CORS_ALLOWED_ORIGINS = [
-        # "http://localhost:3000", # Frontend local
-        # "http://127.0.0.1:3000",
-        f"https://{VERCEL_DEPLOYMENT_URL.replace('https://', '')}" if VERCEL_DEPLOYMENT_URL else "", # URL Vercel
-        f"https://{PRODUCTION_HOST}" if PRODUCTION_HOST else "", # Domain tùy chỉnh
-        # Thêm các domain frontend khác của bạn khi deploy
-    ]
-    # Loại bỏ các chuỗi rỗng nếu biến môi trường không được đặt
-    CORS_ALLOWED_ORIGINS = [origin for origin in CORS_ALLOWED_ORIGINS if origin]
-    if not CORS_ALLOWED_ORIGINS: # Nếu không có origin nào được cấu hình cho production, có thể là lỗi
-        print("CORS_ALLOWED_ORIGINS is empty in production. This might block frontend access.")
-
-
 ROOT_URLCONF = 'auction_web.urls'
 
 TEMPLATES = [
