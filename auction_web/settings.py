@@ -15,9 +15,12 @@ from datetime import timedelta
 import os
 import sys
 from dotenv import load_dotenv
+import dj_database_url # Thêm import này
 
 # Tìm đến file .env và đọc các biến trong đó vào môi trường
-load_dotenv()
+# Tệp .env nên nằm ở thư mục gốc của dự án (cùng cấp với manage.py)
+BASE_DIR_ENV = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR_ENV / '.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,12 +31,27 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w-t8l2+f*=gt(0%&^_+hrzbuf46)tbm@^79#ngcxt^sn9*^wz)'
+SECRET_KEY = os.getenv('SECRET_KEY', 'fallback_secret_key_if_not_in_env_but_please_set_it') # Nên có giá trị fallback an toàn hơn hoặc raise error
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Giá trị 'False' (chuỗi) sẽ là False. 'True' (chuỗi) sẽ là True.
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+# Vercel sẽ tự động cung cấp biến môi trường VERCEL_URL
+# Chúng ta sẽ thêm nó vào ALLOWED_HOSTS khi nó tồn tại
+VERCEL_DEPLOYMENT_URL = os.getenv('VERCEL_URL')
+if VERCEL_DEPLOYMENT_URL:
+    # VERCEL_URL có dạng https://<domain>, chúng ta chỉ cần phần domain
+    ALLOWED_HOSTS.append(VERCEL_DEPLOYMENT_URL.replace('https://', ''))
+
+# Thêm tên miền tùy chỉnh của bạn nếu có (đọc từ .env hoặc hardcode nếu ít thay đổi)
+PRODUCTION_HOST = os.getenv('PRODUCTION_HOST') # Ví dụ: auctionhub.yourcustomdomain.com
+if PRODUCTION_HOST:
+    ALLOWED_HOSTS.append(PRODUCTION_HOST)
+
+# Nếu bạn vẫn muốn hardcode tên miền Vercel cụ thể (nhưng VERCEL_URL ở trên linh hoạt hơn)
+# ALLOWED_HOSTS.append('auctionhub.vercel.app')
 
 
 # Application definition
@@ -57,8 +75,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'channels',
-    
-    # Ứng dụng của project 
+
+    # Ứng dụng của project
     'apps.auth_users.apps.AuthUsersConfig',
     'apps.items.apps.ItemsConfig',
     'apps.bidding.apps.BiddingConfig',
@@ -69,36 +87,45 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Đặt ở đầu tiên sau SecurityMiddleware là tốt nhất
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # Thường đặt trước CommonMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware', # Đã có ở trên, xóa dòng này
 ]
 
 
-# Cấu hình CORS (QUAN TRỌNG!)
-# Cho phép frontend của anh (chạy ở domain khác) gọi API
-# Trong môi trường development, có thể cho phép tất cả:
-CORS_ALLOW_ALL_ORIGINS = True 
-# Khi deploy lên production, phải cấu hình cụ thể hơn:
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000", # Nếu frontend React/Vue chạy ở port 3000
-#     "http://127.0.0.1:3000",
-#     "https://your-frontend-domain.com", # Domain frontend của anh khi deploy
-# ]
+# Cấu hình CORS
+# Nếu DEBUG là True, cho phép tất cả. Ngược lại, sử dụng danh sách cụ thể.
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOW_ALL_ORIGINS = False
+    CORS_ALLOWED_ORIGINS = [
+        # "http://localhost:3000", # Frontend local
+        # "http://127.0.0.1:3000",
+        f"https://{VERCEL_DEPLOYMENT_URL.replace('https://', '')}" if VERCEL_DEPLOYMENT_URL else "", # URL Vercel
+        f"https://{PRODUCTION_HOST}" if PRODUCTION_HOST else "", # Domain tùy chỉnh
+        # Thêm các domain frontend khác của bạn khi deploy
+    ]
+    # Loại bỏ các chuỗi rỗng nếu biến môi trường không được đặt
+    CORS_ALLOWED_ORIGINS = [origin for origin in CORS_ALLOWED_ORIGINS if origin]
+    if not CORS_ALLOWED_ORIGINS: # Nếu không có origin nào được cấu hình cho production, có thể là lỗi
+        print("CORS_ALLOWED_ORIGINS is empty in production. This might block frontend access.")
+
 
 ROOT_URLCONF = 'auction_web.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'auction_web/templates'],  # Thư mục chứa các template của project
+        'DIRS': [BASE_DIR / 'auction_web/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -117,20 +144,38 @@ ASGI_APPLICATION = 'auction_web.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# Cấu hình mặc định cho local development nếu DATABASE_URL không được đặt
+LOCAL_DB_ENGINE = 'django.db.backends.postgresql'
+LOCAL_DB_NAME = os.getenv('DB_NAME', 'auctiondb_local_fallback')
+LOCAL_DB_USER = os.getenv('DB_USER', 'auction_local_user')
+LOCAL_DB_PASSWORD = os.getenv('DB_PASSWORD', 'local_password')
+LOCAL_DB_HOST = os.getenv('DB_HOST', 'localhost')
+LOCAL_DB_PORT = os.getenv('DB_PORT', '5432')
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',  # Sử dụng PostgreSQL
-        'NAME': 'auctiondb',
-        'USER': 'auction',
-        'PASSWORD': 'thosanbatcay111',
-        'HOST': 'localhost',
-        'PORT': '5432',  # Mặc định PostgreSQL chạy trên port 5432
+        'ENGINE': LOCAL_DB_ENGINE,
+        'NAME': LOCAL_DB_NAME,
+        'USER': LOCAL_DB_USER,
+        'PASSWORD': LOCAL_DB_PASSWORD,
+        'HOST': LOCAL_DB_HOST,
+        'PORT': LOCAL_DB_PORT,
     }
 }
 
+# Ghi đè bằng DATABASE_URL nếu nó tồn tại (cho Vercel và có thể cả local)
+DATABASE_URL = os.getenv('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES['default'] = dj_database_url.config(
+        default=DATABASE_URL,
+        conn_max_age=600, # Thời gian kết nối được giữ (giây)
+        conn_health_checks=True, # Kiểm tra sức khỏe kết nối
+    )
+
+
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "BACKEND": "channels.layers.InMemoryChannelLayer", # OK cho development và Vercel (serverless)
     },
 }
 
@@ -139,18 +184,10 @@ CHANNEL_LAYERS = {
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
 ]
 
 
@@ -158,23 +195,23 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Ho_Chi_Minh'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/' # Luôn có dấu / ở cuối
 STATICFILES_DIRS = [
-    BASE_DIR / 'auction_web/static',  # Thư mục chứa các file tĩnh chính của project
+    BASE_DIR / 'auction_web/static',
 ]
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # Thư mục chứa các file tĩnh khi deploy
+
+STATIC_ROOT = BASE_DIR / "staticfiles_build" / "static"
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -182,27 +219,30 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'auth_users.User'
 
+# Email Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'tvhoangg05@gmail.com'  
-EMAIL_HOST_PASSWORD = 'aabc ijil fyzu vzkx'  
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD') # Sử dụng mật khẩu ứng dụng
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication', # <--- THÊM CÁI NÀY VÀO ĐÂY!
-        'rest_framework_simplejwt.authentication.JWTAuthentication', # Giữ lại nếu anh CÓ DÙNG JWT ở chỗ khác
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated', # Bắt buộc đăng nhập cho mọi API mặc định
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly', # Cho phép xem nếu chưa đăng nhập, sửa/xóa phải đăng nhập
+        # 'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ]
 }
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True, 
+    'BLACKLIST_AFTER_ROTATION': True,
 }
 
 ACCOUNT_FORMS = {'signup': 'apps.auth_users.forms.CustomSignupForm'}
@@ -214,44 +254,68 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-SITE_ID = 1
+SITE_ID = 1 # Cần thiết cho django-allauth và django.contrib.sites
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_AUTHENTICATION_METHOD = 'email' # Đăng nhập bằng email
+ACCOUNT_EMAIL_REQUIRED = True # Email là bắt buộc
+ACCOUNT_UNIQUE_EMAIL = True # Email phải là duy nhất
+ACCOUNT_EMAIL_VERIFICATION = os.getenv('ACCOUNT_EMAIL_VERIFICATION', "mandatory") # "mandatory", "optional", hoặc "none"
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True # Tự động đăng nhập sau khi xác thực email
 
-# Cấu hình đăng nhập (thay thế ACCOUNT_AUTHENTICATION_METHOD và ACCOUNT_USERNAME_REQUIRED)
-ACCOUNT_LOGIN_METHODS = {'email'}  # Chỉ cho phép đăng nhập bằng email
 
-ACCOUNT_UNIQUE_EMAIL = True  # Email duy nhất
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"  # Bắt buộc xác thực email
-ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True  # Chuyển hướng sau khi đăng nhập thành công
-
-# Các trường trong form đăng ký (thay thế ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE)
-ACCOUNT_SIGNUP_FIELDS = [
-    "email*",      # Email bắt buộc
-    "password1*",  # Mật khẩu bắt buộc
-    "password2*"   # Xác nhận mật khẩu bắt buộc
-]
-
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = os.getenv('LOGIN_REDIRECT_URL', "/")
+LOGOUT_REDIRECT_URL = os.getenv('LOGOUT_REDIRECT_URL', "/")
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
-        'SCOPE': ['profile', 'email'],  # Quyền truy cập
-        'AUTH_PARAMS': {'access_type': 'online'},  # Loại xác thực
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
         'APP': {
-            'client_id': '', 
-            'secret': '',
+            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
+            'secret': os.getenv('GOOGLE_CLIENT_SECRET'),
             'key': ''
         }
     }
 }
+# Chỉ load provider nếu có client_id và secret
+if not (os.getenv('GOOGLE_CLIENT_ID') and os.getenv('GOOGLE_CLIENT_SECRET')):
+    SOCIALACCOUNT_PROVIDERS.pop('google', None)
+
 
 # VietQR API Configuration
-VIETQR_CLIENT_ID = "99fb5419-7a77-4cb1-9ca4-81e92b979853"
-VIETQR_API_KEY = "cf6ddc52-67c5-4bf4-9210-a2f3ab5183dd"
+VIETQR_CLIENT_ID = os.getenv("VIETQR_CLIENT_ID")
+VIETQR_API_KEY = os.getenv("VIETQR_API_KEY")
 VIETQR_GENERATE_API_URL = "https://api.vietqr.io/v2/generate"
 
-WEBSITE_BANK_ACCOUNT_NO = "0606062005"       
-WEBSITE_BANK_ACCOUNT_NAME = "TRAN QUANG HUY" 
-WEBSITE_BANK_ACQ_ID = "970443"     
+WEBSITE_BANK_ACCOUNT_NO = os.getenv("WEBSITE_BANK_ACCOUNT_NO")
+WEBSITE_BANK_ACCOUNT_NAME = os.getenv("WEBSITE_BANK_ACCOUNT_NAME")
+WEBSITE_BANK_ACQ_ID = os.getenv("WEBSITE_BANK_ACQ_ID")
+
+
+# Logging (ví dụ cơ bản, bạn có thể mở rộng)
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO' if not DEBUG else 'DEBUG', # Log INFO trở lên ở production
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+    },
+}
