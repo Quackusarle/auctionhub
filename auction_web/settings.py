@@ -262,6 +262,7 @@ ACCOUNT_EMAIL_REQUIRED = True # Email là bắt buộc
 ACCOUNT_UNIQUE_EMAIL = True # Email phải là duy nhất
 ACCOUNT_EMAIL_VERIFICATION = os.getenv('ACCOUNT_EMAIL_VERIFICATION', "mandatory") # "mandatory", "optional", hoặc "none"
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True # Tự động đăng nhập sau khi xác thực email
+ACCOUNT_USERNAME_REQUIRED = False
 
 
 LOGIN_REDIRECT_URL = os.getenv('LOGIN_REDIRECT_URL', "/")
