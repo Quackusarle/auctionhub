@@ -64,7 +64,8 @@ INSTALLED_APPS = [
     'apps.bidding.apps.BiddingConfig',
     'apps.payments.apps.PaymentsConfig',
     'apps.reviews.apps.ReviewsConfig',
-    'apps.wallet.apps.WalletConfig'
+    'apps.wallet.apps.WalletConfig',
+    'apps.sim.apps.SimConfig',
 ]
 
 MIDDLEWARE = [
@@ -121,7 +122,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',  # Sử dụng PostgreSQL
         'NAME': 'auctiondb',
         'USER': 'postgres',
-        'PASSWORD': '18112005',
+        'PASSWORD': '123456',
         'HOST': 'localhost',
         'PORT': '5432',  # Mặc định PostgreSQL chạy trên port 5432
     }

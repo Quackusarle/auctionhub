@@ -18,9 +18,6 @@ urlpatterns = [
     # URL danh sách bài viết
     path('blog/', views.blog_post_list_view, name='blog_post_list'),
 
-    # Bạn có thể xóa dòng này nếu chỉ muốn dùng slug cho chi tiết bài viết
-    # path('blog/post/<int:post_id>/', views.blog_post_detail_view, name='blog_post_detail_by_id'),
-
     path('contact/', views.contact_page_view, name='contact_us_page'),
 
     path('admin/', admin.site.urls),
@@ -37,4 +34,7 @@ urlpatterns = [
     path('search/', item_search_view, name='search_results'),
     path('my-purchasing-items/', my_active_bids_view, name='my_purchasing_items_page'),
     path('user/profile/', views.profile_view, name='profile'),
+
+    # --- URLS CHO IMAGE UPLOAD ---
+    path('image-upload', include('apps.sim.urls')),
 ]
