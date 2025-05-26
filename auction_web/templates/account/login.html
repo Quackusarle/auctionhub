@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load account %}
+{% load socialaccount %}
+{% load static %}
+
+{% block title %}{% trans "Đăng Nhập" %} - AuctionHub{% endblock %}
+
+{% block page_specific_css %}
+    {# Link đến file CSS đã được "dọn dẹp" ở trên #}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock page_specific_css %}
+
+{% block content %}
+{# Sử dụng class mới từ modern_auth.css để căn giữa #}
+<div class="login-page-content-wrapper">
+    <div class="modern-auth-wrapper">
+        <div class="modern-auth-container">
+            <div class="modern-auth-header">
+                <a href="{% url 'home-template' %}" class="auth-logo-link"> <!-- **ĐẢM BẢO 'home-template' LÀ URL NAME ĐÚNG** -->
+                    <span class="logo">Auction<span class="logo-alt">Hub</span></span>
+                </a>
+                <h2>{% trans "Chào Mừng Trở Lại!" %}</h2>
+                <p>{% trans "Đăng nhập để tiếp tục với AuctionHub." %}</p>
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="auth-alert auth-alert-danger">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}{% if not forloop.last %}<br>{% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form class="modern-auth-form login" method="POST" action="{% url 'account_login' %}">
+                {% csrf_token %}
+
+                <div class="form-field-group">
+                    <label for="{{ form.login.id_for_label }}">{% trans "Email hoặc Tên đăng nhập" %}</label>
+                    {{ form.login }} {# JS sẽ thêm class 'form-input-modern' và placeholder #}
+                    {% if form.login.errors %}
+                        <div class="field-error-message">
+                            {% for error in form.login.errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-field-group">
+                    <label for="{{ form.password.id_for_label }}">{% trans "Mật khẩu" %}</label>
+                    {{ form.password }} {# JS sẽ thêm class 'form-input-modern' và placeholder #}
+                     {% if form.password.errors %}
+                        <div class="field-error-message">
+                            {% for error in form.password.errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+
+                <div class="form-options">
+                    {% if form.remember %}
+                    <div class="form-check-custom">
+                        {{ form.remember }} {# JS sẽ thêm class 'form-check-input-modern' #}
+                        <label for="{{ form.remember.id_for_label }}">{% trans "Ghi nhớ tôi" %}</label>
+                    </div>
+                    {% endif %}
+                    <a class="forgot-password-link" href="{% url 'account_reset_password' %}">{% trans "Quên mật khẩu?" %}</a>
+                </div>
+
+                <button class="btn-auth-submit" type="submit">{% trans "Đăng Nhập" %}</button>
+            </form>
+
+            {% get_providers as socialaccount_providers %}
+            {% if socialaccount_providers %}
+            <div class="social-login-section">
+                <div class="divider-with-text">
+                    <span>{% trans "Hoặc đăng nhập với" %}</span>
+                </div>
+                <div class="social-login-buttons">
+                    {% for provider in socialaccount_providers %}
+                    <a title="Đăng nhập bằng {{ provider.name }}" href="{% provider_login_url provider.id process="login" %}" class="social-btn social-btn-{{ provider.id|lower }}">
+                        <i class="fab fa-{{ provider.id|lower }}"></i> {{ provider.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="auth-footer-link">
+                <p>{% trans "Chưa có tài khoản?" %} <a href="{% url 'account_signup' %}">{% trans "Tạo tài khoản ngay" %}</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block page_specific_js %}
+{# JavaScript để thêm class và placeholder vẫn giữ nguyên như cậu đã cung cấp #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.querySelector('form.login');
+    if (loginForm) {
+        // Sử dụng ID mà django-allauth thường tạo cho các trường
+        const loginInput = loginForm.querySelector('#id_login'); // {{ form.login.id_for_label }} cũng ra id_login
+        const passwordInput = loginForm.querySelector('#id_password'); // {{ form.password.id_for_label }} cũng ra id_password
+
+        if (loginInput) {
+            loginInput.classList.add('form-input-modern');
+            loginInput.placeholder = "{% trans 'Nhập email hoặc tên đăng nhập của bạn'|escapejs %}";
+        }
+        if (passwordInput) {
+            passwordInput.classList.add('form-input-modern');
+            passwordInput.placeholder = "{% trans 'Nhập mật khẩu của bạn'|escapejs %}";
+        }
+
+        const rememberCheckbox = loginForm.querySelector('#id_remember'); // {{ form.remember.id_for_label }} cũng ra id_remember
+        if (rememberCheckbox) {
+            rememberCheckbox.classList.add('form-check-input-modern');
+        }
+    }
+});
+</script>
+{% endblock page_specific_js %}

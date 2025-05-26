@@ -1,0 +1,624 @@
+/* static/css/new_about.css */
+
+/* Kế thừa biến màu và font từ base.css */
+/* Các biến chính: --primary-color, --primary-rgb, --secondary-color, --text-color, --heading-color, --accent-color, --white, --border-color, --bg-color, --muted-color, --dark-green-footer-bg, --font-family */
+
+body {
+    font-family: var(--font-family, 'Montserrat', sans-serif);
+    background-color: var(--bg-color, #f8f9fa);
+    color: var(--text-color, #212529);
+    line-height: 1.6;
+    font-size: 16px;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--heading-color, #1a3b2a);
+    font-weight: 700;
+    margin-bottom: 0.75em;
+    line-height: 1.3;
+}
+
+h1 { font-size: 2.8rem; font-weight: 800;}
+h2 { font-size: 2.2rem; font-weight: 700; margin-bottom: 2.5rem; text-align:center; }
+h2::after { /* Subtle line for section titles */
+    content: ''; display: block; width: 60px; height: 3px; background-color: var(--primary-color, #198754); margin: 10px auto 0; border-radius: 2px;
+}
+h3 { font-size: 1.6rem; font-weight: 600; }
+h4 { font-size: 1.25rem; font-weight: 600; }
+p { margin-bottom: 1.25rem; color: var(--text-color, #212529); }
+p.lead { font-size: 1.15rem; color: var(--text-color, #212529); }
+a { color: var(--primary-color, #198754); text-decoration: none; transition: color 0.3s ease; }
+a:hover { color: var(--accent-color, #157347); }
+
+.btn {
+    display: inline-block;
+    padding: 12px 28px;
+    background-color: var(--primary-color, #198754);
+    color: #FFFFFF;
+    font-weight: 600;
+    border-radius: 50px; /* Bo tròn tương tự home.html hero button */
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border: 2px solid transparent;
+}
+.btn:hover {
+    background-color: var(--accent-color, #157347);
+    color: #FFFFFF;
+    transform: translateY(-2px);
+}
+.btn-secondary {
+    background-color: transparent;
+    color: var(--primary-color, #198754);
+    border-color: var(--primary-color, #198754);
+}
+.btn-secondary:hover {
+    background-color: var(--primary-color, #198754);
+    color: #FFFFFF;
+}
+.btn-lg { padding: 16px 36px; font-size: 1.1rem; }
+
+section { padding: 80px 0; position: relative; }
+section:nth-child(even) { background-color: var(--bg-secondary, #F7F9FC); } /* Màu nền xen kẽ */
+.section-header { text-align: center; margin-bottom: 50px; }
+.section-header .subtitle { color: var(--primary-color, #198754); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; display: block; }
+
+
+/* Hero Section (About page specific) */
+.about-hero-section {
+    padding-top: calc(var(--header-height) + 60px); /* Adjust based on your header height */
+    padding-bottom: 80px;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-color, #f8f9fa);
+    text-align: center; /* Căn giữa toàn bộ text */
+}
+.about-hero-container {
+    display: flex; /* Thay đổi thành flex để căn giữa nội dung */
+    flex-direction: column; /* Xếp các phần tử theo cột */
+    align-items: center; /* Căn giữa theo chiều ngang */
+    gap: 20px; /* Giảm gap */
+}
+.about-hero-text-content {
+    flex: 1;
+    max-width: 900px; /* Giới hạn chiều rộng để text không quá dài */
+}
+.about-hero-heading {
+    font-size: 3.5em;
+    margin-bottom: 20px;
+    font-weight: 700;
+    color: var(--heading-color, #1a3b2a);
+    line-height: 1.2;
+    min-height: 90px; /* Đảm bảo đủ không gian cho chữ chạy */
+}
+.about-hero-heading .highlight { color: var(--primary-color, #198754); }
+.about-hero-subtitle {
+    font-size: 1em; /* Consistent with home.html p */
+    margin: 25px auto 35px; /* Căn giữa p lead */
+    color: var(--muted-color, #6c757d);
+    max-width: 700px; /* Giới hạn chiều rộng của p lead */
+}
+.about-hero-buttons .btn { margin: 0 10px; }
+/* Ẩn phần hình ảnh hero-image-content */
+.about-hero-image-content {
+    display: none;
+}
+.typed-cursor {
+    font-weight: 300;
+    color: var(--primary-color);
+}
+
+
+/* General Content Section Styles for About Page */
+.about-content-section {
+    padding: 80px 0;
+}
+
+.about-grid-blocks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.about-block-item {
+    background-color: var(--secondary-color, #ffffff);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color, #dee2e6);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-block-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.about-icon {
+    font-size: 2.5rem; /* Điều chỉnh kích thước icon */
+    color: var(--primary-color, #198754);
+    margin-bottom: 20px;
+}
+.about-block-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+.about-block-item p {
+    font-size: 0.95rem;
+    color: var(--muted-color, #6c757d);
+}
+
+/* Team Section */
+.team-members-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+.team-member-card {
+    background-color: var(--secondary-color, #ffffff);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color, #dee2e6);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.team-member-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+.team-member-card img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 3px solid var(--primary-color, #198754);
+}
+.team-member-card h4 {
+    font-size: 1.3rem;
+    margin-bottom: 5px;
+}
+.team-member-card .team-role {
+    font-size: 0.9rem;
+    color: var(--muted-color, #6c757d);
+    margin-bottom: 15px;
+}
+.team-member-card .team-social a {
+    font-size: 1.2rem; /* Điều chỉnh kích thước icon mạng xã hội */
+    margin: 0 8px;
+    color: var(--text-color, #212529);
+}
+.team-member-card .team-social a:hover {
+    color: var(--primary-color, #198754);
+}
+
+/* Technology Section */
+.tech-stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+.tech-item {
+    background-color: var(--secondary-color, #ffffff);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color, #dee2e6);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.tech-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+.tech-icon {
+    font-size: 3rem;
+    color: var(--primary-color, #198754);
+    margin-bottom: 20px;
+}
+.tech-item h3 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+}
+.tech-item p {
+    font-size: 0.9rem;
+    color: var(--muted-color, #6c757d);
+}
+
+/* Security Section - Similar to Education Section in myprofile.html */
+#security-tree-container {
+    position: relative;
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.security-trunk {
+    width: 10px;
+    height: 100%; /* Sẽ được điều chỉnh bởi JS nếu có animation */
+    background-color: var(--muted-color); /* Màu thân cây */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    opacity: 1; /* Để luôn hiển thị, hoặc 0 nếu có animation JS */
+    transition: opacity 0.5s ease;
+}
+/* Nếu muốn animation:
+#security-tree-container.animate .security-trunk { opacity: 1; }
+*/
+
+.security-branch {
+    list-style: none;
+    padding-left: 0;
+    position: relative;
+}
+
+.security-branch > li {
+    background-color: var(--secondary-color); /* Màu nền card */
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 15px 20px;
+    border-radius: 8px; /* Bo tròn tương tự các card khác */
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Bóng đổ nhẹ */
+    position: relative;
+    opacity: 1; /* Để luôn hiển thị, hoặc 0 nếu có animation JS */
+    transform: translateX(0%); /* Để luôn hiển thị, hoặc -100% nếu có animation JS */
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* Nếu muốn animation tương tự education tree:
+#security-tree-container.animate .security-branch > li { opacity: 1; transform: translateX(0); }
+#security-tree-container.animate .security-branch > li:nth-child(1) { transition-delay: 0.2s; }
+#security-tree-container.animate .security-branch > li:nth-child(2) { transition-delay: 0.4s; }
+#security-tree-container.animate .security-branch > li:nth-child(3) { transition-delay: 0.6s; }
+#security-tree-container.animate .security-branch > li:nth-child(4) { transition-delay: 0.8s; }
+*/
+
+.security-branch > li::before {
+    content: '';
+    position: absolute;
+    left: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 2px;
+    background-color: var(--primary-color); /* Màu đường kết nối */
+    opacity: 1; /* Để luôn hiển thị, hoặc 0 nếu có animation JS */
+    transition: opacity 0.5s ease 0.5s;
+}
+/* Nếu muốn animation tương tự education tree:
+#security-tree-container.animate .security-branch > li::before { opacity: 1; }
+*/
+
+
+/* Đặt xen kẽ trái phải */
+.security-branch > li:nth-child(odd) {
+    margin-left: 55%; /* Đẩy sang phải */
+    /* transform: translateX(100%); */ /* Chỉ dùng nếu có animation */
+}
+/* Nếu muốn animation tương tự education tree:
+#security-tree-container.animate .security-branch > li:nth-child(odd) { transform: translateX(0); }
+*/
+.security-branch > li:nth-child(odd)::before {
+    left: auto;
+    right: 100%; /* Đường kẻ bên phải */
+    margin-right: 0px;
+}
+
+.security-title {
+    font-weight: 600;
+    color: var(--primary-color); /* Màu tiêu đề đậm */
+    font-size: 1.15rem;
+    margin-bottom: 5px;
+}
+
+.security-description {
+    font-size: 0.9rem;
+    color: var(--muted-color);
+}
+
+/* List of Security Features (Nếu có) */
+.security-list-features {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 20px;
+    max-width: 800px; /* Giới hạn chiều rộng cho list này */
+    margin-left: auto;
+    margin-right: auto;
+}
+.security-list-features li {
+    background-color: var(--secondary-color);
+    padding: 10px 15px;
+    border-radius: 4px; /* Bo tròn nhỏ */
+    margin-bottom: 10px;
+    border-left: 3px solid var(--primary-color); /* Đường kẻ bên trái */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Bóng đổ nhẹ */
+    display: flex;
+    align-items: center;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+.security-list-features li i {
+    margin-right: 10px;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+/* Responsive cho phần an toàn và bảo mật */
+@media (max-width: 992px) {
+    .security-branch > li,
+    .security-branch > li:nth-child(odd) {
+        margin-left: 0;
+        transform: translateY(0px); /* Bỏ translate Y nếu không có animation */
+    }
+    .security-branch > li::before {
+        display: none; /* Ẩn đường kẻ nối trên mobile */
+    }
+    .security-trunk {
+        display: none; /* Ẩn thân cây trên mobile */
+    }
+}
+
+
+/* Future Development Section */
+.future-dev-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+.future-dev-item {
+    background-color: var(--secondary-color, #ffffff);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color, #dee2e6);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.future-dev-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+.future-icon {
+    font-size: 3rem;
+    color: var(--primary-color, #198754);
+    margin-bottom: 20px;
+}
+.future-dev-item h3 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+}
+.future-dev-item p {
+    font-size: 0.9rem;
+    color: var(--muted-color, #6c757d);
+}
+
+/* Present Section Styles */
+#present {
+    text-align: center;
+}
+.gift-box-container {
+    display: inline-block;
+    padding: 30px;
+    background-color: var(--secondary-color, #FFFFFF); /* Sử dụng secondary color */
+    border-radius: 12px; /* Dùng border-radius-md */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.03); /* shadow-lg-light */
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    border: 1px solid var(--border-color, #E2E8F0); /* Thêm border */
+}
+.gift-box-container:hover {
+    transform: scale(1.1);
+}
+.gift-box-container i {
+    font-size: 5rem;
+    color: var(--primary-color, #198754); /* Màu xanh lá chủ đạo */
+}
+
+.present-effect-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0,0,0,0.5);
+    overflow: hidden;
+}
+.present-effect-content {
+    background-color: var(--secondary-color, #FFFFFF);
+    color: var(--text-color, #1E293B);
+    padding: 40px;
+    border-radius: 12px; /* border-radius-md */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+    text-align: center;
+    font-size: 1.5rem;
+    opacity: 0;
+    transform: scale(0.5);
+    animation: popInEffect 0.5s forwards;
+}
+@keyframes popInEffect { to { opacity: 1; transform: scale(1); } }
+
+.balloon {
+    position: absolute;
+    width: 60px;
+    height: 80px;
+    background-color: red; /* Sẽ được random trong JS */
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    opacity: 0.8;
+    animation: riseAndSway 5s forwards ease-in-out;
+}
+.balloon::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 30px;
+    background-color: #ccc;
+}
+@keyframes riseAndSway {
+    0% { bottom: -100px; opacity: 1; transform: translateX(0px) rotate(0deg); }
+    50% { transform: translateX(50px) rotate(10deg); }
+    100% { bottom: 110vh; opacity: 0; transform: translateX(-50px) rotate(-10deg); }
+}
+
+.lollipop {
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    animation: floatUpLollipop 3s forwards ease-out;
+    opacity: 0;
+}
+@keyframes floatUpLollipop {
+    0% { opacity: 0; transform: translateY(50px) scale(0.5); }
+    50% { opacity: 1; transform: translateY(-20px) scale(1.1) rotate(15deg); }
+    100% { opacity: 0; transform: translateY(-100px) scale(0.8) rotate(-15deg); }
+}
+
+.matrix-code-rain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1999;
+    display: none;
+    background: rgba(0,0,0,0.7);
+}
+.matrix-column {
+    position: absolute;
+    font-family: 'Matrix Code NFI', 'Courier New', Courier, monospace;
+    color: #0F0;
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+    user-select: none;
+    font-size: 16px;
+    text-shadow: 0 0 5px #0F0, 0 0 10px #0F0;
+    animation: fall 1s linear infinite;
+}
+@keyframes fall { to { transform: translateY(100vh); } }
+
+
+/* Side Rocket (Left only now) */
+.side-rocket {
+    position: fixed;
+    bottom: 30px;
+    font-size: 2.5rem;
+    color: var(--primary-color, #198754); /* Màu xanh lá chủ đạo */
+    cursor: pointer;
+    z-index: 1001;
+    transition: transform 1s cubic-bezier(0.5, -0.5, 0.5, 1.5), opacity 0.3s ease;
+    opacity: 0.8;
+}
+.side-rocket:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+.side-rocket.left { left: 20px; }
+.side-rocket.flying { transform: translateY(-120vh) rotate(15deg); opacity: 0; }
+#fireworks-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    pointer-events: none;
+    display: none;
+}
+
+
+/* Contact Info Section */
+.contact-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+.contact-card {
+    background-color: var(--secondary-color, #ffffff);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color, #dee2e6);
+    text-align: center;
+}
+.contact-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+}
+.contact-card p {
+    font-size: 0.95rem;
+    color: var(--muted-color, #6c757d);
+}
+.contact-card .contact-icon { /* Điều chỉnh cụ thể cho icon trong contact-card */
+    font-size: 1.8rem; /* Kích thước nhỏ hơn */
+    color: var(--primary-color, #198754);
+    margin-bottom: 15px;
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .about-hero-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    .about-hero-text-content { text-align: center; }
+    .about-hero-heading { font-size: 2.8em; }
+    .about-hero-subtitle { max-width: 100%; }
+    /* .about-hero-image-content { margin-top: 40px; } // Không còn ảnh */
+
+    .security-branch > li,
+    .security-branch > li:nth-child(odd) {
+        margin-left: 0;
+        transform: translateY(0px); /* Bỏ translate Y nếu không có animation */
+    }
+    .security-branch > li::before {
+        display: none; /* Ẩn đường kẻ nối trên mobile */
+    }
+    .security-trunk {
+        display: none; /* Ẩn thân cây trên mobile */
+    }
+}
+
+@media (max-width: 768px) {
+    section { padding: 50px 0; }
+    h1 { font-size: 2.2rem; }
+    h2 { font-size: 1.8rem; margin-bottom: 2rem; }
+    .about-hero-heading { font-size: 2.5em; }
+    .about-hero-subtitle { font-size: 0.95em; }
+    .btn-lg { padding: 12px 28px; font-size: 1rem; }
+
+    .side-rocket { font-size: 2rem; bottom: 15px; left: 10px; }
+}
+
+@media (max-width: 576px) {
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.2rem; }
+    .about-hero-heading { font-size: 2em; }
+    .about-hero-buttons .btn { margin: 5px; }
+    .about-grid-blocks, .team-members-grid, .tech-stack-grid, .security-features-grid, .future-dev-grid, .contact-details-grid {
+        grid-template-columns: 1fr;
+    }
+}

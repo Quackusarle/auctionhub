@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Email Addresses" %}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h1 class="h4 mb-0">{% trans "Email Addresses" %}</h1>
+                </div>
+                <div class="card-body">
+                    {% if user.emailaddress_set.all %}
+                    <p>{% trans 'The following email addresses are associated with your account:' %}</p>
+                    
+                    <form action="{% url 'account_email' %}" class="email_list" method="post">
+                        {% csrf_token %}
+                        <fieldset class="blockLabels">
+                            {% for emailaddress in user.emailaddress_set.all %}
+                            <div class="form-check mb-2">
+                                <input id="email_radio_{{ forloop.counter }}" type="radio" name="email" 
+                                       {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked"{% endif %} 
+                                       value="{{ emailaddress.email }}"
+                                       class="form-check-input">
+
+                                <label for="email_radio_{{ forloop.counter }}" class="form-check-label {% if emailaddress.primary %}fw-bold{% endif %}">
+                                    {{ emailaddress.email }}
+                                    {% if emailaddress.verified %}
+                                    <span class="badge bg-success">{% trans "Verified" %}</span>
+                                    {% else %}
+                                    <span class="badge bg-warning text-dark">{% trans "Unverified" %}</span>
+                                    {% endif %}
+                                    {% if emailaddress.primary %}
+                                    <span class="badge bg-primary">{% trans "Primary" %}</span>
+                                    {% endif %}
+                                </label>
+                            </div>
+                            {% endfor %}
+
+                            <div class="btn-group mt-3">
+                                <button class="btn btn-secondary" type="submit" name="action_primary">
+                                    {% trans 'Make Primary' %}
+                                </button>
+                                <button class="btn btn-secondary" type="submit" name="action_send">
+                                    {% trans 'Re-send Verification' %}
+                                </button>
+                                <button class="btn btn-danger" type="submit" name="action_remove">
+                                    {% trans 'Remove' %}
+                                </button>
+                            </div>
+                        </fieldset>
+                    </form>
+
+                    {% else %}
+                    <p><strong>{% trans 'Warning:' %}</strong> {% trans "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc." %}</p>
+                    {% endif %}
+
+                    {% if can_add_email %}
+                    <h2 class="h5 mt-4">{% trans "Add Email Address" %}</h2>
+                    <form method="post" action="{% url 'account_email' %}" class="add_email">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button name="action_add" type="submit" class="btn btn-primary mt-3">
+                            {% trans "Add Email" %}
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_specific_js %}
+<script type="text/javascript">
+(function() {
+    var message = "{% trans 'Do you really want to remove the selected email address?' %}";
+    var actions = document.getElementsByName('action_remove');
+    if (actions.length) {
+        actions[0].addEventListener("click", function(e) {
+            if (! confirm(message)) {
+                e.preventDefault();
+            }
+        });
+    }
+})();
+</script>
+{% endblock %} 

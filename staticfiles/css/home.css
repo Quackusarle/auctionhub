@@ -1,0 +1,127 @@
+/* Reset CSS cơ bản & Thiết lập biến Theme Sáng - Green */
+:root {
+    --primary-color: #198754;
+    --secondary-color: #ffffff;
+    --text-color: #212529;
+    --heading-color: #212529;
+    --accent-color: #157347;
+    --white: #ffffff;
+    --border-color: #dee2e6;
+    --bg-color: #f8f9fa;
+    --muted-color: #6c757d;
+    --dark-green-footer-bg: #157347;
+    --active-card-bg: #146c43; /* Used by old hover effects, can be removed if not used by base.css */
+    --font-family: 'Montserrat', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: var(--font-family); color: var(--text-color);
+    background-color: var(--bg-color); line-height: 1.6; font-size: 16px;
+    overflow-x: hidden; /* Ngăn cuộn ngang */
+}
+.container { max-width: 1140px; margin: 0 auto; padding: 0 15px; }
+
+/* --- Hero Section --- */
+.hero-section.plant-theme-hero {
+    background-color: var(--bg-color); color: var(--text-color);
+    text-align: left; padding: 80px 0; position: relative;
+}
+.hero-container { display: flex; align-items: center; gap: 40px; }
+.hero-text-content { flex: 1; }
+.hero-image-content { flex-basis: 45%; text-align: center; }
+.hero-image-content img { max-width: 100%; height: auto; max-height: 450px; }
+.hero-text-content h1 {
+    font-size: 3.5em; margin-bottom: 20px; font-weight: 700;
+    color: var(--heading-color); line-height: 1.2;
+}
+.hero-text-content h1 .highlight { color: var(--primary-color); }
+.hero-text-content p {
+    font-size: 1em; margin-bottom: 35px; color: var(--muted-color); max-width: 500px;
+}
+.hero-btn.btn-primary {
+    background-color: var(--text-color); color: var(--white); padding: 12px 30px;
+    font-size: 1em; border-radius: 50px; font-weight: 700; border: none;
+    text-decoration: none; display: inline-block; transition: background-color 0.3s ease;
+}
+.hero-btn.btn-primary:hover { background-color: #000; }
+
+/* --- Product Section (Homepage Specific) --- */
+.listings { padding-top: 40px; }
+.section-title-wrapper { text-align: center; margin-bottom: 40px; }
+.listings h2 { /* Title like "Phiên Đấu Giá Nổi Bật" */
+    color: var(--heading-color); border-bottom: 2px solid var(--primary-color);
+    display: inline-block; padding-bottom: 8px; font-size: 1.8em;
+}
+
+/* Grid container for featured items on the homepage */
+#item-grid-container {
+    display: grid;
+    /* Default to 1 column, then 2 for sm, 3 for md and up */
+    /* This can be adjusted based on how many items are typically shown (e.g., 6 or 9) */
+    grid-template-columns: 1fr; /* Mobile first: 1 column */
+    gap: 1.5rem; /* Consistent gap with base.css product card usage if any */
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
+/* Responsive columns for the homepage grid */
+@media (min-width: 576px) { /* Small devices (sm) */
+    #item-grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (min-width: 768px) { /* Medium devices (md) */
+    #item-grid-container {
+        /* Show 3 items per row for 9 items total (if page_size=9) */
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media (min-width: 992px) { /* Large devices (lg) */
+    #item-grid-container {
+        /* Could go to 3 or 4 columns if more items or wider layout desired */
+        grid-template-columns: repeat(3, 1fr); 
+    }
+}
+
+
+/* Styling for messages (loading, error, empty) within the grid container */
+/* home.js adds a wrapper div with style="grid-column: 1 / -1;" */
+/* and then a <p class="grid-message ..."> inside it. */
+#item-grid-container .grid-message { /* Targets the <p> tag with this class */
+    text-align: center;
+    padding: 20px; /* Add some padding to the message itself */
+    margin: 0; /* Reset margin if any */
+    /* Additional styling for different message types can be added here or in base.css */
+}
+
+#item-grid-container .loading-message i, /* If using <i> for spinner */
+#item-grid-container .spinner-border { /* For Bootstrap spinner */
+    color: var(--primary-color); /* Ensure spinner uses theme color */
+}
+.view-all-items-btn {
+    /* Ví dụ: thay đổi font-weight hoặc thêm hiệu ứng */
+    font-weight: 500;
+    padding: 0.75rem 2rem; /* Điều chỉnh padding nếu cần */
+    border-width: 2px; /* Làm viền dày hơn một chút nếu muốn */
+    transition: all 0.3s ease; /* Thêm transition cho mượt mà */
+}
+
+.view-all-items-btn:hover {
+    background-color: var(--primary-color); /* Màu nền khi hover */
+    color: var(--white); /* Màu chữ khi hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.3);
+}
+
+.view-all-items-btn i {
+    transition: transform 0.3s ease;
+}
+
+.view-all-items-btn:hover i {
+    transform: translateX(3px); /* Di chuyển nhẹ icon khi hover */
+}
+
+
+/* --- KẾT THÚC CSS --- */

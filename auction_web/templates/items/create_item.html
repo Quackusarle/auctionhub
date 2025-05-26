@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tạo Phiên Đấu Giá Mới{% endblock %}
+
+{% block content %}
+<style>
+    /* CSS bổ sung cho trang create_auction.html, sử dụng biến từ base.css */
+    .create-auction-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: var(--white);
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .create-auction-container h1 {
+        color: var(--heading-color);
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+        font-weight: 600;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="number"],
+    .form-group input[type="datetime-local"],
+    /* .form-group input[type="file"], Bỏ đi kiểu dáng cho input file */
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        font-family: var(--font-family);
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+    
+    /* Bỏ đi padding riêng cho input file
+    .form-group input[type="file"] {
+        padding: 0.5rem;
+    }
+    */
+
+    .form-group input[type="text"]:focus,
+    .form-group input[type="number"]:focus,
+    .form-group input[type="datetime-local"]:focus,
+    /* .form-group input[type="file"]:focus, Bỏ đi focus cho input file */
+    .form-group textarea:focus,
+    .form-group select:focus {
+        border-color: var(--primary-color);
+        outline: none;
+    }
+
+    .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .btn-submit-auction {
+        display: block;
+        width: 100%;
+        padding: 0.85rem;
+        background-color: var(--primary-color);
+        color: var(--white);
+        border: none;
+        border-radius: 4px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        text-align: center;
+    }
+
+    .btn-submit-auction:hover {
+        background-color: var(--accent-color);
+    }
+
+    .message {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+        text-align: center;
+    }
+
+    .message.success {
+        background-color: rgba(var(--primary-rgb), 0.1);
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+    }
+
+    .message.error {
+        background-color: #f8d7da; /* Màu nền cho lỗi */
+        color: #721c24; /* Màu chữ cho lỗi */
+        border: 1px solid #f5c6cb; /* Màu viền cho lỗi */
+    }
+
+    .error-list {
+        list-style-type: none;
+        padding: 0;
+        margin-top: 0.5rem;
+    }
+
+    .error-list li {
+        color: #721c24; /* Màu chữ lỗi cụ thể */
+        font-size: 0.9rem;
+    }
+
+    .form-field-error {
+        border-color: #dc3545 !important; /* Viền đỏ cho trường bị lỗi */
+    }
+
+    /* Bỏ đi phần CSS cho image preview
+    .image-preview-container {
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+    .image-preview {
+        max-width: 100%;
+        max-height: 200px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        object-fit: contain;
+    }
+    .image-preview.hidden {
+        display: none;
+    }
+    */
+
+</style>
+
+<div class="create-auction-container">
+    <h1><i class="fas fa-gavel"></i> Tạo Phiên Đấu Giá Mới</h1>
+
+    {# Hiển thị thông báo thành công (nếu có từ context) #}
+    {% if message %}
+        <div class="message success">
+            {{ message }}
+        </div>
+    {% endif %}
+
+    {# Hiển thị thông báo lỗi chung (nếu có và không phải lỗi của từng trường) #}
+    {% if errors and errors.non_field_errors %}
+        <div class="message error">
+            <ul class="error-list">
+                {% for error in errors.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <form method="POST" action=""> {# QUAN TRỌNG: Bỏ enctype vì không còn upload file #}
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="id_name">Tên sản phẩm/phiên đấu giá:</label>
+            {% if form %}
+                {{ form.name }}
+            {% else %}
+                <input type="text" name="name" id="id_name" value="{{ form_data.name|default:'' }}"
+                       class="{% if errors.name %}form-field-error{% endif %}" required>
+            {% endif %}
+            {% if errors.name %}
+                <ul class="error-list">
+                    {% for error in errors.name %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_description">Mô tả chi tiết:</label>
+            {% if form %}
+                {{ form.description }}
+            {% else %}
+                <textarea name="description" id="id_description"
+                          class="{% if errors.description %}form-field-error{% endif %}" required>{{ form_data.description|default:'' }}</textarea>
+            {% endif %}
+            {% if errors.description %}
+                <ul class="error-list">
+                    {% for error in errors.description %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_starting_price">Giá khởi điểm (VNĐ):</label>
+            {% if form %}
+                {{ form.starting_price }}
+            {% else %}
+                                 <input type="number" name="starting_price" id="id_starting_price" step="1000" min="1000"
+                       value="{{ form_data.starting_price|default:'' }}"
+                       class="{% if errors.starting_price %}form-field-error{% endif %}" required>
+            {% endif %}
+            {% if errors.starting_price %}
+                <ul class="error-list">
+                    {% for error in errors.starting_price %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_end_time">Thời gian kết thúc:</label>
+            {% if form %}
+                {{ form.end_time }}
+            {% else %}
+                <input type="datetime-local" name="end_time" id="id_end_time"
+                       value="{{ form_data.end_time|default:'' }}"
+                       class="{% if errors.end_time %}form-field-error{% endif %}" required>
+            {% endif %}
+            {% if errors.end_time %}
+                <ul class="error-list">
+                    {% for error in errors.end_time %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn-submit-auction">Tạo Phiên Đấu Giá</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Script nhỏ để xử lý input datetime-local cho phù hợp
+    document.addEventListener('DOMContentLoaded', function() {
+        const endTimeInput = document.getElementById('id_end_time');
+        if (endTimeInput) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            
+            const minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+            endTimeInput.setAttribute('min', minDateTime);
+        }
+    });
+</script>
+{% endblock %}

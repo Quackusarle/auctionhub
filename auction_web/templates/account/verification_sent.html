@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Verify Your Email Address" %}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h1 class="h4 mb-0">{% trans "Verify Your Email Address" %}</h1>
+                </div>
+                <div class="card-body">
+                    <p>{% blocktrans %}We have sent an email to verify your email address. Please check your email and click on the link to complete the registration process.{% endblocktrans %}</p>
+                    <p>{% blocktrans %}If you do not receive the verification email within a few minutes, please check your spam folder.{% endblocktrans %}</p>
+                    
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle"></i>
+                        {% blocktrans %}If you still don't receive the email, you can try to:{% endblocktrans %}
+                        <ul class="mt-2 mb-0">
+                            <li>{% trans "Check your spam/junk folder" %}</li>
+                            <li>{% trans "Make sure you entered the correct email address" %}</li>
+                            <li>{% trans "Wait a few minutes and try again" %}</li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="{% url 'home' %}" class="btn btn-primary">
+                            {% trans "Return to Home" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

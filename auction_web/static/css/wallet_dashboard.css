@@ -1,0 +1,346 @@
+/* static/css/wallet_dashboard.css */
+
+/* Kế thừa biến màu từ base.css (ví dụ: --primary-color, --white, --text-color, --border-color, --bg-color) */
+
+.wallet-page-container { /* Đổi tên từ -green để dùng chung */
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+    background-color: var(--bg-color, #f4f6f8); /* Màu nền chung của trang */
+    min-height: calc(100vh - var(--header-height, 70px) - var(--footer-height, 250px)); /* Ước lượng chiều cao header & footer */
+}
+
+.wallet-card { /* Đổi tên từ -green */
+    max-width: 650px; /* Điều chỉnh độ rộng nếu cần */
+    margin: 1.5rem auto; /* Tăng margin top/bottom */
+    background-color: var(--white, #ffffff);
+    border-radius: 12px; /* Bo tròn góc */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07); /* Bóng đổ nhẹ nhàng hơn */
+    overflow: hidden;
+}
+
+.wallet-header { /* Đổi tên từ -green */
+    background: var(--primary-color, #198754); /* Màu xanh lá chủ đạo */
+    color: var(--white, #ffffff);
+    padding: 25px 20px; /* Giảm padding một chút */
+    text-align: center;
+}
+
+.wallet-header .greeting { /* Đổi tên từ -green */
+    font-size: 0.95rem;
+    font-weight: 400;
+    margin-bottom: 3px;
+    opacity: 0.85;
+}
+
+.wallet-header .user-name { /* Đổi tên từ -green */
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.wallet-balance-info { /* Đổi tên từ -green */
+    padding: 8px;
+    border-radius: 8px;
+    margin-top: 8px;
+}
+
+.wallet-balance-info .balance-label { /* Đổi tên từ -green */
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    opacity: 0.75;
+}
+
+.wallet-balance-amount { /* Đổi tên từ -green */
+    font-size: 2.3rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.wallet-balance-amount .currency { /* Đổi tên từ -green */
+    font-size: 1.5rem;
+    font-weight: 400; /* Nhẹ hơn số tiền */
+    margin-left: 4px;
+    opacity: 0.9;
+}
+
+.wallet-main-actions { /* Đổi tên từ -green */
+    display: flex;
+    justify-content: space-around;
+    padding: 18px 15px;
+    background-color: var(--white, #ffffff); /* Nền trắng cho khu vực nút */
+    border-bottom: 1px solid var(--border-color, #dee2e6);
+}
+
+.wallet-action-button { /* Đổi tên từ -green */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-color, #212529);
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    flex-basis: 0; /* Cho phép co giãn đều */
+    flex-grow: 1;
+    max-width: 160px;
+    text-align: center;
+}
+
+.wallet-action-button .icon-circle { /* Đổi tên từ -green */
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--primary-color, #198754);
+    color: var(--white, #ffffff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.wallet-action-button:hover .icon-circle {
+    background-color: var(--accent-color, #157347);
+    transform: scale(1.05);
+}
+
+.wallet-action-button:hover {
+    color: var(--primary-color, #198754);
+}
+
+.form-section { /* Class chung cho các form, đã có trong HTML */
+    padding: 20px;
+    background-color: #f9fafb; /* Màu nền rất nhẹ cho form */
+}
+.form-section:not(:last-child) {
+     border-bottom: 1px solid var(--border-color, #dee2e6);
+}
+
+.form-section h3 {
+    font-size: 1.25rem;
+    color: var(--heading-color, #1a3b2a);
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-weight: 600;
+}
+
+.form-group { /* Class chung cho các group input, đã có trong HTML */
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem; /* 14px */
+    color: var(--text-color, #212529);
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.form-group input[type="number"],
+.form-group input[type="text"] { /* Style chung cho input */
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 5px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input[type="number"]:focus,
+.form-group input[type="text"]:focus {
+    border-color: var(--primary-color, #198754);
+    box-shadow: 0 0 0 0.15rem rgba(var(--primary-rgb, 25, 135, 84), 0.2);
+    outline: none;
+}
+
+.btn-submit-action { /* Class chung cho nút submit form, đã có trong HTML */
+    display: block;
+    width: 100%;
+    padding: 10px 15px; /* Giảm padding một chút */
+    background-color: var(--primary-color, #198754);
+    color: var(--white, #ffffff);
+    border: none;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 15px;
+}
+
+.btn-submit-action:hover {
+    background-color: var(--accent-color, #157347);
+}
+
+.qr-code-area { /* Đã có id là khuVucMaQR trong HTML */
+    margin: 18px auto;
+    text-align:center;
+}
+.qr-code-area img {
+    max-width: 220px;
+    height: auto;
+    border: 1px solid var(--border-color, #dee2e6);
+    padding: 4px;
+    background-color: white;
+    border-radius: 4px;
+}
+
+.qr-instructions { /* Đã có id là huongDanNapTien trong HTML */
+    text-align:center;
+    margin-top:1rem;
+    display:none; /* Sẽ được JS hiện ra */
+    font-size:0.85em;
+    color:#555;
+}
+.qr-instructions strong { /* Đã có id là thongTinDonHangQR trong HTML */
+    color: var(--primary-color, #198754);
+    font-weight: bold;
+}
+
+.status-message { /* Đã có id là trangThaiNapTien/trangThaiRutTien trong HTML */
+    text-align: center;
+    margin-top: 1rem;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    display:none; /* Sẽ được JS hiện ra */
+}
+.status-message.success { background-color: #e6f7f0; color: #0d6a37; border: 1px solid #a3d9b8;}
+.status-message.error { background-color: #fdecea; color: #b32d3a; border: 1px solid #f5c6cb;}
+.status-message.info { background-color: #e7f3fe; color: #0c5460; border: 1px solid #bee5eb;}
+
+.coming-soon-text {
+    text-align:center;
+    color: #777;
+    padding: 1rem 0;
+}
+
+.transaction-history-section { /* Đổi tên từ -green */
+    padding: 20px;
+    background-color: var(--white, #ffffff);
+    margin-top: 0; /* Sát với phần actions hoặc form nếu không có form nào mở */
+    border-top: 1px solid var(--border-color, #dee2e6);
+}
+
+.transaction-history-section h3 {
+    font-size: 1.3rem;
+    color: var(--heading-color, #1a3b2a);
+    margin-top:0;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+.table-responsive-wallet {
+    overflow-x: auto; /* Cho phép cuộn ngang trên màn hình nhỏ nếu bảng quá rộng */
+}
+.transaction-history-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.transaction-history-section th,
+.transaction-history-section td {
+    padding: 10px 8px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.875rem; /* 14px */
+    color: var(--text-color, #333);
+    vertical-align: middle;
+}
+
+.transaction-history-section thead th {
+    font-weight: 600;
+    color: var(--heading-color, #1a3b2a);
+    background-color: #f8f9fa; /* Nền xám rất nhạt cho header table */
+    border-bottom-width: 1px;
+    border-bottom-color: var(--border-color, #dee2e6);
+}
+.transaction-history-section tbody tr:hover {
+    background-color: #f5f5f5; /* Màu hover nhẹ cho hàng */
+}
+.transaction-history-section tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.transaction-history-section .amount-deposit {
+    color: var(--primary-color, #198754); /* Màu xanh lá cho tiền vào */
+    font-weight: 500;
+}
+.transaction-history-section .amount-withdrawal {
+    color: #c82333; /* Màu đỏ đậm hơn cho tiền ra */
+    font-weight: 500;
+}
+.transaction-history-section .status-completed { color: var(--primary-color, #198754); }
+.transaction-history-section .status-pending { color: #ffc107; } /* Màu vàng cho pending */
+.transaction-history-section .status-failed { color: #dc3545; } /* Màu đỏ cho failed */
+.transaction-history-section .status-cancelled { color: #6c757d; } /* Màu xám cho cancelled */
+
+
+.no-transactions { /* Đã có trong HTML */
+    text-align: center;
+    padding: 20px;
+    color: #6c757d; /* var(--muted-color) */
+    font-style: italic;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+/* Responsive cho bảng lịch sử giao dịch */
+@media screen and (max-width: 767px) {
+    .transaction-history-section .d-none {
+        display: none !important; /* Ẩn các cột không quan trọng trên mobile */
+    }
+    .transaction-history-section table,
+    .transaction-history-section thead,
+    .transaction-history-section tbody,
+    .transaction-history-section th,
+    .transaction-history-section td,
+    .transaction-history-section tr {
+        display: block;
+    }
+    .transaction-history-section thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    .transaction-history-section tr {
+        border: 1px solid var(--border-color, #dee2e6);
+        margin-bottom: 0.8rem;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    .transaction-history-section td {
+        border: none;
+        border-bottom: 1px solid #f0f0f0;
+        position: relative;
+        padding-left: 50% !important; /* Điều chỉnh để label có không gian */
+        text-align: right !important;
+        white-space: normal;
+    }
+    .transaction-history-section td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        width: calc(50% - 20px); /* Chiều rộng của label */
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left !important;
+        font-weight: bold;
+        color: var(--heading-color);
+    }
+    .transaction-history-section td:last-child {
+        border-bottom: 0;
+    }
+    .transaction-history-section .d-md-table-cell {
+        display: none !important; /* Đảm bảo cột mô tả ẩn trên mobile */
+    }
+
+    
+}

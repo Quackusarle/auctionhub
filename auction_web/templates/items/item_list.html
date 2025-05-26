@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Products" %} - AuctionHub{% endblock %}
+
+{% block page_specific_css %}
+    <link rel="stylesheet" href="{% static 'css/item_list.css' %}">
+    <style>
+        .filter-sort-bar {
+            background-color: var(--white);
+            padding: 1.25rem 1.5rem; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            margin-bottom: 2rem; 
+        }
+
+        .filter-sort-bar .form-control,
+        .filter-sort-bar .form-select {
+            height: calc(2.25rem + 10px); 
+            border-color: var(--border-color);
+            font-size: 0.95rem;
+        }
+        .filter-sort-bar .form-control:focus,
+        .filter-sort-bar .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.25);
+        }
+        .filter-sort-bar label {
+            font-weight: 500;
+            color: var(--heading-color);
+            margin-bottom: 0.3rem;
+        }
+         .filter-sort-bar .btn-apply-filters { 
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--white);
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            height: calc(2.25rem + 10px); 
+        }
+        .filter-sort-bar .btn-apply-filters:hover {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Thanh Search và Sort -->
+            <div class="filter-sort-bar">
+                <div class="row g-3 align-items-end"> 
+                    <div class="col-md-7 col-lg-8">
+                        <label for="searchInput" class="form-label">{% trans "Search Products" %}</label>
+                        <input type="text" class="form-control" id="searchInput" placeholder="{% trans "Enter keyword..." %}">
+                    </div>
+                    <div class="col-md-5 col-lg-4">
+                        <label for="sortSelect" class="form-label">{% trans "Sort by" %}</label>
+                        <select class="form-select" id="sortSelect">
+                            <option value="newest" selected>{% trans "Newest" %}</option>
+                            <option value="ending-soon">{% trans "Ending Soon" %}</option>
+                            <option value="price-low">{% trans "Price: Low to High" %}</option>
+                            <option value="price-high">{% trans "Price: High to Low" %}</option>
+                            <option value="relevance">{% trans "Relevance" %}</option>
+                            <option value="most-bids">{% trans "Most Bids" %}</option>
+                            <option value="hottest">{% trans "Hottest" %}</option>
+                        </select>
+                    </div>
+                    <!-- Nút Apply Filters có thể không cần nếu bạn muốn search/sort tự động kích hoạt API call -->
+                    <!-- <div class="col-md-12 col-lg-2">
+                        <button id="applyFiltersBtn" class="btn btn-apply-filters w-100">
+                            <i class="fas fa-search me-1"></i> {% trans "Go" %}
+                        </button>
+                    </div> -->
+                </div>
+            </div>
+
+            <h3 class="mb-4 section-title">{% trans "Đang đấu giá" %}</h3>
+
+            <div id="itemListSpinner" class="text-center my-5" style="display: none;">
+                <div class="spinner-border text-primary-custom" style="width: 3rem; height: 3rem; color: var(--primary-color);" role="status">
+                    <span class="visually-hidden">{% trans "Loading..." %}</span>
+                </div>
+                <p class="mt-2" style="color: var(--muted-color);">{% trans "Loading products..." %}</p>
+            </div>
+
+            <div id="itemListError" class="alert alert-danger text-center my-5" style="display: none;" role="alert">
+                <i class="fas fa-exclamation-triangle fa-2x me-2"></i>
+                <h5 class="alert-heading">{% trans "Error!" %}</h5>
+                <p>{% trans "Oops! Something went wrong while loading products. Please try again later." %}</p>
+            </div>
+            
+            <div id="noItemsMessage" class="alert alert-info text-center my-5" style="display: none;" role="alert">
+                 <i class="fas fa-info-circle fa-2x me-2"></i>
+                <h5 class="alert-heading">{% trans "No Products Found" %}</h5>
+                <p>{% trans "No products found matching your criteria. Try adjusting your search or sort options." %}</p>
+            </div>
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="itemListContainer">
+                <!-- Item cards will be injected here by JavaScript -->
+                <!-- Thêm row-cols-xl-4 để hiển thị 4 cột trên màn hình rất lớn -->
+            </div>
+
+            <!-- Pagination -->
+            <nav aria-label="Page navigation" class="mt-5">
+                <ul class="pagination justify-content-center" id="paginationContainer">
+                    <!-- Pagination links will be injected here -->
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<script>
+    window.viewDetailsText = "{% trans 'View Details' %}";
+    // Thêm các text khác nếu cần
+    window.previousText = "{% trans 'Previous' %}";
+    window.nextText = "{% trans 'Next' %}";
+</script>
+{% block page_specific_js %}
+<script src="{% static 'js/item_list.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,395 @@
+/* --- Biến màu và font (Giả sử đã được định nghĩa trong base.css hoặc một file global) --- */
+/* :root {
+    --primary-color: #198754;
+    --secondary-color: #ffffff;
+    --text-color: #212529;
+    --heading-color: #212529;
+    --accent-color: #157347;
+    --white: #ffffff;
+    --border-color: #dee2e6;
+    --bg-color: #f8f9fa;
+    --muted-color: #6c757d;
+    --dark-green-footer-bg: #157347; 
+    --active-card-bg: #146c43; 
+    --font-family: 'Montserrat', sans-serif;
+} 
+*/
+
+/* --- Item Detail Section --- */
+.item-detail-container {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.item-detail {
+    padding: 40px;
+    background-color: var(--white);
+    border-radius: 10px;
+    margin: 20px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+}
+
+.item-detail-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.item-image-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.item-main-image {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.item-main-image:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.item-info-section {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 15px 15px 0;
+}
+
+.item-title {
+    font-family: var(--font-family);
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--heading-color);
+    margin-bottom: 15px;
+    line-height: 1.3;
+}
+
+.item-price-block {
+    display: flex;
+    align-items: baseline;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.item-price-block .current-price {
+    font-size: 2.2em;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.item-price-block .original-price {
+    font-size: 1.1em;
+    color: var(--muted-color);
+    text-decoration: line-through;
+    font-weight: 500;
+}
+
+.item-description {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: var(--bg-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.item-description h3 {
+    font-family: var(--font-family);
+    font-size: 1.2em;
+    font-weight: 600;
+    color: var(--heading-color);
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+
+.item-description p {
+    font-size: 1em;
+    color: var(--text-color);
+    line-height: 1.7;
+    font-weight: 400;
+}
+
+.item-actions {
+    margin-bottom: 25px;
+}
+
+.bid-now-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: var(--white);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    display: inline-block;
+}
+
+.bid-now-btn i {
+    margin-right: 8px;
+}
+
+.bid-now-btn:hover {
+    background-color: var(--accent-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.bid-now-btn:active {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.item-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    background: var(--bg-color);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.meta-label {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--muted-color);
+    margin-bottom: 4px;
+}
+
+.meta-value {
+    font-size: 0.95em;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+/* --- Reviews Section --- */
+.reviews-section {
+    padding: 40px;
+    background-color: var(--white);
+    border-radius: 10px;
+    margin: 20px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-color);
+}
+
+.reviews-title {
+    font-family: var(--font-family);
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--heading-color);
+    margin-bottom: 20px;
+}
+
+.reviews-summary {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+
+.average-rating {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.review-count {
+    color: var(--muted-color);
+    margin-left: 10px;
+}
+
+.review-form {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: var(--bg-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.review-form h3 {
+    font-family: var(--font-family);
+    font-size: 1.2em;
+    font-weight: 600;
+    color: var(--heading-color);
+    margin-bottom: 15px;
+}
+
+.rating-input, .review-text-input {
+    margin-bottom: 15px;
+}
+
+.rating-input label, .review-text-input label {
+    display: block;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--muted-color);
+    margin-bottom: 5px;
+}
+
+.rating-input select, .review-text-input textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1em;
+    font-family: var(--font-family);
+}
+
+.review-text-input textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.submit-review-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: var(--white);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.submit-review-btn:hover {
+    background-color: var(--accent-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.login-prompt {
+    font-size: 1em;
+    color: var(--muted-color);
+}
+
+.login-prompt a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.login-prompt a:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.review-item {
+    padding: 20px;
+    background: var(--bg-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.review-rating {
+    color: #f5c518; /* Gold color for stars */
+    font-size: 1.2em;
+}
+
+.review-text {
+    font-size: 1em;
+    color: var(--text-color);
+    line-height: 1.7;
+}
+
+.review-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.edit-review-btn, .delete-review-btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.edit-review-btn {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.edit-review-btn:hover {
+    background-color: var(--accent-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.delete-review-btn {
+    background-color: #dc3545; /* Bootstrap danger color */
+    color: var(--white);
+}
+
+.delete-review-btn:hover {
+    background-color: #c82333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.no-reviews, .error-message {
+    font-size: 1em;
+    color: var(--muted-color);
+    text-align: center;
+    padding: 20px;
+    background: var(--bg-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.error-message {
+    color: #dc3545; /* Bootstrap danger color */
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    .item-detail-wrapper {
+        grid-template-columns: 1fr;
+    }
+    .item-image-section {
+        padding: 0;
+        margin-bottom: 20px;
+    }
+    .item-info-section {
+        padding: 0;
+    }
+    .item-title { font-size: 1.8em; }
+    .item-price-block .current-price { font-size: 2em; }
+    .item-price-block .original-price { font-size: 1em; }
+    .item-meta {
+        gap: 10px;
+        padding: 10px 15px;
+    }
+    .reviews-section {
+        padding: 20px;
+    }
+    .reviews-title { font-size: 1.6em; }
+    .review-form { padding: 15px; }
+    .submit-review-btn { padding: 10px 20px; }
+}

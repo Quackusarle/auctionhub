@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title|default:"Sản phẩm đang đấu giá" }} - AuctionHub{% endblock %}
+
+{% block page_specific_css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/my_active_bids.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="container my-active-bids-container mt-4 mb-5">
+    <h1 class="page-title mb-4">{{ page_title|default:"Sản phẩm bạn đang theo dõi/đấu giá" }}</h1>
+
+    <div id="cancel-bid-message-area" class="mb-3"></div> {% if active_bids_info %}
+        <div class="table-responsive">
+            <table class="table my-active-bids-table table-hover">
+                <thead class="table-dark-custom">
+                    <tr>
+                        <th scope="col" class="col-product">Sản phẩm</th>
+                        <th scope="col" class="col-price">Giá hiện tại</th>
+                        <th scope="col" class="col-price">Giá của bạn</th>
+                        <th scope="col" class="col-seller">Người bán</th>
+                        <th scope="col" class="col-time">TG còn lại</th>
+                        <th scope="col" class="col-status">Trạng thái</th>
+                        <th scope="col" class="col-action">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for thong_tin in active_bids_info %}
+                    <tr id="item-row-{{ thong_tin.item.pk }}">
+                        <td data-label="Sản phẩm" class="product-cell">
+                            <a href="{% if thong_tin.item.get_absolute_url %}{{ thong_tin.item.get_absolute_url }}{% else %}{% url 'item-detail-template' pk=thong_tin.item.pk %}{% endif %}" class="product-link">
+                                <img src="{% if thong_tin.item.image_url %}{{ thong_tin.item.image_url.url }}{% else %}{% static 'images/placeholder_item_400x300.png' %}{% endif %}"
+                                    alt="{{ thong_tin.item.name }}" class="product-thumbnail">
+                                <span class="product-name">{{ thong_tin.item.name }}</span>
+                            </a>
+                        </td>
+                        <td data-label="Giá hiện tại" class="price-cell current-item-price-{{ thong_tin.item.pk }}">
+                            {{ thong_tin.item.current_price|default:thong_tin.item.starting_price|floatformat:0|intcomma }} VNĐ
+                        </td>
+                        <td data-label="Giá của bạn" class="price-cell your-bid-cell your-bid-{{ thong_tin.item.pk }}">
+                            {% if thong_tin.gia_cao_nhat_cua_toi > 0 %}
+                                {{ thong_tin.gia_cao_nhat_cua_toi|floatformat:0|intcomma }} VNĐ
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td data-label="Người bán">
+                            {{ thong_tin.item.seller.email|default:"N/A" }}
+                        </td>
+                        <td data-label="Thời gian kết thúc">
+                            {% if thong_tin.item.end_time > now %}
+                                {{ thong_tin.item.end_time|timeuntil }}
+                            {% else %}
+                                {{ thong_tin.item.end_time|date:"H:i, d/m/Y" }}
+                            {% endif %}
+                        </td>
+                        <td data-label="Trạng thái" class="status-cell-{{ thong_tin.item.pk }}">
+                            <span class="status-badge status-{{ thong_tin.trang_thai_cho_toi|slugify }}">
+                                {{ thong_tin.trang_thai_cho_toi }}
+                            </span>
+                        </td>
+                        <td data-label="Hành động" class="action-cell action-cell-{{ thong_tin.item.pk }}">
+                            {% if thong_tin.chu_tren_nut_hanh_dong %}
+                                {# URL đã được xây dựng trong view, bao gồm cả URL cho wallet hoặc trang chi tiết #}
+                                <a href="{{ thong_tin.url_cho_nut_hanh_dong }}" class="btn btn-sm {{ thong_tin.class_css_cho_nut_hanh_dong|default:'btn-primary' }} w-100">
+                                    {{ thong_tin.chu_tren_nut_hanh_dong }}
+                                </a>
+                                {# Hiển thị nút hủy nếu trạng thái là Đang đấu giá và user có bid #}
+                                {% if thong_tin.trang_thai_cho_toi == "Dang dau gia" and thong_tin.hien_thi_nut_huy_dau_gia and thong_tin.bid_id_cao_nhat_cua_toi %}
+                                <button type="button" class="btn btn-sm btn-outline-secondary btn-cancel-bid w-100 mt-1"
+                                        data-item-id="{{ thong_tin.item.pk }}"
+                                        data-bid-id="{{ thong_tin.bid_id_cao_nhat_cua_toi }}"
+                                        onclick="handleCancelBid('{{ thong_tin.item.pk }}', '{{ thong_tin.bid_id_cao_nhat_cua_toi }}', this)">
+                                    Hủy
+                                </button>
+                                {% endif %}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            Bạn hiện không tham gia đấu giá hoặc theo dõi sản phẩm nào.
+        </div>
+    {% endif %}
+</main>
+{% endblock %}
+
+{% block page_specific_js %}
+{{ block.super }}
+<script>
+function showGlobalMessage(message, type = 'info') {
+    const messageArea = document.getElementById('cancel-bid-message-area');
+    if (messageArea) {
+        messageArea.innerHTML = ''; // Clear previous messages
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type === 'error' ? 'danger' : (type === 'success' ? 'success' : 'info')} alert-dismissible fade show`;
+        alertDiv.setAttribute('role', 'alert');
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        messageArea.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            const existingAlert = messageArea.querySelector('.alert');
+            if (existingAlert) {
+                // Check if Bootstrap's Alert class is available and try to use its close method
+                if (typeof bootstrap !== 'undefined' && bootstrap.Alert && bootstrap.Alert.getInstance(existingAlert)) {
+                     bootstrap.Alert.getInstance(existingAlert).close();
+                } else {
+                    // Fallback if Bootstrap JS for Alert is not loaded or fails
+                    existingAlert.classList.remove('show');
+                    setTimeout(() => existingAlert.remove(), 150); // Allow fade out animation
+                }
+            }
+        }, 7000);
+    }
+}
+
+async function handleCancelBid(itemId, bidId, buttonElement) {
+    if (!confirm('Bạn có chắc chắn muốn hủy lượt đặt giá cao nhất hiện tại cho sản phẩm này không? Hành động này không thể hoàn tác.')) {
+        return;
+    }
+
+    buttonElement.disabled = true;
+    buttonElement.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang hủy...';
+
+    const csrfToken = "{{ csrf_token_value }}"; 
+
+    try {
+        const response = await fetch("{% url 'cancel_my_bid_api' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                item_id: itemId
+            })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            showGlobalMessage(result.message || 'Đã hủy bid thành công!', 'success');
+            // Tải lại trang để cập nhật đầy đủ thông tin
+            // Đây là cách đơn giản nhất để đảm bảo UI đồng bộ
+            window.location.reload(); 
+
+        } else {
+            showGlobalMessage(result.error || 'Lỗi khi hủy bid. Vui lòng thử lại.', 'error');
+             buttonElement.disabled = false;
+             buttonElement.textContent = 'Hủy';
+        }
+    } catch (error) {
+        console.error('Lỗi JavaScript khi hủy bid:', error);
+        showGlobalMessage('Lỗi kết nối hoặc lỗi không xác định. Vui lòng thử lại.', 'error');
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Hủy';
+    }
+}
+</script>
+{% endblock %}

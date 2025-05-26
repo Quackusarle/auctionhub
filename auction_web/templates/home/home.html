@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %} {# Thêm load static nếu chưa có ở đầu file, mặc dù bạn đã dùng /static/ #}
+
+{% block title %}Trang Chủ - AuctionHub Đấu Giá Độc Quyền{% endblock %}
+
+{% block page_specific_css %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" /> {# Nên dùng template tag static #}
+{% endblock %}
+
+{% block content %}
+    <section class="hero-section plant-theme-hero">
+        <div class="container hero-container">
+            <div class="hero-text-content">
+                <h1>
+                    Khám Phá Phiên<br /><span class="highlight">Đấu Giá</span> Độc Quyền
+                </h1>
+                <p class="hero-subtitle">
+                    Tìm kiếm những món đồ độc đáo từ khắp nơi trên thế giới với mức giá tốt nhất.
+                    Tham gia ngay để không bỏ lỡ!
+                </p>
+                <a href="#listings-section" class="btn btn-primary btn-lg hero-btn">Khám Phá Ngay <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="hero-image-content">
+                <img src="{% static 'images/logo.png' %}" alt="Sản phẩm đấu giá độc quyền nổi bật" /> {# Nên dùng template tag static #}
+            </div>
+        </div>
+    </section>
+
+    <div class="container page-section">
+        <main class="site-main">
+            <section class="listings" id="listings-section">
+                <div class="section-title-wrapper">
+                    <h2>Phiên Đấu Giá Nổi Bật</h2>
+                    <p class="section-subtitle">Những sản phẩm đang được quan tâm nhất hiện nay.</p>
+                </div>
+                <div id="item-grid-container">
+                    <p id="loading-items-message" class="loading-message" style="grid-column: 1 / -1;">
+                        <i class="fas fa-spinner fa-spin"></i> Đang tải danh sách sản phẩm...
+                    </p>
+                    <!-- Các item card sẽ được JS chèn vào đây -->
+                </div>
+
+                <div class="text-center mt-5 mb-4">
+                    <a href="{% url 'item-list' %}" class="btn btn-outline-primary btn-lg view-all-items-btn">
+                        Xem Tất Cả Sản Phẩm <i class="fas fa-th-large ms-2"></i>
+                    </a>
+                </div>
+
+            </section>
+        </main>
+    </div>
+{% endblock %}
+
+{% block page_specific_js %}
+    <script src="{% static 'js/home.js' %}"></script> {# Nên dùng template tag static #}
+{% endblock %}

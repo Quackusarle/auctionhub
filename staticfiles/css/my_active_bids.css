@@ -1,0 +1,358 @@
+/* static/css/my_active_bids.css */
+
+.my-active-bids-container .page-title {
+    color: var(--heading-color);
+    font-weight: 700;
+    border-bottom: 2px solid var(--primary-color);
+    display: inline-block;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem !important;
+}
+
+#cancel-bid-message-area .alert {
+    font-size: 0.9rem;
+}
+
+.my-active-bids-table {
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+}
+
+.my-active-bids-table thead.table-dark-custom {
+    background-color: var(--heading-color);
+    color: var(--white);
+}
+
+.my-active-bids-table thead.table-dark-custom th {
+    border-bottom-width: 0;
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    font-weight: 600;
+    /* Mặc định căn trái cho các tiêu đề */
+    text-align: left;
+}
+
+/* Căn trái tiêu đề cột "Người bán" (đã là mặc định) */
+/* Không cần quy tắc riêng nếu mặc định là left */
+/* .my-active-bids-table thead.table-dark-custom th.col-seller {
+    text-align: left;
+} */
+
+/* Căn giữa tiêu đề cột "Thời gian còn lại" */
+.my-active-bids-table thead.table-dark-custom th.col-time {
+    text-align: left;
+}
+
+/* Căn giữa tiêu đề cột "Trạng thái" */
+.my-active-bids-table thead.table-dark-custom th.col-status {
+    text-align: center;
+}
+
+/* Căn giữa tiêu đề cột "Hành động" */
+.my-active-bids-table thead.table-dark-custom th.col-action {
+    text-align: center;
+}
+
+.my-active-bids-table thead.table-dark-custom th.col-seller {
+    text-align: right;
+}
+
+
+.my-active-bids-table tbody td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.my-active-bids-table tbody td[data-label="Người bán"] {
+    text-align: center;
+}
+
+/* Căn giữa nội dung ô "Thời gian còn lại" */
+.my-active-bids-table tbody td[data-label="Thời gian còn lại"] { /* Đổi data-label cho phù hợp */
+    text-align: left;
+}
+
+
+/* Căn giữa nội dung ô "Trạng thái" (chứa badge) */
+.my-active-bids-table tbody td[data-label="Trạng thái"] {
+    text-align: center;
+}
+
+.my-active-bids-table tbody tr:hover {
+    background-color: rgba(var(--primary-rgb), 0.05);
+}
+
+.product-cell {
+    min-width: 250px;
+}
+.product-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-color);
+}
+.product-link:hover .product-name {
+    color: var(--primary-color);
+}
+.product-thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 15px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+}
+.product-name {
+    font-weight: 600;
+    font-size: 1em;
+}
+
+.price-cell {
+    font-weight: 500;
+    color: var(--primary-color);
+    min-width: 130px;
+    text-align: right; /* Căn phải cho các ô giá */
+}
+.my-active-bids-table thead.table-dark-custom th.col-price {
+    text-align: right; /* Căn phải cho tiêu đề giá */
+}
+
+.your-bid-cell {
+    color: var(--accent-color);
+}
+
+.col-seller { min-width: 180px; } /* Tăng độ rộng cho cột người bán nếu cần */
+.col-time { min-width: 150px; }
+.col-status { min-width: 140px; }
+.col-action { min-width: 150px; text-align: center;} /* Giảm nhẹ để cân đối */
+
+
+.status-badge {
+    padding: 0.4em 0.8em;
+    border-radius: 4px;
+    font-weight: 700;
+    white-space: nowrap;
+    display: inline-block;
+    text-transform: uppercase;
+    vertical-align: middle;
+    line-height: 1.4;
+}
+
+.status-dang-dau-gia {
+    background-color: transparent;
+    color: var(--accent-color) !important;
+    font-weight: 700;
+    font-size: 1.05em;
+    padding: 0;
+    letter-spacing: 0.5px;
+}
+
+/* ... (Các style .status-badge khác giữ nguyên) ... */
+.status-dau-gia-thanh-cong {
+    background-color: #28a745;
+    color: var(--white);
+    font-size: 0.9em;
+}
+.status-da-thanh-toan {
+    background-color: #17a2b8;
+    color: var(--white);
+    font-size: 0.9em;
+}
+.status-dau-gia-that-bai {
+    background-color: #dc3545;
+    color: var(--white);
+    font-size: 0.9em;
+}
+.status-phien-bi-huy {
+    background-color: #ffc107;
+    color: var(--text-color) !important;
+    font-size: 0.9em;
+}
+
+
+.action-cell .btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+    margin: 2px 0;
+    font-weight: 600;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+.action-buttons-stacked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* ... (Các style cho nút giữ nguyên) ... */
+.action-buttons-stacked .btn-bid-again {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--white);
+}
+.action-buttons-stacked .btn-bid-again:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.action-buttons-stacked .btn-cancel-bid {
+    background-color: var(--white);
+    border: 1px solid var(--muted-color);
+    color: var(--muted-color);
+}
+.action-buttons-stacked .btn-cancel-bid:hover {
+    background-color: #f8f9fa;
+    color: var(--text-color);
+}
+
+.action-cell .btn-success {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.action-cell .btn-success:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+.action-cell .btn-primary { /* Nút mặc định trong các trường hợp khác */
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.action-cell .btn-primary:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+.action-cell .btn-info {
+    background-color: #0dcaf0;
+    border-color: #0dcaf0;
+}
+.action-cell .btn-info:hover {
+    background-color: #0b90a8;
+    border-color: #0b90a8;
+}
+.action-cell .btn-secondary {
+    background-color: var(--muted-color);
+    border-color: var(--muted-color);
+}
+.action-cell .btn-secondary:hover {
+    background-color: #545b62;
+    border-color: #545b62;
+}
+.action-cell .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+.action-cell .btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #e0a800;
+}
+
+
+/* Responsive cho bảng */
+@media (max-width: 992px) {
+    .my-active-bids-table thead {
+        display: none;
+    }
+    .my-active-bids-table,
+    .my-active-bids-table tbody,
+    .my-active-bids-table tr,
+    .my-active-bids-table td {
+        display: block;
+        width: 100%;
+    }
+    .my-active-bids-table tr {
+        margin-bottom: 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        overflow: hidden;
+        background-color: var(--white);
+    }
+    .my-active-bids-table tbody td {
+        text-align: right; /* Mặc định căn phải trên mobile */
+        padding-left: 45% !important;
+        position: relative;
+        border-top: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .my-active-bids-table tbody td:last-child {
+        border-bottom: none;
+    }
+    .my-active-bids-table tbody td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        width: calc(45% - 1.5rem);
+        text-align: left; /* Label căn trái */
+        font-weight: bold;
+        color: var(--heading-color);
+        white-space: nowrap;
+    }
+
+    /* Override cho các cột cụ thể trên mobile nếu cần căn giữa/trái */
+    .my-active-bids-table tbody td[data-label="Người bán"] {
+        text-align: right; /* Vẫn giữ căn phải cho Người bán trên mobile */
+    }
+    .my-active-bids-table tbody td[data-label="Thời gian còn lại"], /* Đổi data-label */
+    .my-active-bids-table tbody td[data-label="Trạng thái"],
+    .my-active-bids-table tbody td[data-label="Hành động"].action-cell {
+        text-align: center; /* Căn giữa các cột này trên mobile */
+        padding-left: 1rem !important; /* Reset padding-left để căn giữa đúng */
+    }
+     .my-active-bids-table tbody td[data-label="Thời gian còn lại"]::before, /* Đổi data-label */
+     .my-active-bids-table tbody td[data-label="Trạng thái"]::before,
+     .my-active-bids-table tbody td[data-label="Hành động"].action-cell::before {
+        width: auto;
+        position: relative;
+        display: block;
+        text-align: center; /* Label cũng căn giữa */
+        margin-bottom: 0.3rem;
+        font-size: 0.8rem;
+        color: var(--muted-color);
+    }
+
+
+    .product-cell, .price-cell, .col-seller, .col-time, .col-status, .col-action {
+         min-width: unset;
+    }
+    .action-buttons-stacked {
+        align-items: center;
+    }
+    .action-buttons-stacked .btn {
+        width: auto;
+        max-width: 200px;
+        display: inline-block;
+    }
+    .product-link { justify-content: flex-end; }
+    .product-link .product-name { margin-left: 10px; margin-right: 0; }
+    .product-thumbnail { order: 1; margin-right:0; margin-left: 10px; }
+}
+
+@media (max-width: 576px) {
+    .my-active-bids-container .page-title {
+        font-size: 1.5rem;
+    }
+    .my-active-bids-table tbody td {
+        padding: 0.75rem;
+        padding-left: 40% !important;
+    }
+    .my-active-bids-table tbody td::before {
+        left: 0.75rem;
+        width: calc(40% - 1rem);
+    }
+    .product-thumbnail {
+        width: 50px;
+        height: 50px;
+    }
+    .action-buttons-stacked .btn {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.7rem;
+    }
+}

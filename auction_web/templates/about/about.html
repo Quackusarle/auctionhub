@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Về Chúng Tôi - AuctionHub{% endblock %}
+
+{% block page_specific_css %}
+    <link rel="stylesheet" href="{% static 'css/about.css' %}">
+{% endblock %}
+
+{% block content %}
+<main>
+    <section id="hero" class="about-hero-section">
+        <div class="container about-hero-container">
+            <div class="about-hero-text-content">
+                <h1 class="about-hero-heading">
+                    <span id="typed-greeting"></span> <span class="highlight">AuctionHub</span>
+                </h1>
+                <p class="lead about-hero-subtitle">
+                    <span id="typed-tagline"></span>
+                </p>
+                <div class="about-hero-buttons">
+                    <a href="#about-us" class="btn btn-lg about-btn-primary">Tìm hiểu thêm</a>
+                    <a href="#contact-info" class="btn btn-lg btn-secondary about-btn-secondary">Liên hệ chúng tôi</a>
+                </div>
+            </div>
+            {# Xóa phần hero-image-content ở đây #}
+        </div>
+    </section>
+
+    <section id="about-us" class="about-content-section bg-secondary-override">
+        <div class="container">
+            <div class="section-header">
+                <span class="subtitle">Chúng tôi là ai</span>
+                <h2>Về AuctionHub</h2>
+                <p>AuctionHub là sàn đấu giá trực tuyến hàng đầu, được phát triển nhằm tạo ra một nền tảng giao dịch minh bạch và hiệu quả, cho phép người dùng tham gia đấu giá sản phẩm theo thời gian thực. Hệ thống tập trung vào việc xây dựng một kiến trúc backend mạnh mẽ và có khả năng mở rộng cao, hỗ trợ nhiều giao dịch đồng thời mà không làm giảm hiệu suất.
+                </p>
+            </div>
+            <div class="about-grid-blocks">
+                <div class="about-block-item">
+                    <div class="about-icon"><i class="fas fa-eye"></i></div>
+                    <h3>Minh Bạch & Công Bằng</h3>
+                    <p>Chúng tôi cam kết cung cấp một môi trường đấu giá công bằng và an toàn, nơi mọi giao dịch đều diễn ra minh bạch. Hệ thống luôn đảm bảo tính toàn vẹn của dữ liệu và quy trình đấu giá.</p>
+                </div>
+                <div class="about-block-item">
+                    <div class="about-icon"><i class="fas fa-handshake"></i></div>
+                    <h3>Trải Nghiệm An Toàn & Tiện Lợi</h3>
+                    <p>AuctionHub mang đến cơ hội sở hữu những sản phẩm độc đáo với giá cạnh tranh, cùng với trải nghiệm mua sắm an toàn và tiện lợi cho mọi người dùng.
+                    </p>
+                </div>
+                <div class="about-block-item">
+                    <div class="about-icon"><i class="fas fa-cubes"></i></div>
+                    <h3>Kiến Trúc Mạnh Mẽ & Mở Rộng</h3>
+                    <p>Hệ thống được xây dựng với kiến trúc backend mạnh mẽ, có khả năng mở rộng cao, hỗ trợ nhiều giao dịch đồng thời mà không làm giảm hiệu suất.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="team" class="about-content-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="subtitle">Gặp gỡ những người tạo ra</span>
+                <h2>Đội Ngũ Phát Triển</h2>
+                <p>Đội ngũ của chúng tôi luôn nỗ lực không ngừng để cải thiện dịch vụ, đảm bảo sự hài lòng của khách hàng. Chúng tôi tin rằng con người là yếu tố cốt lõi, và đội ngũ AuctionHub chính là tài sản quý giá nhất của chúng tôi.</p>
+            </div>
+            <div class="team-members-grid">
+                <div class="team-member-card">
+                    <img src="{% static 'images/team_hung.jpg' %}" alt="Nguyễn Đình Hưng">
+                    <h4>Nguyễn Đình Hưng</h4>
+                    <p class="team-role">Backend Developer</p>
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="team-member-card">
+                    <img src="{% static 'images/team_huy.jpg' %}" alt="Trần Quang Huy">
+                    <h4>Trần Quang Huy</h4>
+                    <p class="team-role">Frontend Developer</p>
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="team-member-card">
+                    <img src="{% static 'images/team_hoang.jpg' %}" alt="Trần Việt Hoàng">
+                    <h4>Trần Việt Hoàng</h4>
+                    <p class="team-role">Database Administrator</p>
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="team-member-card">
+                    <img src="{% static 'images/team_dat.jpg' %}" alt="Hoàng Quốc Đạt">
+                    <h4>Hoàng Quốc Đạt</h4>
+                    <p class="team-role">UI/UX Designer</p>
+                    <div class="team-social">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="technology" class="about-content-section bg-secondary-override">
+        <div class="container">
+            <div class="section-header">
+                <span class="subtitle">Nền tảng công nghệ</span>
+                <h2>Kiến Trúc & Công Nghệ</h2>
+                <p>Hệ thống đấu giá trực tuyến của chúng tôi được xây dựng trên nền tảng công nghệ vững chắc để đảm bảo hiệu suất và bảo mật tối ưu.
+                </p>
+            </div>
+            <div class="tech-stack-grid">
+                <div class="tech-item">
+                    <i class="fab fa-python tech-icon"></i>
+                    <h3>Django 4.2</h3>
+                    <p>Framework chính, cung cấp cấu trúc MVC hoàn chỉnh, bảo mật mạnh mẽ và dễ mở rộng.</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-code tech-icon"></i>
+                    <h3>Django REST Framework</h3>
+                    <p>Xây dựng các API RESTful với tính năng bảo mật cao, dễ dàng tương tác với hệ thống.</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-database tech-icon"></i>
+                    <h3>MySQL 8.0</h3>
+                    <p>Hệ quản trị cơ sở dữ liệu quan hệ, đáp ứng yêu cầu giao dịch phức tạp với tính ổn định cao.</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-bolt tech-icon"></i>
+                    <h3>Redis</h3>
+                    <p>Xử lý cache và các tác vụ real-time, giúp giảm thiểu độ trễ.</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-sync-alt tech-icon"></i>
+                    <h3>Celery</h3>
+                    <p>Quản lý các tác vụ bất đồng bộ, xử lý công việc nền mà không gián đoạn người dùng.</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-key tech-icon"></i>
+                    <h3>JWT</h3>
+                    <p>Cơ chế xác thực hiện đại, bảo vệ API, đảm bảo người dùng truy cập tài nguyên đã được xác thực.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="security" class="about-content-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="subtitle">Bảo mật là ưu tiên hàng đầu</span>
+                <h2>An Toàn & Bảo Mật</h2>
+                <p>Hệ thống AuctionHub áp dụng các biện pháp bảo mật tiên tiến để bảo vệ dữ liệu và đảm bảo trải nghiệm đấu giá an toàn cho người dùng.</p>
+            </div>
+            <div id="security-tree-container">
+                <div class="security-trunk"></div>
+                <ul class="security-branch">
+                    <li>
+                        <div class="security-title">Xác thực 2 lớp với JWT</div>
+                        <div class="security-description">Tăng cường bảo mật khi đăng nhập và xác thực các yêu cầu API.</div>
+                    </li>
+                    <li>
+                        <div class="security-title">Mã hóa dữ liệu nhạy cảm</div>
+                        <div class="security-description">Dữ liệu nhạy cảm như mật khẩu và thông tin tài chính được mã hóa bằng AES-256 để đảm bảo an toàn tuyệt đối.</div>
+                    </li>
+                    <li>
+                        <div class="security-title">Kiểm tra đầu vào chống SQL Injection</div>
+                        <div class="security-description">Đảm bảo các truy vấn đến cơ sở dữ liệu luôn được kiểm tra và xử lý an toàn.</div>
+                    </li>
+                    <li>
+                        <div class="security-title">Giới hạn request phòng chống DDoS</div>
+                        <div class="security-description">Hệ thống áp dụng các biện pháp hạn chế số lượng request từ một địa chỉ IP trong một khoảng thời gian nhất định.</div>
+                    </li>
+                </ul>
+            </div>
+            <div class="section-header" style="margin-top: 60px;">
+                <h3>Các biện pháp bảo mật khác</h3>
+            </div>
+            <ul class="security-list-features">
+                <li><i class="fas fa-check-circle"></i> Cơ chế xác thực hiện đại giúp bảo vệ API, đảm bảo người dùng chỉ có thể truy cập các tài nguyên của hệ thống khi đã được xác thực đúng đắn.</li>
+                <li><i class="fas fa-check-circle"></i> Dữ liệu nhạy cảm được mã hóa để đảm bảo an toàn tuyệt đối.</li>
+                <li><i class="fas fa-check-circle"></i> Áp dụng các biện pháp hạn chế số lượng request để tránh tình trạng tấn công từ chối dịch vụ (DDoS).</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="future-development" class="about-content-section bg-secondary-override">
+        <div class="container">
+            <div class="section-header">
+                <span class="subtitle">Tầm nhìn tương lai</span>
+                <h2>Hướng Phát Triển</h2>
+                <p>Hệ thống có thể được phát triển và mở rộng trong tương lai thông qua các giải pháp sau:
+                </p>
+            </div>
+            <div class="future-dev-grid">
+                <div class="future-dev-item">
+                    <i class="fas fa-cogs future-icon"></i>
+                    <h3>Hệ thống Microservice</h3>
+                    <p>Phân chia các thành phần của hệ thống thành các dịch vụ độc lập, tối ưu hiệu suất và khả năng mở rộng.</p>
+                </div>
+                <div class="future-dev-item">
+                    <i class="fas fa-robot future-icon"></i>
+                    <h3>Tích hợp AI phát hiện gian lận</h3>
+                    <p>Sử dụng trí tuệ nhân tạo để nhận diện các hành vi gian lận trong quá trình đấu giá.</p>
+                </div>
+                <div class="future-dev-item">
+                    <i class="fas fa-gavel future-icon"></i>
+                    <h3>Cơ chế đấu giá tự động thông minh</h3>
+                    <p>Tích hợp thuật toán tự động giúp đấu giá diễn ra nhanh chóng, đồng thời giảm thiểu sự can thiệp của người dùng và đảm bảo mọi cuộc đấu giá đều được xử lý công bằng.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="present" class="about-content-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="subtitle">Một chút niềm vui</span>
+                <h2>Nhấn vào hộp quà!</h2>
+            </div>
+            <div class="gift-box-container" id="giftBox">
+                <i class="fas fa-gift"></i>
+            </div>
+        </div>
+        <div class="present-effect-overlay" id="presentEffectOverlay">
+            {# Content for effects will be injected here by JS #}
+        </div>
+        <div class="matrix-code-rain" id="matrixRainEffect"></div>
+    </section>
+
+    <section id="contact-info" class="about-content-section bg-secondary-override">
+        <div class="container">
+            <div class="section-header">
+                <span class="subtitle">Liên hệ chúng tôi</span>
+                <h2>Thông Tin Liên Hệ</h2>
+                <p>Nếu có bất kỳ thắc mắc hay góp ý nào, đừng ngần ngại liên hệ với chúng tôi.</p>
+            </div>
+            <div class="contact-details-grid">
+                <div class="contact-card">
+                    <i class="fas fa-map-marker-alt contact-icon"></i>
+                    <h3>Địa chỉ</h3>
+                    <p>Trường Đại Học Công Nghệ Thông Tin (UIT), ĐHQG TPHCM</p>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-phone-alt contact-icon"></i>
+                    <h3>Điện thoại</h3>
+                    <p><a href="tel:0914321432">09.1432.1432</a></p>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-envelope contact-icon"></i>
+                    <h3>Email</h3>
+                    <p><a href="mailto:support@auctionhub.com">support@auctionhub.com</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<div class="side-rocket left" id="rocketLeft"><i class="fas fa-rocket"></i></div>
+<div id="fireworks-overlay"></div>
+{% endblock content %}
+
+{% block page_specific_js %}
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fireworks-js@latest/dist/fireworks.js"></script>
+    <script src="{% static 'js/about.js' %}"></script>
+{% endblock page_specific_js %}
