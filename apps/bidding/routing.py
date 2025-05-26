@@ -1,8 +1,7 @@
 from django.urls import re_path
 from . import consumers
 
-print("DEBUG Bidding routing: Top of bidding/routing.py - This file is being loaded.") # DÒNG DEBUG
 websocket_urlpatterns = [
-    re_path(r'ws/bidding/(?P<item_id>\d+)/$', consumers.BidConsumer.as_asgi()),
+    re_path(r'ws/home/$', consumers.HomeBidConsumer.as_asgi()),  # dành cho trang home
+    re_path(r'ws/bidding/(?P<item_id>\d+)/$', consumers.BidConsumer.as_asgi()),  # dành cho từng trang đấu giá
 ]
-print(f"DEBUG Bidding routing: websocket_urlpatterns defined as: {websocket_urlpatterns}") # DÒNG DEBUG
