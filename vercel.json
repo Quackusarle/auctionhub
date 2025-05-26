@@ -6,7 +6,7 @@
         "use": "@vercel/python",
         "config": {
           "maxLambdaSize": "15mb",
-          "runtime": "python3.12.3"
+          "runtime": "python3.12"
         }
       },
       {
@@ -23,8 +23,15 @@
         "dest": "/static/$1"
       },
       {
+        "src": "/media/(.*)",
+        "dest": "/media/$1"
+      },
+      {
         "src": "/(.*)",
         "dest": "auctionhub/wsgi.py"
       }
-    ]
+    ],
+    "env": {
+      "DJANGO_SETTINGS_MODULE": "auction_web.settings"
+    }
   }
