@@ -122,7 +122,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',  # Sử dụng PostgreSQL
         'NAME': 'auctiondb',
         'USER': 'postgres',
-        'PASSWORD': '123456',
+        'PASSWORD': '18112005',
         'HOST': 'localhost',
         'PORT': '5432',  # Mặc định PostgreSQL chạy trên port 5432
     }
