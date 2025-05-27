@@ -37,22 +37,10 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'fallback_secret_key_if_not_in_env_but_plea
 # Giá trị 'False' (chuỗi) sẽ là False. 'True' (chuỗi) sẽ là True.
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
-# Vercel sẽ tự động cung cấp biến môi trường VERCEL_URL
-# Chúng ta sẽ thêm nó vào ALLOWED_HOSTS khi nó tồn tại
-VERCEL_DEPLOYMENT_URL = os.getenv('VERCEL_URL')
-if VERCEL_DEPLOYMENT_URL:
-    # VERCEL_URL có dạng https://<domain>, chúng ta chỉ cần phần domain
-    ALLOWED_HOSTS.append(VERCEL_DEPLOYMENT_URL.replace('https://', ''))
+# --- ALLOWED_HOSTS ---
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'auctionhub-theta.vercel.app']
 
-# Thêm tên miền tùy chỉnh của bạn nếu có (đọc từ .env hoặc hardcode nếu ít thay đổi)
-PRODUCTION_HOST = os.getenv('PRODUCTION_HOST') # Ví dụ: auctionhub.yourcustomdomain.com
-if PRODUCTION_HOST:
-    ALLOWED_HOSTS.append(PRODUCTION_HOST)
-
-# Nếu bạn vẫn muốn hardcode tên miền Vercel cụ thể (nhưng VERCEL_URL ở trên linh hoạt hơn)
-# ALLOWED_HOSTS.append('auctionhub.vercel.app')
-
+PRODUCTION_HOST = ['auctionhub-theta.vercel.app']
 
 # Application definition
 
@@ -99,26 +87,6 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
     # 'whitenoise.middleware.WhiteNoiseMiddleware', # Đã có ở trên, xóa dòng này
 ]
-
-
-# Cấu hình CORS
-# Nếu DEBUG là True, cho phép tất cả. Ngược lại, sử dụng danh sách cụ thể.
-if DEBUG:
-    CORS_ALLOW_ALL_ORIGINS = True
-else:
-    CORS_ALLOW_ALL_ORIGINS = False
-    CORS_ALLOWED_ORIGINS = [
-        # "http://localhost:3000", # Frontend local
-        # "http://127.0.0.1:3000",
-        f"https://{VERCEL_DEPLOYMENT_URL.replace('https://', '')}" if VERCEL_DEPLOYMENT_URL else "", # URL Vercel
-        f"https://{PRODUCTION_HOST}" if PRODUCTION_HOST else "", # Domain tùy chỉnh
-        # Thêm các domain frontend khác của bạn khi deploy
-    ]
-    # Loại bỏ các chuỗi rỗng nếu biến môi trường không được đặt
-    CORS_ALLOWED_ORIGINS = [origin for origin in CORS_ALLOWED_ORIGINS if origin]
-    if not CORS_ALLOWED_ORIGINS: # Nếu không có origin nào được cấu hình cho production, có thể là lỗi
-        print("CORS_ALLOWED_ORIGINS is empty in production. This might block frontend access.")
-
 
 ROOT_URLCONF = 'auction_web.urls'
 
@@ -262,6 +230,7 @@ ACCOUNT_EMAIL_REQUIRED = True # Email là bắt buộc
 ACCOUNT_UNIQUE_EMAIL = True # Email phải là duy nhất
 ACCOUNT_EMAIL_VERIFICATION = os.getenv('ACCOUNT_EMAIL_VERIFICATION', "mandatory") # "mandatory", "optional", hoặc "none"
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True # Tự động đăng nhập sau khi xác thực email
+ACCOUNT_USERNAME_REQUIRED = False
 
 
 LOGIN_REDIRECT_URL = os.getenv('LOGIN_REDIRECT_URL', "/")
@@ -298,7 +267,7 @@ WEBSITE_BANK_ACCOUNT_NAME = os.getenv("WEBSITE_BANK_ACCOUNT_NAME")
 WEBSITE_BANK_ACQ_ID = os.getenv("WEBSITE_BANK_ACQ_ID")
 
 
-# Logging (ví dụ cơ bản, bạn có thể mở rộng)
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

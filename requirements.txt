@@ -3,13 +3,17 @@ asgiref==3.8.1
 based==0.7.0
 certifi==2025.4.26
 cffi==1.17.1
+channels==4.2.2
 charset-normalizer==3.4.1
 click==8.1.8
+cloudinary==1.44.0
 cryptography==44.0.2
 deptry==0.23.0
-Django==5.2
-django-allauth==65.7.0
+dj-database-url==2.3.0
+Django==5.1.6
+django-allauth==0.57.0
 django-cors-headers==4.7.0
+django-otp==1.6.0
 djangorestframework==3.16.0
 djangorestframework_simplejwt==5.5.0
 greenlet==3.2.2
@@ -33,6 +37,7 @@ PyYAML==6.0.2
 requests==2.32.3
 requirements-parser==0.11.0
 setuptools==80.4.0
+six==1.17.0
 SQLAlchemy==2.0.40
 sqlparse==0.5.3
 termcolor==3.1.0
@@ -43,7 +48,4 @@ urllib3==2.4.0
 urwid==3.0.2
 wcwidth==0.2.13
 wheel==0.45.1
-channels==4.2.2
 whitenoise==6.9.0
-cloudinary==1.44.0
-python-dotenv==1.1.0
