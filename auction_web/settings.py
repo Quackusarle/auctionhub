@@ -38,9 +38,9 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'fallback_secret_key_if_not_in_env_but_plea
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # --- ALLOWED_HOSTS ---
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'https://auctionhub-theta.vercel.app/']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'auctionhub-theta.vercel.app']
 
-PRODUCTION_HOST = ['https://auctionhub-theta.vercel.app/']
+PRODUCTION_HOST = ['auctionhub-theta.vercel.app']
 
 # Application definition
 
