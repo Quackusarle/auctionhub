@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
       {
-        "src": "auctionhub/wsgi.py",
+        "src": "auction_web/wsgi.py",
         "use": "@vercel/python",
         "config": {
           "maxLambdaSize": "15mb",
@@ -28,10 +28,10 @@
       },
       {
         "src": "/(.*)",
-        "dest": "auctionhub/wsgi.py"
+        "dest": "auction_web/wsgi.py"
       }
     ],
     "env": {
-      "DJANGO_SETTINGS_MODULE": "auctionhub.settings"
+      "DJANGO_SETTINGS_MODULE": "auction_web.settings"
     }
   }
