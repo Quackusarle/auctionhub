@@ -2,6 +2,9 @@
 
 echo "BUILD START"
 
+echo "Installing requirements..."
+pip3 install -r requirements.txt
+
 echo "Running system checks..."
 python3 manage.py check --deploy
 
