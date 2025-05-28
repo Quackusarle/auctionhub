@@ -16,6 +16,7 @@ import os
 import sys
 from dotenv import load_dotenv
 import dj_database_url # Thêm import này
+import cloudinary
 
 # Tìm đến file .env và đọc các biến trong đó vào môi trường
 # Tệp .env nên nằm ở thư mục gốc của dự án (cùng cấp với manage.py)
@@ -289,3 +290,13 @@ LOGGING = {
         },
     },
 }
+
+CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME')
+CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY')
+CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET')
+
+cloudinary.config(
+    cloud_name=CLOUDINARY_CLOUD_NAME,
+    api_key=CLOUDINARY_API_KEY,
+    api_secret=CLOUDINARY_API_SECRET,
+)
