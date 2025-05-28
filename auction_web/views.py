@@ -1,6 +1,8 @@
 # auction_web/views.py
 from django.shortcuts import render # Bỏ get_object_or_404 và HttpResponse nếu không dùng nữa
-# from django.http import HttpResponse # Không cần nếu không dùng
+from django.http import HttpResponse
+from django.conf import settings
+import os
 # from apps.items.models import Item # Giữ lại nếu bạn dùng ở đâu đó trong file này
 
 # --- KHÔNG CÒN DỮ LIỆU MẪU Ở ĐÂY ---
@@ -21,6 +23,21 @@ def profile_view(request):
 
 def about(request):
     return render(request, 'about/about.html')
+
+def robots_txt(request):
+    """Serve robots.txt file"""
+    robots_path = os.path.join(settings.BASE_DIR, 'auction_web', 'static', 'robots.txt')
+    try:
+        with open(robots_path, 'r') as f:
+            robots_content = f.read()
+        return HttpResponse(robots_content, content_type='text/plain')
+    except FileNotFoundError:
+        # Fallback robots.txt nếu file không tồn tại
+        robots_content = """User-agent: *
+Allow: /
+Sitemap: https://auctionhub.uk/sitemap.xml
+"""
+        return HttpResponse(robots_content, content_type='text/plain')
 
 # --- CÁC VIEW CHO BLOG ---
 def blog_post_list_view(request):

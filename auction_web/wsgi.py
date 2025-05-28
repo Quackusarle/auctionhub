@@ -15,4 +15,4 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'auction_web.settings')
 
 application = get_wsgi_application()
 
-app = application
+app = application  # Đặt biến `app` để tương thích với Vercel

@@ -1,7 +1,9 @@
 # auction_web/urls.py
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.sitemaps.views import sitemap
 from . import views # views của project auction_web
+from .sitemaps import sitemaps  # Import sitemaps
 from apps.items.views import item_detail_view
 from apps.items.views import item_search_view
 from apps.items.views import item_list_view
@@ -11,6 +13,10 @@ from apps.bidding.views import my_active_bids_view
 urlpatterns = [
     path('', views.home_view, name='home-template'),
     path('about/', views.about, name='about'),
+
+    # --- SITEMAP & SEO ---
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('robots.txt', views.robots_txt, name='robots_txt'),
 
     # --- URLS CHO BLOG ---
     # URL chi tiết bài viết (sử dụng slug) - PHẢI ĐẶT TRƯỚC URL danh sách

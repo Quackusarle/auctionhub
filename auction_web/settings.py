@@ -38,14 +38,15 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'fallback_secret_key_if_not_in_env_but_plea
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # --- ALLOWED_HOSTS ---
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'auctionhub-theta.vercel.app', 'auctionhub.uk', 'www.auctionhub.uk']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'auctionhub.uk', 'www.auctionhub.uk', 'auctionhub-theta.vercel.app']
 
-PRODUCTION_HOST = ['auctionhub-theta.vercel.app', 'auctionhub.uk', 'www.auctionhub.uk']
+PRODUCTION_HOST = ['auctionhub.uk', 'www.auctionhub.uk']
 
 # Application definition
 
 INSTALLED_APPS = [
     'django.contrib.sites',
+    'django.contrib.sitemaps',  # Thêm sitemaps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -236,14 +237,6 @@ ACCOUNT_USERNAME_REQUIRED = False
 LOGIN_REDIRECT_URL = os.getenv('LOGIN_REDIRECT_URL', "/")
 LOGOUT_REDIRECT_URL = os.getenv('LOGOUT_REDIRECT_URL', "/")
 
-SESSION_COOKIE_SECURE = True
-
-CSRF_COOKIE_SECURE = True
-
-SECURE_BROWSER_XSS_FILTER = True
-
-SECURE_CONTENT_TYPE_NOSNIFF = True
-
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': [
@@ -275,7 +268,7 @@ WEBSITE_BANK_ACCOUNT_NAME = os.getenv("WEBSITE_BANK_ACCOUNT_NAME")
 WEBSITE_BANK_ACQ_ID = os.getenv("WEBSITE_BANK_ACQ_ID")
 
 
-# Logging (ví dụ cơ bản, bạn có thể mở rộng)
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
