@@ -38,14 +38,15 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'fallback_secret_key_if_not_in_env_but_plea
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # --- ALLOWED_HOSTS ---
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'auctionhub-theta.vercel.app']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'auctionhub.uk', 'www.auctionhub.uk', 'auctionhub-theta.vercel.app']
 
-PRODUCTION_HOST = ['auctionhub-theta.vercel.app']
+PRODUCTION_HOST = ['auctionhub.uk', 'www.auctionhub.uk']
 
 # Application definition
 
 INSTALLED_APPS = [
     'django.contrib.sites',
+    'django.contrib.sitemaps',  # Thêm sitemaps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
