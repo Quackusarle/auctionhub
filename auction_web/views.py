@@ -39,6 +39,26 @@ Sitemap: https://auctionhub.uk/sitemap.xml
 """
         return HttpResponse(robots_content, content_type='text/plain')
 
+def sitemap_xml(request):
+    """Serve sitemap.xml file"""
+    sitemap_path = os.path.join(settings.BASE_DIR, 'auction_web', 'static', 'sitemap.xml')
+    try:
+        with open(sitemap_path, 'r') as f:
+            sitemap_content = f.read()
+        return HttpResponse(sitemap_content, content_type='application/xml')
+    except FileNotFoundError:
+        # Fallback sitemap nếu file không tồn tại
+        sitemap_content = '''<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://auctionhub.uk/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+</urlset>'''
+        return HttpResponse(sitemap_content, content_type='application/xml')
+
 # --- CÁC VIEW CHO BLOG ---
 def blog_post_list_view(request):
     """
