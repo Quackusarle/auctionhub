@@ -5,7 +5,7 @@
 
 {% block content %}
 <style>
-    /* CSS bổ sung cho trang create_auction.html, sử dụng biến từ base.css */
+    /* CSS remains unchanged */
     .create-auction-container {
         max-width: 800px;
         margin: 2rem auto;
@@ -36,7 +36,6 @@
     .form-group input[type="text"],
     .form-group input[type="number"],
     .form-group input[type="datetime-local"],
-    /* .form-group input[type="file"], Bỏ đi kiểu dáng cho input file */
     .form-group textarea,
     .form-group select {
         width: 100%;
@@ -47,17 +46,10 @@
         font-size: 1rem;
         transition: border-color 0.3s ease;
     }
-    
-    /* Bỏ đi padding riêng cho input file
-    .form-group input[type="file"] {
-        padding: 0.5rem;
-    }
-    */
 
     .form-group input[type="text"]:focus,
     .form-group input[type="number"]:focus,
     .form-group input[type="datetime-local"]:focus,
-    /* .form-group input[type="file"]:focus, Bỏ đi focus cho input file */
     .form-group textarea:focus,
     .form-group select:focus {
         border-color: var(--primary-color);
@@ -102,9 +94,9 @@
     }
 
     .message.error {
-        background-color: #f8d7da; /* Màu nền cho lỗi */
-        color: #721c24; /* Màu chữ cho lỗi */
-        border: 1px solid #f5c6cb; /* Màu viền cho lỗi */
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
     }
 
     .error-list {
@@ -114,69 +106,79 @@
     }
 
     .error-list li {
-        color: #721c24; /* Màu chữ lỗi cụ thể */
+        color: #721c24;
         font-size: 0.9rem;
     }
 
     .form-field-error {
-        border-color: #dc3545 !important; /* Viền đỏ cho trường bị lỗi */
+        border-color: #dc3545 !important;
     }
 
-    /* Bỏ đi phần CSS cho image preview
-    .image-preview-container {
-        margin-top: 1rem;
-        text-align: center;
+    .preview-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+        width: 100%;
+        border: 1px dashed var(--border-color);
+        background: #fafafa;
+        border-radius: 4px;
+        margin-top: 0.5rem;
+        cursor: pointer;
     }
 
-    .image-preview {
+    .preview-text {
+        font-family: var(--font-family);
+        color: var(--muted-color);
+    }
+
+    .preview-image {
         max-width: 100%;
         max-height: 200px;
-        border: 1px solid var(--border-color);
+        border: 1px dotted var(--border-color);
+        object-fit: cover;
+        display: block;
+        background: #ddd;
         border-radius: 4px;
-        object-fit: contain;
     }
-    .image-preview.hidden {
-        display: none;
-    }
-    */
 
+    .upload-message {
+        text-align: center;
+        margin-top: 0.5rem;
+    }
 </style>
 
-<div class="create-auction-container">
+<div class="create-auction-container" x-data="uploader()">
     <h1><i class="fas fa-gavel"></i> Tạo Phiên Đấu Giá Mới</h1>
 
-    {# Hiển thị thông báo thành công (nếu có từ context) #}
     {% if message %}
         <div class="message success">
             {{ message }}
         </div>
     {% endif %}
 
-    {# Hiển thị thông báo lỗi chung (nếu có và không phải lỗi của từng trường) #}
-    {% if errors and errors.non_field_errors %}
+    {% if form.errors %}
         <div class="message error">
             <ul class="error-list">
-                {% for error in errors.non_field_errors %}
-                    <li>{{ error }}</li>
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
                 {% endfor %}
             </ul>
         </div>
     {% endif %}
 
-    <form method="POST" action=""> {# QUAN TRỌNG: Bỏ enctype vì không còn upload file #}
+    <form method="POST" action="" enctype="multipart/form-data">
         {% csrf_token %}
+        <input type="hidden" name="image_url" x-ref="imageUrl">
 
         <div class="form-group">
             <label for="id_name">Tên sản phẩm/phiên đấu giá:</label>
-            {% if form %}
-                {{ form.name }}
-            {% else %}
-                <input type="text" name="name" id="id_name" value="{{ form_data.name|default:'' }}"
-                       class="{% if errors.name %}form-field-error{% endif %}" required>
-            {% endif %}
-            {% if errors.name %}
+            {{ form.name }}
+            {% if form.name.errors %}
                 <ul class="error-list">
-                    {% for error in errors.name %}
+                    {% for error in form.name.errors %}
                         <li>{{ error }}</li>
                     {% endfor %}
                 </ul>
@@ -185,15 +187,10 @@
 
         <div class="form-group">
             <label for="id_description">Mô tả chi tiết:</label>
-            {% if form %}
-                {{ form.description }}
-            {% else %}
-                <textarea name="description" id="id_description"
-                          class="{% if errors.description %}form-field-error{% endif %}" required>{{ form_data.description|default:'' }}</textarea>
-            {% endif %}
-            {% if errors.description %}
+            {{ form.description }}
+            {% if form.description.errors %}
                 <ul class="error-list">
-                    {% for error in errors.description %}
+                    {% for error in form.description.errors %}
                         <li>{{ error }}</li>
                     {% endfor %}
                 </ul>
@@ -202,16 +199,10 @@
 
         <div class="form-group">
             <label for="id_starting_price">Giá khởi điểm (VNĐ):</label>
-            {% if form %}
-                {{ form.starting_price }}
-            {% else %}
-                                 <input type="number" name="starting_price" id="id_starting_price" step="1000" min="1000"
-                       value="{{ form_data.starting_price|default:'' }}"
-                       class="{% if errors.starting_price %}form-field-error{% endif %}" required>
-            {% endif %}
-            {% if errors.starting_price %}
+            {{ form.starting_price }}
+            {% if form.starting_price.errors %}
                 <ul class="error-list">
-                    {% for error in errors.starting_price %}
+                    {% for error in form.starting_price.errors %}
                         <li>{{ error }}</li>
                     {% endfor %}
                 </ul>
@@ -220,30 +211,40 @@
 
         <div class="form-group">
             <label for="id_end_time">Thời gian kết thúc:</label>
-            {% if form %}
-                {{ form.end_time }}
-            {% else %}
-                <input type="datetime-local" name="end_time" id="id_end_time"
-                       value="{{ form_data.end_time|default:'' }}"
-                       class="{% if errors.end_time %}form-field-error{% endif %}" required>
-            {% endif %}
-            {% if errors.end_time %}
+            {{ form.end_time }}
+            {% if form.end_time.errors %}
                 <ul class="error-list">
-                    {% for error in errors.end_time %}
+                    {% for error in form.end_time.errors %}
                         <li>{{ error }}</li>
                     {% endfor %}
                 </ul>
             {% endif %}
         </div>
 
-        <button type="submit" class="btn-submit-auction">Tạo Phiên Đấu Giá</button>
+        <div class="form-group">
+            <label for="file-upload">Hình ảnh sản phẩm:</label>
+            <div class="preview-container" x-on:click="$refs.fileInput.click()">
+                <img class="preview-image" x-show="imagePreview" :src="imagePreview" alt="Image preview" />
+                <div x-show="!imagePreview" class="preview-text">Click để chọn hình ảnh</div>
+            </div>
+            <input id="file-upload" type="file" accept="image/*" style="display: none;"
+                   x-ref="fileInput" x-on:change="showPreview" x-on:click="uploadMessage = ''">
+            <div class="upload-message" x-text="uploadMessage"></div>
+            {% if form.image_url.errors %}
+                <ul class="error-list">
+                    {% for error in form.image_url.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn-submit-auction" x-bind:disabled="!imageUrl">Tạo Phiên Đấu Giá</button>
     </form>
 </div>
-{% endblock %}
 
-{% block extra_js %}
+<script src="//unpkg.com/alpinejs" defer></script>
 <script>
-    // Script nhỏ để xử lý input datetime-local cho phù hợp
     document.addEventListener('DOMContentLoaded', function() {
         const endTimeInput = document.getElementById('id_end_time');
         if (endTimeInput) {
@@ -253,10 +254,82 @@
             const day = now.getDate().toString().padStart(2, '0');
             const hours = now.getHours().toString().padStart(2, '0');
             const minutes = now.getMinutes().toString().padStart(2, '0');
-            
             const minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
             endTimeInput.setAttribute('min', minDateTime);
         }
+    });
+
+    async function uploadImage(file, signatureData) {
+        console.log('Uploading image with signature data:', signatureData);
+        const formData = new FormData();
+        formData.append('signature', signatureData.signature);
+        formData.append('api_key', signatureData.api_key);
+        formData.append('timestamp', signatureData.timestamp);
+        formData.append('file', file);
+
+        const response = await fetch(signatureData.upload_url, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (response.ok) {
+            return await response.json();
+        } else {
+            throw new Error(`Upload failed: ${response.statusText}`);
+        }
+    }
+
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('uploader', () => ({
+            file: null,
+            imagePreview: '',
+            uploadMessage: '',
+            imageUrl: '',
+
+            init() {
+                console.log('Alpine uploader component initialized');
+            },
+
+            async showPreview() {
+                console.log('File input changed');
+                this.file = this.$refs.fileInput.files[0];
+                if (this.file) {
+                    console.log('File selected:', this.file.name);
+                    this.imagePreview = URL.createObjectURL(this.file);
+                    this.uploadMessage = 'Đang tải ảnh lên...';
+
+                    try {
+                        console.log('Fetching upload URL');
+                        const signatureResponse = await fetch('{% url 'get_upload_url' %}');
+                        if (!signatureResponse.ok) {
+                            throw new Error(`Failed to fetch upload URL: ${signatureResponse.statusText}`);
+                        }
+                        const signatureData = await signatureResponse.json();
+                        console.log('Signature data received:', signatureData);
+
+                        const uploadedData = await uploadImage(this.file, signatureData);
+                        console.log('Image uploaded successfully:', uploadedData);
+                        this.uploadMessage = '✅ Tải ảnh lên thành công';
+                        this.imageUrl = uploadedData.secure_url;
+                        this.$refs.imageUrl.value = this.imageUrl;
+                        console.log('Image URL set to hidden input:', this.imageUrl);
+                    } catch (error) {
+                        console.error('Upload error:', error);
+                        this.uploadMessage = `❌ ${error.message}`;
+                        this.file = null;
+                        this.imagePreview = '';
+                        this.imageUrl = '';
+                        this.$refs.imageUrl.value = '';
+                    }
+                } else {
+                    console.log('No file selected');
+                    this.imagePreview = '';
+                    this.uploadMessage = '';
+                    this.imageUrl = '';
+                    this.$refs.imageUrl.value = '';
+                }
+            }
+        }));
     });
 </script>
 {% endblock %}

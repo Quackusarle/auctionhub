@@ -1,4 +1,8 @@
 # apps/items/views.py
+from datetime import datetime
+import os
+import cloudinary
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
@@ -25,51 +29,64 @@ class ItemCreate(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        # Tạo form trống cho GET request
         form = ItemCreateForm()
         return render(request, 'items/create_item.html', {'form': form})
 
     def post(self, request):
-        # Debug: Kiểm tra dữ liệu từ form
-        print("Request POST data:", request.POST)
-        starting_price_value = request.POST.get('starting_price')
-        print(f"Starting price from form: '{starting_price_value}' (type: {type(starting_price_value)})")
-
-        # Sử dụng Django Form thay vì serializer
+        print("POST data:", request.POST)
         form = ItemCreateForm(request.POST)
         
         if form.is_valid():
             try:
-                # Tạo item nhưng chưa save để có thể gán seller
+                print("Form valid. Cleaned data:", form.cleaned_data)
                 item = form.save(commit=False)
                 item.seller = request.user
-                
-                # QUAN TRỌNG: Set current_price = starting_price khi tạo item mới
                 item.current_price = item.starting_price
-                
                 item.save()
-
+                print("Item created:", item)
                 context = {
                     'message': 'Tạo phiên đấu giá thành công!',
-                    'form': ItemCreateForm()  # Form trống cho lần tạo tiếp theo
+                    'form': ItemCreateForm()
                 }
                 return render(request, 'items/create_item.html', context)
-
             except Exception as e:
-                print(f"Error during save: {e}")
+                print(f"Save error: {e}")
                 context = {
-                    'errors': {'non_field_errors': [f'Có lỗi xảy ra trong quá trình lưu: {e}']},
+                    'errors': {'non_field_errors': [f'Lỗi: {e}']},
                     'form': form
                 }
                 return render(request, 'items/create_item.html', context)
         else:
-            # Form không hợp lệ, hiển thị lỗi
             print("Form errors:", form.errors)
             context = {
                 'errors': form.errors,
                 'form': form
             }
             return render(request, 'items/create_item.html', context)
+
+def get_upload_url(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    try:
+        timestamp = int(datetime.now().timestamp())
+        params_to_sign = {"timestamp": timestamp}
+        api_secret = os.getenv('CLOUDINARY_API_SECRET')
+        if not api_secret:
+            print("Error: CLOUDINARY_API_SECRET not set")
+            return JsonResponse({'error': 'Server configuration error'}, status=500)
+        signature = cloudinary.utils.api_sign_request(params_to_sign, api_secret)
+        response = {
+            'signature': signature,
+            'api_key': os.getenv('CLOUDINARY_API_KEY'),
+            'timestamp': timestamp,
+            'upload_url': f"https://api.cloudinary.com/v1_1/{os.getenv('CLOUDINARY_CLOUD_NAME')}/image/upload",
+        }
+        print("Upload signature generated:", response)
+        return JsonResponse(response)
+    except Exception as e:
+        print(f"Signature error: {e}")
+        return JsonResponse({'error': f'Failed to generate signature: {e}'}, status=500)
 
 class ItemDetail(APIView):
     permission_classes = [permissions.AllowAny]
