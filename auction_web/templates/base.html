@@ -3,13 +3,77 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
     <title>{% block title %}AuctionHub - Sàn Đấu Giá Trực Tuyến{% endblock %}</title>
+    <meta name="description" content="{% block description %}AuctionHub - Sàn đấu giá trực tuyến uy tín với hàng ngàn sản phẩm chất lượng. Tham gia đấu giá ngay để sở hữu những món đồ độc đáo với giá tốt nhất.{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}đấu giá, sàn đấu giá, đấu giá trực tuyến, auction, mua bán, bid, đấu thầu{% endblock %}">
+    <meta name="author" content="AuctionHub Team">
+    <meta name="robots" content="{% block robots %}index, follow{% endblock %}">
+    
+    <!-- Open Graph Meta Tags for Social Media -->
+    <meta property="og:title" content="{% block og_title %}AuctionHub - Sàn Đấu Giá Trực Tuyến{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Sàn đấu giá trực tuyến uy tín với hàng ngàn sản phẩm chất lượng. Tham gia đấu giá ngay!{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}https://auctionhub.uk{{ request.get_full_path }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}https://auctionhub.uk/static/images/auction-og-image.jpg{% endblock %}">
+    <meta property="og:site_name" content="AuctionHub">
+    <meta property="og:locale" content="vi_VN">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}AuctionHub - Sàn Đấu Giá Trực Tuyến{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Sàn đấu giá trực tuyến uy tín với hàng ngàn sản phẩm chất lượng{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}https://auctionhub.uk/static/images/auction-og-image.jpg{% endblock %}">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{% block canonical %}https://auctionhub.uk{{ request.get_full_path }}{% endblock %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/images/apple-touch-icon.png">
+    
+    <!-- Additional Meta Tags -->
+    <meta name="theme-color" content="#4a90e2">
+    <meta name="msapplication-TileColor" content="#4a90e2">
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/static/css/base.css" /> {% block page_specific_css %}{% endblock %}
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "{% block schema_type %}WebSite{% endblock %}",
+        "name": "AuctionHub",
+        "description": "Sàn đấu giá trực tuyến uy tín với hàng ngàn sản phẩm chất lượng",
+        "url": "https://auctionhub.uk",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://auctionhub.uk/static/images/logo.png"
+        },
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://auctionhub.uk/search/?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+        {% block additional_schema %}{% endblock %}
+    }
+    </script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YN77XKC414"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-YN77XKC414');
+</script>
 
 
     <!-- Chatbot Script 

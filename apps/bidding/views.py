@@ -246,6 +246,14 @@ def place_bid(request):
                     }
                 }
             )
+
+            async_to_sync(channel_layer.group_send)(
+                'homepage_items',
+                {
+                    'type': 'bid_update',
+                    'item_details': item_details_data
+                }
+            )
             # ----------------------------------
 
             response_data = serializer.data.copy()
@@ -383,6 +391,14 @@ def cancel_my_bid_view(request):
                     'canceled_by_user_email': nguoi_dung_hien_tai.email,
                     'canceled_bid_amount': str(gia_bid_can_xoa)
                 }
+            }
+        )
+
+        async_to_sync(channel_layer.group_send)(
+            'homepage_items',
+            {
+                'type': 'bid_update',
+                'item_details': item_details_data
             }
         )
         # ----------------------------------

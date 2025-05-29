@@ -1,7 +1,35 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ item.name }} - AuctionHub{% endblock title %}
+{% block title %}{{ item.name }} - Đấu giá trực tuyến tại AuctionHub{% endblock title %}
+
+{% block description %}Đấu giá {{ item.name }} với giá khởi điểm {{ item.starting_price }}đ. Hiện tại {{ item.current_price }}đ. Kết thúc {{ item.end_time }}. Tham gia đấu giá ngay tại AuctionHub!{% endblock description %}
+
+{% block keywords %}{{ item.name }}, đấu giá {{ item.name }}, auction, bid, đấu giá trực tuyến, {{ item.name }} giá rẻ{% endblock keywords %}
+
+{% block og_title %}{{ item.name }} - Đấu giá tại AuctionHub{% endblock og_title %}
+{% block og_description %}Đấu giá {{ item.name }} với giá hiện tại {{ item.current_price }}đ. Kết thúc {{ item.end_time }}. Tham gia ngay!{% endblock og_description %}
+{% block og_type %}product{% endblock og_type %}
+{% block og_image %}{% if item.image_url %}{{ item.image_url }}{% else %}https://auctionhub.uk/static/images/auction-og-image.jpg{% endif %}{% endblock og_image %}
+
+{% block schema_type %}Product{% endblock schema_type %}
+{% block additional_schema %},
+"name": "{{ item.name }}",
+"description": "{{ item.description|default:'Sản phẩm đấu giá chất lượng tại AuctionHub' }}",
+"image": "{% if item.image_url %}{{ item.image_url }}{% else %}https://auctionhub.uk/static/images/placeholder.png{% endif %}",
+"offers": {
+    "@type": "Offer",
+    "price": "{{ item.current_price }}",
+    "priceCurrency": "VND",
+    "availability": "{% if item.status == 'ongoing' %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "validUntil": "{{ item.end_time|date:'c' }}"
+},
+"brand": {
+    "@type": "Brand",
+    "name": "AuctionHub"
+}{% endblock additional_schema %}
+
+{% block robots %}{% if item.status == 'ongoing' %}index, follow{% else %}noindex, follow{% endif %}{% endblock robots %}
 
 {% block page_specific_css %}
     <link rel="stylesheet" href="{% static 'css/item_detail.css' %}">
