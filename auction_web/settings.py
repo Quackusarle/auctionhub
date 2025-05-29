@@ -119,12 +119,12 @@ ASGI_APPLICATION = 'auction_web.asgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',  # Sử dụng PostgreSQL
+        'ENGINE': 'django.db.backends.mysql',  # Sử dụng PostgreSQL
         'NAME': 'auctiondb',
-        'USER': 'postgres',
-        'PASSWORD': '123456',
+        'USER': 'root',
+        'PASSWORD': '1447928479',
         'HOST': 'localhost',
-        'PORT': '5432',  # Mặc định PostgreSQL chạy trên port 5432
+        'PORT': '3306',  # Mặc định PostgreSQL chạy trên port 5432
     }
 }
 

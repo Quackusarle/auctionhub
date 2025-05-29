@@ -19,6 +19,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import json
 from urllib.parse import urlencode
+from django.db.models import Case, When, Value 
 
 # Imports cho Django Channels
 from channels.layers import get_channel_layer
@@ -184,8 +185,8 @@ def place_bid(request):
             item.refresh_from_db() # Lấy lại trạng thái mới nhất
         return Response({"error": "Phiên đấu giá đã kết thúc hoặc không hợp lệ!"}, status=status.HTTP_400_BAD_REQUEST)
     
-    if item.seller == user: # Người bán không được tự đặt giá
-        return Response({"error": "Người bán không được đặt giá cho sản phẩm của chính mình."}, status=status.HTTP_403_FORBIDDEN)
+    #if item.seller == user: # Người bán không được tự đặt giá
+    #    return Response({"error": "Người bán không được đặt giá cho sản phẩm của chính mình."}, status=status.HTTP_403_FORBIDDEN)
 
     current_effective_price = item.current_price if item.current_price > Decimal('0') else item.starting_price
     min_increment_percentage = Decimal('0.01')
@@ -402,7 +403,7 @@ def cancel_my_bid_view(request):
 
 @login_required
 def my_active_bids_view(request):
-    nguoi_dung_hien_tai = request.user
+    nguoi_dung_hien_tai = request.user  
     thoi_gian_hien_tai_utc = timezone.now()
 
     id_cac_san_pham_da_dau_gia = Bid.objects.filter(user_id=nguoi_dung_hien_tai).values_list('item_id', flat=True).distinct()
@@ -459,7 +460,7 @@ def my_active_bids_view(request):
                 so_tien_can_thanh_toan = giao_dich_thang_cuoc_cua_toi.final_price
 
                 if giao_dich_thang_cuoc_cua_toi.status == 'completed':
-                    trang_thai_san_pham_cho_nguoi_dung = "Da thanh toan"
+                    trang_thai_san_pham_cho_nguoi_dung = "Đã thanh toán"
                     # ... (logic nút của bạn)
                 elif giao_dich_thang_cuoc_cua_toi.status == 'pending':
                     trang_thai_san_pham_cho_nguoi_dung = "Dau gia thanh cong"

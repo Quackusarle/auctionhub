@@ -46,4 +46,4 @@ wheel==0.45.1
 channels==4.2.2
 whitenoise==6.9.0
 cloudinary==1.44.0
-python-dotenv==1.1.0
+python-dotenv==1.1
