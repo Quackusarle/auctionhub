@@ -16,6 +16,8 @@ def home_view(request):
 def register_view(request):
     context = {}
     return render(request, 'account/signup.html', context)
+    context = {}
+    return render(request, 'account/signup.html', context)
 
 def profile_view(request):
     context = {}

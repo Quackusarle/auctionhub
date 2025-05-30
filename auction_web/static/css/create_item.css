@@ -1,130 +1,143 @@
-    /* CSS bổ sung cho trang create_auction.html, sử dụng biến từ base.css */
-    .create-auction-container {
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 2rem;
-        background-color: var(--white);
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
+/* Container form chính */
+.create-auction-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-    .create-auction-container h1 {
-        color: var(--heading-color);
-        text-align: center;
-        margin-bottom: 1.5rem;
-        font-size: 2rem;
-    }
+/* Tiêu đề */
+.create-auction-container h1 {
+    color: var(--heading-color);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+}
 
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
+/* Form group */
+.form-group {
+    margin-bottom: 1.5rem;
+}
 
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: var(--text-color);
-        font-weight: 600;
-    }
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
 
-    .form-group input[type="text"],
-    .form-group input[type="number"],
-    .form-group input[type="datetime-local"],
-    .form-group input[type="file"],
-    .form-group textarea,
-    .form-group select {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        font-family: var(--font-family);
-        font-size: 1rem;
-        transition: border-color 0.3s ease;
-    }
-    
-    .form-group input[type="file"] {
-        padding: 0.5rem; /* Điều chỉnh padding cho input file */
-    }
+/* Input styles */
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="datetime-local"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color, #ccc);
+    border-radius: 4px;
+    font-family: var(--font-family, 'Arial');
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
 
-    .form-group input[type="text"]:focus,
-    .form-group input[type="number"]:focus,
-    .form-group input[type="datetime-local"]:focus,
-    .form-group input[type="file"]:focus,
-    .form-group textarea:focus,
-    .form-group select:focus {
-        border-color: var(--primary-color);
-        outline: none;
-    }
+.form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+}
 
-    .form-group textarea {
-        min-height: 120px;
-        resize: vertical;
-    }
+/* Button */
+.btn-submit-auction {
+    display: block;
+    width: 100%;
+    padding: 0.85rem;
+    background-color: var(--primary-color, #28a745);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
-    .btn-submit-auction {
-        display: block;
-        width: 100%;
-        padding: 0.85rem;
-        background-color: var(--primary-color);
-        color: var(--white);
-        border: none;
-        border-radius: 4px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        text-align: center;
-    }
+.btn-submit-auction:hover {
+    background-color: var(--accent-color, #218838);
+}
 
-    .btn-submit-auction:hover {
-        background-color: var(--accent-color);
-    }
+/* Messages */
+.message.success {
+    background-color: #e6f4ea;
+    color: #2f7a4f;
+    border: 1px solid #2f7a4f;
+    padding: 1rem;
+    margin-bottom: 1.2rem;
+    border-radius: 5px;
+}
 
-    .message {
-        padding: 1rem;
-        margin-bottom: 1.5rem;
-        border-radius: 4px;
-        text-align: center;
-    }
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 1rem;
+    margin-bottom: 1.2rem;
+    border-radius: 5px;
+}
 
-    .message.success {
-        background-color: rgba(var(--primary-rgb), 0.1);
-        color: var(--primary-color);
-        border: 1px solid var(--primary-color);
-    }
+.error-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
 
-    .message.error {
-        background-color: #f8d7da; /* Màu nền cho lỗi */
-        color: #721c24; /* Màu chữ cho lỗi */
-        border: 1px solid #f5c6cb; /* Màu viền cho lỗi */
-    }
+.error-list li {
+    color: #721c24;
+    font-size: 0.9rem;
+}
 
-    .error-list {
-        list-style-type: none;
-        padding: 0;
-        margin-top: 0.5rem;
-    }
+/* Upload ảnh dạng drop zone */
+.preview-container {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    border: 2px dashed #ccc;
+    border-radius: 6px;
+    background-color: #fefefe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-align: center;
+    padding: 20px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
 
-    .error-list li {
-        color: #721c24; /* Màu chữ lỗi cụ thể */
-        font-size: 0.9rem;
-    }
+.preview-container.dragover {
+    background-color: #e9f5ff;
+    border-color: #007bff;
+}
 
-    .form-field-error {
-        border-color: #dc3545 !important; /* Viền đỏ cho trường bị lỗi */
-    }
+.preview-text {
+    font-size: 1rem;
+    color: #333;
+    font-weight: 500;
+    user-select: none;
+}
 
-    .image-preview-container {
-        margin-top: 1rem;
-        text-align: center;
-    }
+.preview-image {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+    display: block;
+    background-color: #f0f0f0;
+    box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}
 
-    .image-preview {
-        max-width: 100%;
-        max-height: 200px;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        object-fit: contain; /* Hiển thị ảnh vừa vặn, không bị méo */
-    }
-    .image-preview.hidden {
-        display: none;
-    }
+.upload-message {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #444;
+}

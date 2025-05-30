@@ -42,5 +42,5 @@ urlpatterns = [
     path('items/', item_list_view, name='item-list-template'),
 
     # --- URLS CHO IMAGE UPLOAD ---
-    path('image-upload', include('apps.sim.urls')),
+    path('image-upload/', include('apps.sim.urls')),
 ]
