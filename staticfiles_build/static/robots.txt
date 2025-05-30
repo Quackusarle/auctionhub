@@ -1,0 +1,29 @@
+User-agent: *
+Allow: /
+
+# Cho phép tất cả crawler truy cập
+# Allow crawling of main pages
+Allow: /items/
+Allow: /blog/
+Allow: /about/
+Allow: /contact/
+
+# Không cho phép crawl các trang admin và API
+Disallow: /admin/
+Disallow: /api/
+Disallow: /accounts/
+Disallow: /login-signup/
+Disallow: /user/profile/
+Disallow: /my-purchasing-items/
+
+# Không cho phép crawl các file media và static (trừ CSS, JS cần thiết cho SEO)
+Disallow: /media/
+Allow: /static/css/
+Allow: /static/js/
+Allow: /static/images/
+
+# Sitemap location
+Sitemap: https://auctionhub.uk/sitemap.xml
+
+# Crawl delay để không làm quá tải server
+Crawl-delay: 1 

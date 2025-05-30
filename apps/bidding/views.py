@@ -185,8 +185,8 @@ def place_bid(request):
             item.refresh_from_db() # Lấy lại trạng thái mới nhất
         return Response({"error": "Phiên đấu giá đã kết thúc hoặc không hợp lệ!"}, status=status.HTTP_400_BAD_REQUEST)
     
-    #if item.seller == user: # Người bán không được tự đặt giá
-    #    return Response({"error": "Người bán không được đặt giá cho sản phẩm của chính mình."}, status=status.HTTP_403_FORBIDDEN)
+    if item.seller == user: # Người bán không được tự đặt giá
+        return Response({"error": "Người bán không được đặt giá cho sản phẩm của chính mình."}, status=status.HTTP_403_FORBIDDEN)
 
     current_effective_price = item.current_price if item.current_price > Decimal('0') else item.starting_price
     min_increment_percentage = Decimal('0.01')

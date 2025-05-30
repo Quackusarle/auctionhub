@@ -11,8 +11,9 @@
 /* Layout Grid cho 3 cột */
 .bidding-detail-layout {
     display: grid;
-    /* 3 cột, cột giữa rộng hơn một chút, tự động điều chỉnh */
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    /* Cột trái có chiều rộng tự động nhưng không quá 450px (bạn có thể thay đổi giá trị này) */
+    /* Cột phải sẽ chiếm phần không gian còn lại */
+    grid-template-columns: minmax(300px, 1fr) minmax(auto, 400px);
     gap: 30px; /* Khoảng cách giữa các cột */
 }
 
