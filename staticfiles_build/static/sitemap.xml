@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <!-- Trang chủ -->
+    <url>
+        <loc>https://auctionhub.uk/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+
+    <!-- Trang về chúng tôi -->
+    <url>
+        <loc>https://auctionhub.uk/about/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Trang liên hệ -->
+    <url>
+        <loc>https://auctionhub.uk/contact/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Trang danh sách sản phẩm -->
+    <url>
+        <loc>https://auctionhub.uk/items/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- Trang blog -->
+    <url>
+        <loc>https://auctionhub.uk/blog/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Trang tìm kiếm -->
+    <url>
+        <loc>https://auctionhub.uk/search/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+    </url>
+
+    <!-- Các bài viết blog -->
+    <url>
+        <loc>https://auctionhub.uk/blog/cach-tham-gia-dau-gia/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/blog/kinh-nghiem-dau-gia-thanh-cong/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/blog/tin-tuc-dau-gia-moi-nhat/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/blog/huong-dan-su-dung-website/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Ví dụ một số sản phẩm đấu giá chính -->
+    <url>
+        <loc>https://auctionhub.uk/items/1/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/2/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/3/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/4/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/5/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/6/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/7/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/8/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/9/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/10/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/11/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/12/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/13/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/14/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/15/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/16/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/17/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/18/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/19/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <url>
+        <loc>https://auctionhub.uk/items/20/</loc>
+        <lastmod>2025-05-28</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+</urlset> 

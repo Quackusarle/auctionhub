@@ -125,12 +125,12 @@ LOCAL_DB_PORT = os.getenv('DB_PORT', '5432')
 DATABASES = {
     'default': {
 
-        'ENGINE': 'django.db.backends.mysql',  # Sử dụng PostgreSQL
+        'ENGINE': 'django.db.backends.postgresql',  # Sử dụng PostgreSQL
         'NAME': 'auctiondb',
-        'USER': 'root',
+        'USER': 'postgres',
         'PASSWORD': '1447928479',
         'HOST': 'localhost',
-        'PORT': '3306',  # Mặc định PostgreSQL chạy trên port 5432
+        'PORT': '5432',  # Mặc định PostgreSQL chạy trên port 5432
 
     }
 }
