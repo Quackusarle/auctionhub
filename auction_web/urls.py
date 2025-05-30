@@ -43,4 +43,7 @@ urlpatterns = [
 
     # --- URLS CHO IMAGE UPLOAD ---
     path('image-upload/', include('apps.sim.urls')),
+
+    # ---- URLS CHO CHATBOT ----
+    path('chatbot/', include('apps.chatbot.urls'))
 ]
