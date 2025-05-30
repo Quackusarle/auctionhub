@@ -1,12 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
-{% load i18n %} {# Nếu bạn dùng i18n cho các chuỗi text động #}
-{# {% load humanize %} Nếu bạn dùng để format số, ngày giờ #}
+{% load i18n %}
 
 {% block title %}Đặt giá{% endblock title %}
 
 {% block page_specific_css %}
-    {# <link rel="stylesheet" href="{% static 'css/home.css' %}"> #}
     <link rel="stylesheet" href="{% static 'css/bidding_detail.css' %}">
 {% endblock page_specific_css %}
 
@@ -14,9 +12,7 @@
 <main class="container bidding-detail-main-content">
     <h1 id="item-name-heading" class="page-main-title">Đang tải thông tin sản phẩm...</h1>
 
-    <div class="bidding-detail-layout">
-
-        <section class="bidding-column bidding-item-info">
+    <div class="bidding-detail-layout"> <section class="bidding-column bidding-left-column">
             <h2 class="section-title">Thông tin sản phẩm</h2>
             <div class="item-card-display">
                 <div class="item-image-container">
@@ -28,28 +24,27 @@
             <div class="price-chart-placeholder" id="price-chart-container">
                 <p>(Biểu đồ lịch sử giá sẽ được hiển thị ở đây)</p>
             </div>
-        </section>
-
-        <section class="bidding-column bidding-history">
-            <h2 class="section-title">Lịch sử đặt giá</h2>
-            <div class="bid-list-wrapper">
-                <div class="bid-list">
-                    <table class="bid-history-table">
-                        <thead>
-                            <tr>
-                                <th>Giá đặt</th>
-                                <th>Người đặt</th>
-                                <th>Thời gian</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bid-history-table-body">
-                            <tr><td colspan="3" class="loading-text">Đang tải lịch sử đấu giá...</td></tr>
-                        </tbody>
-                    </table>
+            <div class="bidding-history-section full-width">
+                <h2 class="section-title">Lịch sử đặt giá</h2>
+                <div class="bid-list-wrapper">
+                    <div class="bid-list">
+                        <table class="bid-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Giá đặt</th>
+                                    <th>Người đặt</th>
+                                    <th>Thời gian</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bid-history-table-body">
+                                <tr><td colspan="3" class="loading-text">Đang tải lịch sử đấu giá...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-            <div class="current-price-display">
-                Giá hiện tại: <strong id="current-price" class="current-price-value">Đang tải...</strong>
+                <div class="current-price-display">
+                    Giá hiện tại: <strong id="current-price" class="current-price-value">Đang tải...</strong>
+                </div>
             </div>
         </section>
 
@@ -58,39 +53,28 @@
             <div class="action-details-box">
                 <p>Giá khởi điểm: <strong id="starting-price">Đang tải...</strong> VNĐ</p>
                 <p>Thời gian còn lại: <strong id="time-remaining" class="time-critical">Đang tải...</strong></p>
-
-                <hr class="action-details-divider"> 
-
-                
+                <hr class="action-details-divider">
                 <div class="bid-range-info">
                     <p>Giá tối thiểu: <span id="min-bid-display">Đang tải...</span></p>
                     <p>Giá tối đa: <span id="max-bid-display">Đang tải...</span></p>
                 </div>
             </div>
-            
             <hr class="action-details-divider">
-
             <form id="place-bid-form" class="bid-form-box">
                 {% csrf_token %}
                 <input type="hidden" name="item_id" id="form-item-id" value="{{ item.pk | default:'' }}">
-
                 <div class="form-group">
                     <label for="bid-amount-input" class="bid-input-label">Giá đặt của bạn:</label>
                     <div class="price-input-wrapper" id="bid-input-container">
                         <input type="text" id="bid-amount-input" name="bid_amount" min="0" placeholder="Nhập số tiền" required inputmode="numeric" pattern="[0-9,.]*">
-                        {# <span class="currency-symbol">VNĐ</span> Bỏ biểu tượng VNĐ ở đây để nó không che giá trị #}
-                        <span class="b-indicator" id="b-indicator"></span> {# Chỉ báo "B" #}
+                        <span class="b-indicator" id="b-indicator"></span>
                     </div>
                 </div>
-
-                
-
-                <div class="bid-summary-total"> {# Đổi class #}
-                    Tổng giá trị <strong id="total-bid-value">0 VNĐ</strong> {# Thêm VNĐ trực tiếp #}
+                <div class="bid-summary-total">
+                    Tổng giá trị <strong id="total-bid-value">0 VNĐ</strong>
                 </div>
-
                 <div class="action-buttons">
-                    <button type="submit" class="btn btn-primary btn-submit-bid">Đặt giá</button> {# Nút màu xanh #}
+                    <button type="submit" class="btn btn-primary btn-submit-bid">Đặt giá</button>
                     <button type="button" class="btn btn-secondary btn-cancel-bid">Hủy</button>
                 </div>
                 <p id="bid-form-message" class="form-message"></p>

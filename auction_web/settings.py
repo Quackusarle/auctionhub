@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     'apps.reviews.apps.ReviewsConfig',
     'apps.wallet.apps.WalletConfig',
     'apps.sim.apps.SimConfig',
+    'apps.chatbot.apps.ChatbotConfig',
 ]
 
 MIDDLEWARE = [

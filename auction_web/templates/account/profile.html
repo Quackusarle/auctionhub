@@ -1,135 +1,62 @@
 {% extends "base.html" %}
 {% load static %}
-{% load i18n %}
 
-{% block title %}{{ page_title|default:_("Hồ sơ cá nhân") }}{% endblock title %}
+{% block title %}Hồ sơ cá nhân{% endblock %}
 
-{% block extra_css %}
-{{ block.super }} {# Để giữ CSS từ base.html nếu có #}
-<link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}">
-<style>
-    /* Thêm chút style cơ bản cho các nút mới, cậu tự tùy chỉnh thêm trong profile.css nhé */
-    .profile-actions button,
-    .change-avatar-btn-wrapper button {
-        background-color: #007bff; /* Màu xanh dương cơ bản */
-        color: white;
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1em;
-        margin-top: 10px;
-        transition: background-color 0.3s ease;
-    }
-
-    .profile-actions button:hover,
-    .change-avatar-btn-wrapper button:hover {
-        background-color: #0056b3; /* Màu xanh đậm hơn khi hover */
-    }
-
-    .profile-actions .delete-account-btn {
-        background-color: #dc3545; /* Màu đỏ cho nút xóa */
-        margin-left: 10px; /* Thêm khoảng cách nếu đặt cạnh nút khác */
-    }
-
-    .profile-actions .delete-account-btn:hover {
-        background-color: #c82333; /* Màu đỏ đậm hơn khi hover */
-    }
-
-    .change-avatar-btn-wrapper {
-        margin-top: 15px;
-        text-align: center; /* Căn giữa nút đổi avatar */
-    }
-    #avatarUploadInput {
-        display: none; /* Ẩn input file mặc định */
-    }
-
-    .profile-avatar-wrapper {
-        width: 150px; /* Kích thước cố định cho avatar wrapper */
-        height: 150px; /* Kích thước cố định cho avatar wrapper */
-        margin: 0 auto 10px auto; /* Căn giữa và thêm margin dưới */
-        border-radius: 50%; /* Bo tròn thành hình tròn */
-        overflow: hidden; /* Ẩn phần thừa của ảnh nếu ảnh không vuông */
-        border: 3px solid #ddd; /* Thêm viền cho đẹp */
-        display: flex; /* Dùng flex để căn giữa nội dung bên trong */
-        justify-content: center;
-        align-items: center;
-        background-color: #f0f0f0; /* Màu nền cho placeholder */
-    }
-
-    .profile-avatar-wrapper img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; /* Đảm bảo ảnh che phủ toàn bộ, cắt nếu cần */
-    }
-
-    .profile-avatar-placeholder {
-        font-size: 3em; /* Kích thước chữ cho placeholder */
-        color: #aaa; /* Màu chữ cho placeholder */
-        text-align: center;
-        line-height: 150px; /* Căn giữa chữ theo chiều dọc */
-    }
-</style>
-{% endblock extra_css %}
+{% block page_specific_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
 
 {% block content %}
 <main class="profile-page-container">
     <header class="profile-header">
-        <h1>{% trans "Hồ sơ cá nhân của bạn" %}</h1>
+        <h1>Hồ sơ cá nhân của bạn</h1>
     </header>
 
     <section class="profile-content">
+        <!-- Sidebar trái -->
         <aside class="profile-sidebar">
             <div class="profile-avatar-wrapper">
-                {# ID này dùng để JS cập nhật ảnh/placeholder #}
-                {% if profile.profile_picture and profile.profile_picture.url %}
-                    <img id="profileAvatarDisplay" src="{{ profile.profile_picture.url }}" alt="{% trans 'Ảnh đại diện' %}">
-                {% else %}
-                    <div id="profileAvatarDisplay" class="profile-avatar-placeholder">
-                        {{ profile.email|slice:":1"|upper }}
-                    </div>
-                {% endif %}
+                <div id="profileAvatarDisplay" class="profile-avatar-placeholder"></div>
             </div>
             <div class="change-avatar-btn-wrapper">
-                <input type="file" id="avatarUploadInput" accept="image/*">
-                <button type="button" id="changeAvatarBtn">{% trans "Đổi ảnh đại diện" %}</button>
+                <input type="file" id="avatarUploadInput" accept="image/*" hidden>
+                <button type="button" id="changeAvatarBtn">Đổi ảnh đại diện</button>
             </div>
-            <p class="user-email">{{ profile.email }}</p>
-            {% if profile.is_active %}
-                <span class="user-status active">{% trans "Đang hoạt động" %}</span>
-            {% else %}
-                <span class="user-status inactive">{% trans "Tạm khóa" %}</span>
-            {% endif %}
+            <p class="user-email"></p>
+            <span class="user-status inactive">Tạm khóa</span>
         </aside>
 
+        <!-- Thông tin chính -->
         <article class="profile-main-info">
-            <h2>{% trans "Thông tin chi tiết" %}</h2>
-            <div class="info-item">
-                <span class="label">{% trans "Mã người dùng:" %}</span>
-                <span class="value">{{ profile.id }}</span>
-            </div>
-            <div class="info-item">
-                <span class="label">{% trans "Địa chỉ Email:" %}</span>
-                <span class="value">{{ profile.email }}</span>
-            </div>
-            <div class="info-item">
-                <span class="label">{% trans "Số dư tài khoản:" %}</span>
-                <span class="value balance">{{ profile.balance|floatformat:"0" }} {% trans "VND" %}</span>
-            </div>
-            <div class="info-item">
-                <span class="label">{% trans "Ngày tham gia:" %}</span>
-                <span class="value">{{ profile.created_at_display|date:"d/m/Y H:i"|default_if_none:"Chưa có thông tin" }}</span>
+            <h2>Thông tin chi tiết</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="label">Mã người dùng:</span>
+                    <span class="value" id="profile-id">#</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Địa chỉ Email:</span>
+                    <span class="value" id="profile-email">email</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Số dư tài khoản:</span>
+                    <span class="value balance" id="profile-balance">0 VND</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Ngày tham gia:</span>
+                    <span class="value" id="profile-joined">__/__/____</span>
+                </div>
             </div>
 
-            <div class="profile-actions" style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
-                <button type="button" id="deleteAccountBtn" class="delete-account-btn">{% trans "Xóa tài khoản" %}</button>
+            <div class="profile-actions">
+                <button type="button" id="deleteAccountBtn">Xóa tài khoản</button>
             </div>
         </article>
     </section>
 </main>
-{% endblock content %}
+{% endblock %}
 
-{% block extra_js %}
-{{ block.super }}
+{% block page_specific_js %}
 <script src="{% static 'js/profile.js' %}"></script>
-{% endblock extra_js %}
+{% endblock %}

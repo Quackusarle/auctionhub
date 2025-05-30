@@ -49,3 +49,6 @@ urwid==3.0.2
 wcwidth==0.2.13
 wheel==0.45.1
 whitenoise==6.9.0
+cloudinary==1.44.0
+python-dotenv==1.1
+
