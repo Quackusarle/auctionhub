@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ page_title|default:"Sản phẩm bạn đã tạo" }} - AuctionHub{% endblock %}
+
+{% block page_specific_css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/my_active_bids.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="container my-active-bids-container mt-4 mb-5">
+    <h1 class="page-title mb-4">{{ page_title|default:"Sản phẩm bạn đã tạo" }}</h1>
+
+    {% if active_bids_info %}
+    <div class="table-responsive">
+        <table class="table my-active-bids-table table-hover">
+            <thead class="table-dark-custom">
+                <tr>
+                    <th scope="col">Sản phẩm</th>
+                    <th scope="col">Giá khởi điểm</th>
+                    <th scope="col">Giá hiện tại</th>
+                    <th scope="col">TG còn lại</th>
+                    <th scope="col">Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for thong_tin in active_bids_info %}
+                <tr>
+                    <td class="product-cell">
+                        <a href="{{ thong_tin.item.get_absolute_url|default:'#' }}" class="product-link">
+                            <img src="{{ thong_tin.item.image_url.url|default_if_none:'/static/images/placeholder_item_400x300.png' }}"
+                                 alt="{{ thong_tin.item.name }}" class="product-thumbnail">
+                            <span class="product-name">{{ thong_tin.item.name }}</span>
+                        </a>
+                    </td>
+                    <td class="price-cell">{{ thong_tin.item.starting_price|floatformat:0|intcomma }} VNĐ</td>
+                    <td class="price-cell">{{ thong_tin.item.current_price|floatformat:0|intcomma }} VNĐ</td>
+                    <td>
+                        {% if thong_tin.item.end_time > now %}
+                            {{ thong_tin.item.end_time|timeuntil }}
+                        {% else %}
+                            {{ thong_tin.item.end_time|date:"H:i, d/m/Y" }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ thong_tin.trang_thai_cho_toi|slugify }}">
+                            {{ thong_tin.trang_thai_cho_toi }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center" role="alert">
+        <i class="fas fa-info-circle me-2"></i>
+        Bạn chưa đăng bài bán sản phẩm nào.
+    </div>
+    {% endif %}
+</main>
+{% endblock %}
