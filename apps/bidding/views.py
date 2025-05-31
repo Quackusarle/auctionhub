@@ -548,3 +548,23 @@ def my_active_bids_view(request):
         'csrf_token_value': request.COOKIES.get('csrftoken') # Nên dùng thẻ {% csrf_token %} trong template
     }
     return render(request, 'bidding/my_active_bids.html', context)
+
+@login_required
+def my_created_items_view(request):
+    user = request.user
+    items = Item.objects.filter(seller=user).order_by('-item_id')  # hoặc .order_by('-end_time')
+    
+    active_bids_info = []
+    for item in items:
+        thong_tin = {
+            'item': item,
+            'trang_thai_cho_toi': item.get_status_display(),  # hoặc định nghĩa logic riêng
+        }
+        active_bids_info.append(thong_tin)
+
+    context = {
+        'active_bids_info': active_bids_info,
+        'page_title': "Sản phẩm bạn đã tạo",
+        'now': now(),
+    }
+    return render(request, 'bidding/my_created_bids.html', context)
