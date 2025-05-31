@@ -27,7 +27,8 @@
 "brand": {
     "@type": "Brand",
     "name": "AuctionHub"
-}{% endblock additional_schema %}
+}
+{% endblock additional_schema %}
 
 {% block robots %}{% if item.status == 'ongoing' %}index, follow{% else %}noindex, follow{% endif %}{% endblock robots %}
 
@@ -51,8 +52,7 @@
                 <h1 class="item-title">{{ item.name }}</h1>
                 
                 <div class="item-price-block"> 
-                    <span class="current-price">đ{{ item.current_price }}</span>
-                    <span class="original-price">đ{{ item.starting_price }}</span>
+                    <span class="current-price" id="current-price"></span>
                 </div>
                 
                 <div class="item-description">
@@ -88,9 +88,10 @@
             <span class="review-count">(0 đánh giá)</span>
         </div>
         
-        <!-- Hidden inputs for user ID and seller ID -->
+        <!-- Hidden inputs for user ID, seller ID, and current price -->
         <input type="hidden" id="current-user-id" value="{% if user.is_authenticated %}{{ user.id }}{% else %}null{% endif %}">
         <input type="hidden" id="seller-id" value="{{ item.seller.id }}">
+        <input type="hidden" id="raw-current-price" value="{{ item.current_price }}">
 
         <!-- Review Form (Visible to Authenticated Users) -->
         {% if user.is_authenticated %}
@@ -142,6 +143,39 @@
         return cookieValue;
     }
     const csrftoken = getCookie('csrftoken');
+
+    // Price formatting function (copied from home.js)
+    function formatPrice(priceInput, options = {}) {
+        const defaultOptions = {
+            currencySymbol: 'VNĐ',
+            symbolPosition: 'after',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        };
+        const effectiveOptions = { ...defaultOptions, ...options };
+
+        try {
+            const cleaned = String(priceInput).replace(/[^0-9.-]+/g, '').replace(/,/g, '');
+            const price = parseFloat(cleaned);
+            const formatted = price.toLocaleString('vi-VN', {
+                minimumFractionDigits: effectiveOptions.minimumFractionDigits,
+                maximumFractionDigits: effectiveOptions.maximumFractionDigits,
+            });
+            return effectiveOptions.symbolPosition === 'after'
+                ? `${formatted} ${effectiveOptions.currencySymbol}`
+                : `${effectiveOptions.currencySymbol} ${formatted}`;
+        } catch {
+            return `0 ${effectiveOptions.currencySymbol}`;
+        }
+    }
+
+    // Format current price on page load
+    document.addEventListener("DOMContentLoaded", function () {
+        const currentPriceElement = document.getElementById('current-price');
+        const rawCurrentPrice = document.getElementById('raw-current-price').value;
+
+        currentPriceElement.textContent = formatPrice(rawCurrentPrice);
+    });
 
     // Get user and seller IDs from hidden inputs
     const currentUserId = document.getElementById('current-user-id').value === 'null' ? null : parseInt(document.getElementById('current-user-id').value);
