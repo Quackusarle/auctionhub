@@ -220,3 +220,99 @@ body {
 .view-all-items-btn:hover i {
     transform: translateX(3px);
 }
+
+/* ========= MOBILE RESPONSIVE ========= */
+
+/* Tablet và Mobile - Hero Section */
+@media (max-width: 768px) {
+    .hero-container {
+        flex-direction: column-reverse; /* Image trên, text dưới */
+        gap: 30px;
+        text-align: center;
+    }
+    
+    .hero-text-content h1 {
+        font-size: 2.5em; /* Giảm từ 3.5em */
+        margin-bottom: 15px;
+    }
+    
+    .hero-text-content h1 .exclusive-text {
+        font-size: 0.75em; /* Giảm kích thước xuống 75% so với h1 */
+        color: var(--heading-color);
+    }
+    
+    .hero-text-content p {
+        max-width: 100%;
+        margin-bottom: 25px;
+    }
+    
+    .hero-image-content {
+        flex-basis: auto;
+    }
+    
+    .hero-image-content img {
+        max-height: 250px; /* Giảm từ 450px */
+    }
+    
+    .hero-section.plant-theme-hero {
+        padding: 50px 0; /* Giảm từ 80px */
+    }
+}
+
+/* Mobile phones */
+@media (max-width: 576px) {
+    .hero-text-content h1 {
+        font-size: 2em; /* Giảm thêm cho mobile nhỏ */
+        line-height: 1.3;
+    }
+    
+    .hero-text-content h1 .exclusive-text {
+        font-size: 0.7em; /* Giảm thêm chút cho mobile */
+    }
+    
+    .hero-text-content p {
+        font-size: 0.95em;
+        margin-bottom: 20px;
+    }
+    
+    .hero-btn.btn-primary {
+        padding: 10px 25px;
+        font-size: 0.9em;
+    }
+    
+    .hero-image-content img {
+        max-height: 200px;
+    }
+    
+    .container {
+        padding: 0 10px; /* Giảm padding cho màn hình rất nhỏ */
+    }
+    
+    .section-title-wrapper {
+        margin-bottom: 30px; /* Giảm từ 40px */
+    }
+    
+    .listings h2 {
+        font-size: 1.5em; /* Giảm từ 1.8em */
+    }
+}
+
+/* Extra small devices (portrait phones, less than 480px) */
+@media (max-width: 480px) {
+    .hero-text-content h1 {
+        font-size: 1.8em;
+    }
+    
+    .hero-section.plant-theme-hero {
+        padding: 40px 0;
+    }
+    
+    #item-grid-container {
+        gap: 1rem; /* Giảm gap cho màn hình rất nhỏ */
+    }
+    
+    .view-all-items-btn {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9em;
+    }
+}

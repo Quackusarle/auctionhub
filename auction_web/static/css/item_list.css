@@ -82,3 +82,55 @@
 #noItemsMessage .alert-heading {
     color: var(--heading-color);
 }
+
+/* ========= MOBILE RESPONSIVE ========= */
+
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 1.6rem; /* Giảm từ 1.8rem */
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Pagination responsive */
+    .pagination .page-item .page-link {
+        padding: 0.4rem 0.7rem; /* Giảm padding cho mobile */
+        font-size: 0.85rem;
+        margin: 0 2px;
+    }
+}
+
+@media (max-width: 576px) {
+    .section-title {
+        font-size: 1.4rem;
+        margin-bottom: 1.25rem;
+        text-align: center; /* Center title trên mobile nhỏ */
+    }
+    
+    /* Compact pagination for small screens */
+    .pagination {
+        justify-content: center; /* Center pagination */
+    }
+    
+    .pagination .page-item .page-link {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.8rem;
+        margin: 0 1px;
+    }
+    
+    /* Hide pagination text, show only numbers and arrows */
+    .pagination .page-item .page-link .sr-only {
+        display: none;
+    }
+    
+    /* Spinner responsive */
+    #itemListSpinner .spinner-border {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    
+    /* Alert messages responsive */
+    #itemListError, #noItemsMessage {
+        padding: 1rem;
+        margin: 0 5px; /* Add side margins on small screens */
+    }
+}

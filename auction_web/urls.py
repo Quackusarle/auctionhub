@@ -1,6 +1,8 @@
 # auction_web/urls.py
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views # views của project auction_web
 from apps.items.views import item_detail_view
 from apps.items.views import item_search_view
@@ -51,3 +53,9 @@ urlpatterns = [
     # ---- URLS CHO CHATBOT ----
     path('chatbot/', include('apps.chatbot.urls'))
 ]
+
+# Static files serving cho development
+# Trong production, whitenoise sẽ handle static files
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
