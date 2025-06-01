@@ -372,30 +372,226 @@
 @media (max-width: 768px) {
     .bidding-detail-layout {
         grid-template-columns: 1fr; /* Xếp thành 1 cột */
+        gap: 20px;
     }
+    
+    .bidding-column {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .bidding-column-titles {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 0 10px;
+    }
+    
     #item-name-heading {
         font-size: 1.8em;
+        margin-bottom: 15px;
     }
+    
     .bidding-column h2 {
         font-size: 1.2em;
+        margin-bottom: 15px;
     }
+    
     .current-price-display strong {
         font-size: 1.6em;
     }
+    
     .bid-summary-total strong {
         font-size: 1.3em;
     }
-    .btn.btn-submit-bid,
-    .btn.btn-cancel {
-        padding: 10px 15px;
-        font-size: 1em;
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 10px;
     }
+    
+    .btn.btn-submit-bid,
+    .btn.btn-cancel-bid {
+        padding: 12px 20px;
+        font-size: 1em;
+        width: 100%;
+    }
+    
     #bid-amount-input {
         font-size: 1.5em; /* Nhỏ hơn trên mobile */
         height: 50px;
     }
+    
+    .price-input-wrapper {
+        height: 50px;
+    }
+    
     /* Đảm bảo ẩn chỉ báo B trên mobile nếu nó không được sử dụng */
     .b-indicator {
         display: none !important;
+    }
+    
+    /* Table responsive */
+    .bid-list table {
+        font-size: 0.9em;
+    }
+    
+    .bid-list thead th,
+    .bid-list tbody td {
+        padding: 8px 6px;
+    }
+}
+
+@media (max-width: 576px) {
+    .bidding-detail-main-content {
+        padding: 10px;
+    }
+    
+    .bidding-column {
+        padding: 12px;
+        margin-bottom: 12px;
+        border-radius: 8px;
+    }
+    
+    #item-name-heading {
+        font-size: 1.5em;
+        text-align: center;
+        margin-bottom: 12px;
+    }
+    
+    .bidding-column h2 {
+        font-size: 1.1em;
+        text-align: center;
+        margin-bottom: 12px;
+    }
+    
+    .item-card-display img {
+        width: 100%;
+        max-width: 250px;
+        margin: 0 auto;
+        display: block;
+    }
+    
+    .item-card-display h3 {
+        font-size: 1.1em;
+        text-align: center;
+    }
+    
+    .item-card-display p {
+        font-size: 0.9em;
+        text-align: center;
+    }
+    
+    .current-price-display {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    
+    .current-price-display strong {
+        font-size: 1.4em;
+    }
+    
+    .action-details-box {
+        padding: 12px;
+    }
+    
+    .action-details-box p {
+        font-size: 0.9em;
+        margin-bottom: 8px;
+    }
+    
+    #bid-amount-input {
+        font-size: 1.3em;
+        height: 45px;
+        padding: 8px 15px;
+    }
+    
+    .price-input-wrapper {
+        height: 45px;
+    }
+    
+    .bid-summary-total {
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .bid-summary-total strong {
+        font-size: 1.2em;
+    }
+    
+    .btn.btn-submit-bid,
+    .btn.btn-cancel-bid {
+        padding: 15px;
+        font-size: 1.1em;
+        border-radius: 8px;
+    }
+    
+    /* Make table more mobile-friendly */
+    .bid-list {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .bid-list table {
+        min-width: 300px;
+        font-size: 0.85em;
+    }
+    
+    .bid-list thead th,
+    .bid-list tbody td {
+        padding: 6px 4px;
+        white-space: nowrap;
+    }
+    
+    .bid-list thead th:first-child,
+    .bid-list tbody td:first-child {
+        padding-left: 8px;
+    }
+    
+    .bid-list thead th:last-child,
+    .bid-list tbody td:last-child {
+        padding-right: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    #item-name-heading {
+        font-size: 1.3em;
+    }
+    
+    .bidding-column h2 {
+        font-size: 1em;
+    }
+    
+    .current-price-display strong {
+        font-size: 1.2em;
+    }
+    
+    #bid-amount-input {
+        font-size: 1.1em;
+        height: 40px;
+        padding: 6px 12px;
+    }
+    
+    .price-input-wrapper {
+        height: 40px;
+    }
+    
+    .action-details-box {
+        padding: 10px;
+    }
+    
+    .action-details-box p {
+        font-size: 0.85em;
+    }
+    
+    .btn.btn-submit-bid,
+    .btn.btn-cancel-bid {
+        padding: 12px;
+        font-size: 1em;
+    }
+    
+    .bid-list table {
+        font-size: 0.8em;
     }
 }

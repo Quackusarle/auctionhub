@@ -175,12 +175,22 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/' # Luôn có dấu / ở cuối
+
+# Thư mục chứa static files trong quá trình development
 STATICFILES_DIRS = [
     BASE_DIR / 'auction_web/static',
 ]
 
+# Thư mục để collect static files cho production
 STATIC_ROOT = BASE_DIR / "staticfiles_build" / "static"
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Storage backend cho static files
+if DEBUG:
+    # Development: sử dụng default storage để load trực tiếp
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+else:
+    # Production: sử dụng whitenoise với compression
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # Default primary key field type
