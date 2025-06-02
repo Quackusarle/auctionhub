@@ -53,13 +53,13 @@ class CreateTransactionView(APIView):
                 
                 # 1. Kiểm tra số dư người mua
                 if buyer_for_update.balance < final_price:
-                    print("DEBUG: Condition (buyer_for_update.balance < final_price) is TRUE. Insufficient funds.")
+                    
                     amount_needed = final_price - buyer_for_update.balance
                     wallet_page_url = "" # Khởi tạo
                     try:
                         # Bạn cần có URL name là 'wallet_dashboard' (hoặc tên khác) trong app 'wallet'
                         # và app 'wallet' phải có app_name = 'wallet' trong urls.py của nó
-                        wallet_page_url = request.build_absolute_uri(reverse('wallet:wallet_dashboard'))
+                        wallet_page_url = request.build_absolute_uri(reverse('wallet:bang_dieu_khien'))
                     except Exception as e:
                         print(f"Lỗi khi reverse URL cho trang ví: {e}")
                         wallet_page_url = "/fallback/wallet/page/" # Cung cấp URL mặc định nếu reverse lỗi
