@@ -9,8 +9,7 @@ from django.db import transaction as db_transaction
 from django.shortcuts import get_object_or_404
 from decimal import Decimal, InvalidOperation
 from django.urls import reverse
-from rest_framework.permissions import IsAuthenticated
-from django.shortcuts import render
+from urllib.parse import urlencode
 
 class CreateTransactionView(APIView):       
     """
@@ -57,26 +56,29 @@ class CreateTransactionView(APIView):
                 if buyer_for_update.balance < final_price:
                     
                     amount_needed = final_price - buyer_for_update.balance
-                    wallet_page_url = "" # Khởi tạo
+                    wallet_page_url = "" 
+                    ma_giao_dich_goc_cho_url = item_id
+                    query_params = {
+                            'mucDich': 'thanhToanSanPham',
+                            'soTienCanNap': str(amount_needed.quantize(Decimal('0'))), 
+                            'maGiaoDichGoc': str(ma_giao_dich_goc_cho_url)
+                        }
+
                     try:
-                        # Bạn cần có URL name là 'wallet_dashboard' (hoặc tên khác) trong app 'wallet'
-                        # và app 'wallet' phải có app_name = 'wallet' trong urls.py của nó
-                        wallet_page_url = request.build_absolute_uri(reverse('wallet:bang_dieu_khien'))
+                        base_wallet_url = reverse('wallet:ten_url_trang_vi_cua_ban')
                     except Exception as e:
-                        print(f"Lỗi khi reverse URL cho trang ví: {e}")
-                        wallet_page_url = "/fallback/wallet/page/" # Cung cấp URL mặc định nếu reverse lỗi
+                        print(f"Lỗi khi reverse URL cho trang ví với params: {e}")
+                        wallet_page_url_with_params = f"/api/wallet/?{urlencode(query_params)}" 
 
                     return Response(
-                        {
-                            "error_code": "INSUFFICIENT_FUNDS",
-                            "message": f"Số dư trong ví của bạn không đủ ({buyer_for_update.balance:,.0f} VNĐ). Bạn cần nạp thêm {amount_needed:,.0f} VNĐ.",
-                            "current_balance": buyer_for_update.balance,
-                            "amount_needed": amount_needed,
-                            "wallet_page_url": wallet_page_url,
-                        },
-                        status=status.HTTP_402_PAYMENT_REQUIRED # Mã lỗi cho biết cần thanh toán/nạp tiền
-                    )
-                
+                    {
+                        "error_code": "INSUFFICIENT_FUNDS",
+                        "message": f"Số dư không đủ. Cần nạp thêm {amount_needed:,.0f} VNĐ.",
+                        "amount_needed": str(amount_needed), # Chuyển sang string cho JSON
+                        "wallet_page_url": wallet_page_url_with_params, # URL đã bao gồm các tham số
+                    },
+                    status=status.HTTP_402_PAYMENT_REQUIRED
+                )
                 # 2. Nếu đủ tiền, thực hiện chuyển tiền
                 seller_for_update = User.objects.select_for_update().get(pk=seller.pk)
 
