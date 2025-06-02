@@ -31,7 +31,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('apps.items.urls')),
     path('api/', include('apps.auth_users.urls')),
-    path('api/bidding/', include('apps.bidding.urls', namespace='bidding')),
+    path('api/bidding/', include('apps.bidding.urls')),
     path('api/payments/', include('apps.payments.urls')),
     path('api/reviews/', include('apps.reviews.urls')),
     path('api/wallet/', include('apps.wallet.urls', namespace='wallet')),
