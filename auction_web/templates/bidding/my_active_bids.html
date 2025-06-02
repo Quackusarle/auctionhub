@@ -63,22 +63,32 @@
                             </span>
                         </td>
                         <td data-label="Hành động" class="action-cell action-cell-{{ thong_tin.item.pk }}">
-                            {% if thong_tin.chu_tren_nut_hanh_dong %}
-                                {# URL đã được xây dựng trong view, bao gồm cả URL cho wallet hoặc trang chi tiết #}
+                            {% if thong_tin.is_payment_button %}
+                                {# Đây là nút "Thanh Toán" gọi JavaScript handlePayment #}
+                                <button type="button" class="btn btn-sm btn-success payment-button w-100"
+                                        data-item-id="{{ thong_tin.payment_item_id }}"
+                                        data-buyer-id="{{ thong_tin.payment_buyer_id }}"
+                                        data-seller-id="{{ thong_tin.payment_seller_id }}"
+                                        data-final-price="{{ thong_tin.payment_final_price }}">
+                                    Thanh Toán
+                                </button>
+                            {% elif thong_tin.chu_tren_nut_hanh_dong %}
+                                {# Các loại nút hành động khác vẫn là link <a> bình thường #}
                                 <a href="{{ thong_tin.url_cho_nut_hanh_dong }}" class="btn btn-sm {{ thong_tin.class_css_cho_nut_hanh_dong|default:'btn-primary' }} w-100">
                                     {{ thong_tin.chu_tren_nut_hanh_dong }}
                                 </a>
-                                {# Hiển thị nút hủy nếu trạng thái là Đang đấu giá và user có bid #}
-                                {% if thong_tin.trang_thai_cho_toi == "Dang dau gia" and thong_tin.hien_thi_nut_huy_dau_gia and thong_tin.bid_id_cao_nhat_cua_toi %}
-                                <button type="button" class="btn btn-sm btn-outline-secondary btn-cancel-bid w-100 mt-1"
-                                        data-item-id="{{ thong_tin.item.pk }}"
-                                        data-bid-id="{{ thong_tin.bid_id_cao_nhat_cua_toi }}"
-                                        onclick="handleCancelBid('{{ thong_tin.item.pk }}', '{{ thong_tin.bid_id_cao_nhat_cua_toi }}', this)">
-                                    Hủy
-                                </button>
-                                {% endif %}
                             {% else %}
                                 -
+                            {% endif %}
+
+                            {# Nút Hủy Bid (giữ nguyên logic của bạn) #}
+                            {% if thong_tin.trang_thai_cho_toi == "Đang đấu giá" and thong_tin.hien_thi_nut_huy_dau_gia and thong_tin.bid_id_cao_nhat_cua_toi %}
+                            <button type="button" class="btn btn-sm btn-outline-secondary btn-cancel-bid w-100 mt-1"
+                                    data-item-id="{{ thong_tin.item.pk }}"
+                                    data-bid-id="{{ thong_tin.bid_id_cao_nhat_cua_toi }}"
+                                    onclick="handleCancelBid('{{ thong_tin.item.pk }}', '{{ thong_tin.bid_id_cao_nhat_cua_toi }}', this)">
+                                Hủy Bid
+                            </button>
                             {% endif %}
                         </td>
                     </tr>
@@ -98,6 +108,24 @@
 {% block page_specific_js %}
 {{ block.super }}
 <script>
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
 function showGlobalMessage(message, type = 'info') {
     const messageArea = document.getElementById('cancel-bid-message-area');
     if (messageArea) {
@@ -169,5 +197,95 @@ async function handleCancelBid(itemId, bidId, buttonElement) {
         buttonElement.textContent = 'Hủy';
     }
 }
+
+// ===================================================================================
+// CHỨC NĂNG TẠO TRANSACTION
+// ===================================================================================
+
+async function handlePayment(itemId, buyerId, sellerId, finalPrice, buttonElement) {
+    if (!confirm('Bạn có chắc chắn muốn tiến hành thanh toán cho sản phẩm này?')) {
+        return;
+    }
+
+    buttonElement.disabled = true;
+    buttonElement.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...';
+
+    const csrfToken = getCookie('csrftoken') || "{{ csrf_token_value }}"; // Lấy CSRF token
+
+    const transactionData = {
+        item_id: parseInt(itemId),
+        buyer_id: parseInt(buyerId),
+        seller_id: parseInt(sellerId),
+        final_price: parseFloat(finalPrice) 
+    };
+
+    try {
+        const apiUrl = "{% url 'payments:create_transaction' %}";
+        const response = await fetch(apiUrl, { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(transactionData)
+        });
+
+        const result = await response.json(); 
+
+        if (response.status === 201 || response.status === 200) { // Thanh toán thành công và giao dịch đã hoàn tất
+            showGlobalMessage(result.message || 'Thanh toán thành công! Giao dịch đã hoàn tất.', 'success');
+            // Tải lại trang để cập nhật UI (ví dụ: item không còn nút thanh toán)
+            setTimeout(() => window.location.reload(), 2000); 
+        } else if (response.status === 402 || (response.status === 400 && result.error_code === "INSUFFICIENT_FUNDS")) {
+            // Không đủ tiền, cần chuyển hướng để nạp tiền
+            showGlobalMessage(result.message || 'Số dư không đủ để thực hiện giao dịch.', 'error');
+            if (result.wallet_page_url && result.amount_needed) {
+                // Chờ một chút để người dùng đọc thông báo lỗi rồi mới chuyển hướng
+                setTimeout(() => {
+                    // Chuyển hướng đến trang ví, đính kèm số tiền cần nạp
+                    // Ví dụ: /wallet/?top_up_amount=10000.00
+                    window.location.href = `${result.wallet_page_url}?top_up_amount=${result.amount_needed}`;
+                }, 3000); // Chờ 3 giây
+            } else {
+                // Nếu không có đủ thông tin để chuyển hướng, chỉ hiển thị lỗi
+                 buttonElement.disabled = false;
+                 buttonElement.textContent = 'Thanh Toán';
+            }
+        } else { 
+            // Các lỗi khác (400, 404, 500 từ CreateTransactionView)
+            showGlobalMessage(result.message || result.error || result.detail || 'Lỗi khi thực hiện giao dịch. Vui lòng thử lại.', 'error');
+            buttonElement.disabled = false;
+            buttonElement.textContent = 'Thanh Toán';
+        }
+    } catch (error) {
+        console.error('Lỗi JavaScript khi thực hiện thanh toán:', error);
+        showGlobalMessage('Lỗi kết nối hoặc lỗi không xác định khi thanh toán. Vui lòng thử lại.', 'error');
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Thanh Toán';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentButtons = document.querySelectorAll('.payment-button'); 
+        paymentButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.dataset.itemId;
+                const buyerId = this.dataset.buyerId; 
+                const sellerId = this.dataset.sellerId;
+                const finalPrice = this.dataset.finalPrice;
+                
+                // Kiểm tra lại các giá trị trước khi gọi
+                if (!itemId || !buyerId || !sellerId || !finalPrice) {
+                    showGlobalMessage('Lỗi: Thiếu thông tin giao dịch từ nút bấm. Không thể thanh toán.', 'error');
+                    // Không return ở đây để nút có thể được kích hoạt lại nếu cần
+                    this.disabled = false; // Kích hoạt lại nút
+                    this.innerHTML = 'Thanh Toán'; // Khôi phục text
+                    return;
+                }
+                // `this` ở đây chính là button được click
+                handlePayment(itemId, buyerId, sellerId, finalPrice, this);
+            });
+        });
+    });
 </script>
 {% endblock %}

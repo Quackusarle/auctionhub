@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction as giao_dich_db # Đổi tên để tránh trùng lặp nếu có biến transaction
 from django.http import HttpResponse
 from django.conf import settings
+from django.db import transaction as db_transaction 
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -32,8 +33,14 @@ def bang_dieu_khien_vi_view(request):
     return render(request, 'wallet/wallet_dashboard.html', ngu_canh) 
 
 
-class KhoiTaoGiaoDichNapTienAPIView(APIView): # Đổi tên class
-    permission_classes = [IsAuthenticated]
+class KhoiTaoGiaoDichNapTienAPIView(APIView):
+    """
+    API để người dùng khởi tạo một yêu cầu nạp tiền vào ví của họ.
+    API này nhận số tiền cần nạp, tạo một bản ghi giao dịch ví (GiaoDichVi)
+    với trạng thái PENDING, và trả về thông tin mã QR để người dùng thực hiện chuyển khoản.
+    Số tiền nạp có thể do người dùng tự nhập, hoặc được tính toán từ một giao dịch mua hàng thiếu tiền.
+    """
+    permission_classes = [IsAuthenticated] # Chỉ người dùng đã đăng nhập mới được gọi API này
 
     def post(self, request, *args, **kwargs):
         chuoi_so_tien_nap = request.data.get('amount')
@@ -44,61 +51,87 @@ class KhoiTaoGiaoDichNapTienAPIView(APIView): # Đổi tên class
                 status=status.HTTP_400_BAD_REQUEST
             )
         try:
-            so_tien_can_nap = decimal.Decimal(chuoi_so_tien_nap)
-            so_tien_nap_toi_thieu = decimal.Decimal('10000')
+            so_tien_can_nap = decimal.Decimal(chuoi_so_tien_nap) # Sử dụng Decimal
+            so_tien_nap_toi_thieu = decimal.Decimal('10000') # Số tiền nạp tối thiểu
             if so_tien_can_nap < so_tien_nap_toi_thieu:
                 return Response(
                     {'loi': f'Số tiền nạp tối thiểu là {so_tien_nap_toi_thieu:,.0f} VNĐ.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-        except decimal.InvalidOperation:
+        except decimal.InvalidOperation: # Bắt lỗi nếu không chuyển được sang Decimal
             return Response(
                 {'loi': 'Số tiền nạp không hợp lệ. Vui lòng chỉ nhập số.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         nguoi_dung = request.user
-        ma_giao_dich_noi_bo_cho_qr = f"AUCHUB_NAP_{nguoi_dung.id}_{uuid.uuid4().hex[:8].upper()}" # Đổi tiền tố
+        # Tạo mã tham chiếu duy nhất cho giao dịch nạp tiền này trên QR
+        ma_giao_dich_noi_bo_cho_qr = f"AUCHUB_NAP_{nguoi_dung.id}_{uuid.uuid4().hex[:8].upper()}"
 
         try:
-            with giao_dich_db.atomic():
+            # Sử dụng transaction của Django để đảm bảo tính toàn vẹn
+            # db_transaction là alias của django.db.transaction
+            with db_transaction.atomic(): 
+                # Giả định User model của bạn có trường balance.
+                # Nếu không, bạn cần lấy từ Wallet model liên kết với user.
+                # Vi du: current_user_balance = Wallet.objects.get(user=nguoi_dung).balance
+                current_user_balance = nguoi_dung.balance 
+
+                # Tạo một bản ghi GiaoDichVi (WalletTransaction)
+                # Bạn cần đảm bảo model GiaoDichVi đã được import
                 giao_dich_vi_moi = GiaoDichVi.objects.create(
                     user=nguoi_dung,
-                    transaction_type='DEPOSIT', # Giữ nguyên giá trị key của choices
+                    transaction_type='DEPOSIT', # Loại giao dịch là nạp tiền
                     amount=so_tien_can_nap,
-                    status='PENDING',          # Giữ nguyên giá trị key của choices
+                    status='PENDING',          # Trạng thái chờ admin xác nhận sau khi người dùng chuyển khoản
                     description=f"Yêu cầu nạp tiền {so_tien_can_nap:,.0f} VNĐ. Mã tham chiếu QR: {ma_giao_dich_noi_bo_cho_qr}",
-                    balance_before=nguoi_dung.balance,
-                    balance_after=nguoi_dung.balance
+                    balance_before=current_user_balance, # Số dư trước khi nạp (thực tế chưa thay đổi)
+                    balance_after=current_user_balance   # Số dư sau khi nạp (sẽ được cập nhật khi admin xác nhận)
+                    # Hoặc balance_after có thể là current_user_balance + so_tien_can_nap để hiển thị dự kiến
+                    # Hoặc bạn có thể bỏ trường balance_after ở đây và chỉ cập nhật khi admin confirm
                 )
 
-            dich_vu_vietqr_instance = DichVuVietQR() # Tạo instance của service
+            # Gọi service tạo mã QR sau khi bản ghi GiaoDichVi đã được tạo thành công (nằm ngoài atomic block)
+            # Điều này tránh việc gọi API bên ngoài khi transaction CSDL chưa chắc chắn commit.
+            # Tuy nhiên, nếu tạo QR thất bại, bạn có thể muốn rollback GiaoDichVi hoặc cập nhật lại status.
+            # (Trong code gốc của bạn, bạn cập nhật status nếu tạo QR lỗi, điều đó cũng là một cách)
+
+            # GIẢ ĐỊNH DichVuVietQR và GiaoDichVi đã được import đúng
+            dich_vu_vietqr_instance = DichVuVietQR() 
             phan_hoi_tao_qr = dich_vu_vietqr_instance.tao_ma_qr_nap_tien(
                 so_tien_can_nap=so_tien_can_nap,
                 ma_giao_dich_noi_bo_cho_thong_tin_them=ma_giao_dich_noi_bo_cho_qr
             )
 
             if not phan_hoi_tao_qr or not phan_hoi_tao_qr.get('thanhCong'):
-                giao_dich_vi_moi.status = 'FAILED' # Giữ nguyên giá trị key của choices
+                # Nếu tạo QR lỗi, cập nhật trạng thái GiaoDichVi thành FAILED
+                # Việc này nên nằm trong một try-except hoặc kiểm tra kỹ hơn
+                giao_dich_vi_moi.status = 'FAILED' 
                 giao_dich_vi_moi.description += f" | Lỗi tạo QR: {phan_hoi_tao_qr.get('thongBao', 'Không rõ')}"
                 giao_dich_vi_moi.save()
+                
                 thong_bao_loi_cho_client = phan_hoi_tao_qr.get('thongBao', 'Lỗi khi tạo mã QR. Vui lòng thử lại sau.')
                 return Response({'loi': thong_bao_loi_cho_client}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
+            # Nếu tạo QR thành công
             du_lieu_anh_qr_base64_tu_api = phan_hoi_tao_qr.get('duLieuAnhQRBase64')
 
             return Response({
                 'du_lieu_anh_qr': du_lieu_anh_qr_base64_tu_api,
-                'thong_tin_don_hang_cho_qr': ma_giao_dich_noi_bo_cho_qr,
-                'id_giao_dich_vi_noi_bo': giao_dich_vi_moi.id
+                'thong_tin_don_hang_cho_qr': ma_giao_dich_noi_bo_cho_qr, # Mã để người dùng đối chiếu
+                'id_giao_dich_vi_noi_bo': giao_dich_vi_moi.id, # ID của bản ghi GiaoDichVi vừa tạo
+                'so_tien_can_nap': so_tien_can_nap # Trả về số tiền để frontend hiển thị nếu cần
             }, status=status.HTTP_201_CREATED)
 
         except Exception as e:
-            print(f"Lỗi nghiêm trọng trong KhoiTaoGiaoDichNapTienAPIView: {e}")
+            # Ghi log lỗi chi tiết ở đây
+            print(f"Lỗi nghiêm trọng trong KhoiTaoGiaoDichNapTienAPIView khi xử lý cho user {nguoi_dung.id if nguoi_dung else 'unknown'}: {type(e).__name__} - {e}")
             return Response(
-                {'loi': 'Đã xảy ra lỗi không mong muốn khi khởi tạo yêu cầu nạp tiền.'},
+                {'loi': 'Đã xảy ra lỗi không mong muốn khi khởi tạo yêu cầu nạp tiền. Vui lòng thử lại sau.'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+
 
 class XuLyIPNTuVietQRAPIView(APIView): # Đổi tên class
     permission_classes = [AllowAny]

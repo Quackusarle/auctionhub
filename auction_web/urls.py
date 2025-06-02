@@ -40,7 +40,7 @@ urlpatterns = [
     path('items/<int:pk>/bidding/', bidding_detail_view, name='bidding-detail-page'),
     path('login-signup/', views.register_view, name='login-signup'),
     path('search/', item_search_view, name='search_results'),
-    
+    path('dashboard_admin/', include('apps.dashboard_admin.urls')),
     path('my-purchasing-items/', my_active_bids_view, name='my_purchasing_items_page'),
     path('my-auctions/', my_created_items_view, name='my_auctions_page'),
 
