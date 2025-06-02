@@ -20,7 +20,6 @@ Django==5.1.6
 django-allauth==0.57.0
 django-cors-headers==4.7.0
 django-crispy-forms==2.4
-django-haystack==3.3.0
 django-otp==1.6.0
 djangorestframework==3.16.0
 djangorestframework_simplejwt==5.5.0
@@ -29,7 +28,6 @@ hyperlink==21.0.0
 idna==3.10
 incremental==24.7.2
 mock==5.2.0
-mysqlclient==2.2.7
 oauthlib==3.2.2
 packaging==25.0
 pillow==11.2.1
@@ -69,5 +67,4 @@ urwid==3.0.2
 wcwidth==0.2.13
 wheel==0.45.1
 whitenoise==6.9.0
-Whoosh==2.7.4
 zope.interface==7.2
