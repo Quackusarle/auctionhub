@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
       {
-        "src": "auction_web/wsgi.py",
+        "src": "auction_web/asgi.py",
         "use": "@vercel/python",
         "config": {
           "maxLambdaSize": "15mb",
@@ -28,7 +28,7 @@
       },
       {
         "src": "/(.*)",
-        "dest": "auction_web/wsgi.py"
+        "dest": "auction_web/asgi.py"
       }
     ],
     "env": {
