@@ -39,7 +39,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'fallback_secret_key_if_not_in_env_but_plea
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # --- ALLOWED_HOSTS ---
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'auctionhub.uk', 'www.auctionhub.uk', 'auctionhub-theta.vercel.app', '29aa-113-161-91-223.ngrok-free.app']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'auctionhub.uk', 'www.auctionhub.uk', '*.vercel.app']
 
 PRODUCTION_HOST = ['auctionhub.uk', 'www.auctionhub.uk']
 
@@ -175,7 +175,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = '/static/' # Luôn có dấu / ở cuối
+STATIC_URL = '/static/'
 
 # Thư mục chứa static files trong quá trình development
 STATICFILES_DIRS = [
@@ -186,12 +186,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "staticfiles_build" / "static"
 
 # Storage backend cho static files
-if DEBUG:
-    # Development: sử dụng default storage để load trực tiếp
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-else:
-    # Production: sử dụng whitenoise với compression
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # Default primary key field type
@@ -292,12 +287,12 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'INFO' if not DEBUG else 'DEBUG', # Log INFO trở lên ở production
+        'level': 'WARNING',
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'level': 'WARNING',
             'propagate': False,
         },
     },
