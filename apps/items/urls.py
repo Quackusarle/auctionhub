@@ -3,6 +3,8 @@ from .views import ItemList, ItemDetail, ItemCreate, ItemSearchAPI, ItemListAPI
 from . import views
 from django.views.generic import TemplateView
 
+app_name = 'items'
+
 urlpatterns = [
     path('items/', ItemListAPI.as_view(), name='item-list'),
     path('items/create-auction/', ItemCreate.as_view(), name='create-auction'),

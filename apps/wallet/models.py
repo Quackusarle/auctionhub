@@ -22,7 +22,6 @@ class WalletTransaction(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='wallet_transactions_history')
 
-    # THÊM TRƯỜNG transaction_type VÀO ĐÂY
     transaction_type = models.CharField(
         max_length=20,
         choices=TRANSACTION_TYPES,

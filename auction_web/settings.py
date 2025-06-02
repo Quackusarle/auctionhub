@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'corsheaders',
+    'crispy_forms',
 
     # Ứng dụng bên thứ ba
     'rest_framework',

@@ -1,0 +1,52 @@
+{# apps/wallet/templates/wallet/my_transactions.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Hoá đơn
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-3">Hoá đơn</h2>
+
+    {% if transactions %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Mã GD</th>
+                        <th>Loại GD</th>
+                        <th>Sản phẩm</th>
+                        <th>Giá cuối (VNĐ)</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txn in transactions %}
+                        <tr>
+                            <td>{{ txn.transaction_id }}</td>
+                            <td>{{ txn.get_transaction_type_display }}</td>
+                            <td>
+                                {% if txn.item_id %}
+                                    <a href="{% url 'item-detail-template' txn.item_id.pk %}" class="text-decoration-none">
+                                        {{ txn.item_id.name|default:"(Chưa có tên)" }}
+                                    </a>
+                                {% else %}
+                                    (Không có Item)
+                                {% endif %}
+                            </td>
+                            <td>{{ txn.final_price|floatformat:2 }}</td>
+                            <td>{{ txn.get_status_display }}</td>
+                            <td>{{ txn.created_date|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>Chưa có hoá đơn nào.</p>
+    {% endif %}
+</div>
+{% endblock %}
