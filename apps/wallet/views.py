@@ -18,7 +18,6 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import get_user_model
 NguoiDung = get_user_model() # Đặt tên tiếng Việt cho model User
 from .models import WalletTransaction as GiaoDichVi # Đặt tên tiếng Việt cho model
-
 from .services import DichVuVietQR # Import service với tên tiếng Việt
 
 @login_required

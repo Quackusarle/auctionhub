@@ -9,6 +9,8 @@ from django.db import transaction as db_transaction
 from django.shortcuts import get_object_or_404
 from decimal import Decimal, InvalidOperation
 from django.urls import reverse
+from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import render
 
 class CreateTransactionView(APIView):       
     """
@@ -133,3 +135,13 @@ class ProcessPaymentView(APIView):
 
         result = TransactionService.process_payment(transaction_id)
         return Response(result, status=status.HTTP_200_OK if result["success"] else status.HTTP_400_BAD_REQUEST)
+    
+class MyTransactionsView(APIView):
+    permission_classes = [IsAuthenticated]
+    template_name = "wallet/my_transactions.html"
+
+    def get(self, request, *args, **kwargs):
+        transactions = Transaction.objects.filter(
+            buyer_id=request.user
+        ).order_by("-created_date")
+        return render(request, self.template_name, {"transactions": transactions})

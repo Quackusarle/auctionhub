@@ -1,0 +1,126 @@
+{# apps/wallet/templates/wallet/my_transactions.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Hoá đơn
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-3">Hoá đơn</h2>
+
+    {% if transactions %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Mã GD</th>
+                        <th>Loại GD</th>
+                        <th>Sản phẩm</th>
+                        <th>Giá cuối (VNĐ)</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txn in transactions %}
+                        <tr>
+                            <td>{{ txn.transaction_id }}</td>
+                            <td>{{ txn.get_transaction_type_display }}</td>
+                            <td>
+                                {% if txn.item_id %}
+                                    <a href="{% url 'item-detail-template' txn.item_id.pk %}" class="text-decoration-none">
+                                        {{ txn.item_id.name|default:"(Chưa có tên)" }}
+                                    </a>
+                                {% else %}
+                                    (Không có Item)
+                                {% endif %}
+                            </td>
+                            <td>{{ txn.final_price|floatformat:2 }}</td>
+                            <td>{{ txn.get_status_display }}</td>
+                            <td>{{ txn.created_date|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                {% if txn.status == 'pending' %}
+                                    <button class="btn btn-sm btn-outline-primary btn-pay"
+                                            data-txn-id="{{ txn.transaction_id }}">
+                                        THANH TOÁN
+                                    </button>
+                                {% else %}
+                                    <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>Chưa có hoá đơn nào.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+
+{% block page_specific_js %}
+<script>
+    // Lấy CSRF token từ cookie (nếu cần)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const payButtons = document.querySelectorAll(".btn-pay");
+        payButtons.forEach(button => {
+            button.addEventListener("click", function(event) {
+                event.preventDefault();
+                const txnId = this.getAttribute("data-txn-id");
+                if (!txnId) return;
+
+                this.disabled = true;
+                this.textContent = "ĐANG XỬ LÝ...";
+
+                fetch("{% url 'payments:process_payment' %}", {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ transaction_id: txnId })
+                })
+                .then(response => response.json().then(data => ({ ok: response.ok, status: response.status, data })))
+                .then(({ ok, status, data }) => {
+                    if (ok) {
+                        alert(data.message || "Thanh toán thành công");
+                        window.location.reload();
+                    } else {
+                        let msg = data.message || data.error || `Lỗi ${status}`;
+                        alert("Thanh toán thất bại:\n" + msg);
+                        button.disabled = false;
+                        button.textContent = "THANH TOÁN";
+                    }
+                })
+                .catch(err => {
+                    console.error("Lỗi mạng khi gọi API thanh toán:", err);
+                    alert("Lỗi kết nối. Vui lòng thử lại sau.");
+                    button.disabled = false;
+                    button.textContent = "THANH TOÁN";
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

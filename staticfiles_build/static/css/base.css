@@ -597,3 +597,247 @@ body.modal-open { overflow: hidden; }
 .btn-outline-plant-theme:hover i {
     transform: translateX(3px);
 }
+
+/* ========= MOBILE RESPONSIVE ========= */
+
+/* Mobile Navigation và Header */
+@media (max-width: 768px) {
+    .site-header.plant-theme-header {
+        height: 60px; /* Giảm chiều cao header trên mobile */
+        padding: 0 10px;
+    }
+    
+    .site-main-content-wrapper {
+        padding-top: 60px; /* Điều chỉnh theo header height mới */
+    }
+    
+    .logo {
+        font-size: 1.5em; /* Giảm size logo */
+    }
+
+    .main-nav.plant-theme-nav ul {
+        gap: 20px; /* Giảm gap giữa nav items */
+    }
+    
+    .main-nav.plant-theme-nav ul li a {
+        font-size: 0.9em;
+        padding: 8px 0;
+    }
+    
+    .header-icon {
+        font-size: 1.6em; /* Giảm nhẹ size icon */
+    }
+    
+    /* Modal search responsive */
+    .modal-content-simple {
+        margin: 10px;
+        padding: 20px 25px;
+        width: calc(100% - 20px);
+    }
+    
+    .search-form-simple {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .search-form-simple input[type="text"],
+    .search-form-simple button[type="submit"] {
+        width: 100%;
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    /* Footer responsive */
+    .footer-content-wrapper {
+        flex-direction: column; 
+        gap: 30px;
+        text-align: center; 
+    }
+    
+    .contact-item {
+        justify-content: center; 
+        text-align: left; 
+    }
+    
+    .social-icons {
+        justify-content: center; 
+    }
+    
+    .newsletter-form {
+        max-width: 400px; 
+        margin: 0 auto;
+    }
+}
+
+/* Small mobile phones */
+@media (max-width: 576px) {
+    .site-header.plant-theme-header {
+        height: 55px;
+        padding: 0 5px;
+    }
+    
+    .site-main-content-wrapper {
+        padding-top: 55px;
+    }
+    
+    .logo {
+        font-size: 1.3em;
+    }
+    
+    .header-icon {
+        font-size: 1.4em;
+    }
+    
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    /* Navigation - hide if too cramped */
+    .main-nav.plant-theme-nav {
+        display: none; /* Ẩn navigation trên màn hình rất nhỏ */
+    }
+    
+    /* Product grid single column */
+    #item-grid-container {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+    
+    /* Newsletter form stack vertically */
+    .newsletter-form {
+        flex-direction: column; 
+        height: auto;
+        gap: 10px;
+    }
+    
+    .newsletter-form input[type="email"],
+    .newsletter-form button {
+        width: 100%;
+        border-radius: 5px; 
+        height: 45px;
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    /* Search modal full screen on small devices */
+    .search-modal-simple {
+        padding-top: 10vh;
+    }
+    
+    .modal-content-simple {
+        margin: 5px;
+        padding: 15px 20px;
+        width: calc(100% - 10px);
+    }
+    
+    #searchModalTitle {
+        font-size: 1.3em;
+        margin-bottom: 20px;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .site-header.plant-theme-header {
+        height: 50px;
+    }
+    
+    .site-main-content-wrapper {
+        padding-top: 50px;
+    }
+    
+    .logo {
+        font-size: 1.2em;
+    }
+    
+    .header-actions.plant-theme-actions {
+        gap: 10px;
+    }
+    
+    .header-icon {
+        font-size: 1.3em;
+    }
+    
+    /* Ensure buttons are touchable */
+    button.search-trigger-btn,
+    button.user-dropdown-trigger {
+        padding: 8px;
+        min-width: 44px; /* iOS recommendation for touch targets */
+        min-height: 44px;
+    }
+}
+
+/* ========= GENERAL MOBILE OPTIMIZATIONS ========= */
+
+/* Improve touch targets for all interactive elements */
+@media (max-width: 768px) {
+    button, 
+    .btn,
+    input[type="submit"],
+    input[type="button"],
+    a.btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 10px 15px;
+    }
+    
+    /* Better spacing for forms */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select {
+        font-size: 16px; /* Prevent zoom on iOS */
+        padding: 12px;
+    }
+    
+    /* Better table handling on mobile */
+    .table-responsive {
+        border: none;
+    }
+    
+    /* Improved modal sizing */
+    .modal-dialog {
+        margin: 1rem;
+    }
+    
+    /* Better form styling */
+    .form-control {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+}
+
+/* Extra optimizations for very small screens */
+@media (max-width: 480px) {
+    /* Reduce margins and padding for better space usage */
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    /* Stack elements vertically on very small screens */
+    .row.mobile-stack-480 > [class*="col-"] {
+        width: 100% !important;
+        margin-bottom: 1rem;
+    }
+    
+    /* Hide non-essential elements on very small screens */
+    .hide-on-mobile-480 {
+        display: none !important;
+    }
+    
+    /* Ensure text remains readable */
+    body {
+        font-size: 14px;
+    }
+    
+    h1 { font-size: 1.75rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.25rem; }
+    h4 { font-size: 1.1rem; }
+    h5 { font-size: 1rem; }
+    h6 { font-size: 0.9rem; }
+}

@@ -188,7 +188,7 @@ function updateUserAuthUI(isLoggedIn, userData = {}) {
         myAuctions: "/my-auctions/",
         myPurchasingItems: "/my-purchasing-items/",
         createAuction: "/api/items/create-auction/", // Sửa lại từ code cậu gửi, có thể là create-auction
-        settings: "/accounts/settings/",
+        my_transactions: "/api/payments/my-transactions/",
         logout: "/accounts/logout/",
         wallet: "/api/wallet/",
         howItWorks: "/how-it-works/", // Thêm link này cho trạng thái chưa đăng nhập
@@ -202,11 +202,12 @@ function updateUserAuthUI(isLoggedIn, userData = {}) {
         triggerBtn.setAttribute('aria-label', welcomeMessage);
         dropdownMenuUl.innerHTML = `
             <li><a href="${URLS.profile}">Trang cá nhân</a></li>
+            
             <li class="separator"></li>
             <li><a href="${URLS.myPurchasingItems}">Giỏ hàng của tôi</a></li>
             <li><a href="${URLS.myAuctions}">Phiên đấu giá của tôi</a></li>
             <li><a href="${URLS.createAuction}">Tạo phiên đấu giá</a></li>
-            <li><a href="${URLS.settings}">Cài đặt tài khoản</a></li>
+            <li><a href="${URLS.my_transactions}">Hoá đơn</a></li>
             <li><a href="${URLS.wallet}">Ví của tôi</a></li>
 
             <li class="separator"></li>
