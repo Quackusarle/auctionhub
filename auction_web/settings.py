@@ -111,7 +111,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'auction_web.wsgi.application'
-ASGI_APPLICATION = 'auction_web.asgi.application'
+ASGI_APPLICATION = 'auction_web.asgi.app'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases

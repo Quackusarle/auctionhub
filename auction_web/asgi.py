@@ -12,7 +12,7 @@ django_asgi_app = get_asgi_application()
 # Import routing after Django setup
 from apps.bidding.routing import websocket_urlpatterns
 
-application = ProtocolTypeRouter({
+app = ProtocolTypeRouter({
     "http": django_asgi_app,
     "websocket": AuthMiddlewareStack(
         URLRouter(
